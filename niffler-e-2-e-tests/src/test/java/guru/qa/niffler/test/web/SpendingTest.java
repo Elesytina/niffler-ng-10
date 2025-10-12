@@ -9,24 +9,26 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+
 @WebTest
 public class SpendingTest {
 
   private static final Config CFG = Config.getInstance();
 
   @Spending(
-      username = "duck",
+      username = "fishka",
       category = "Учеба",
       amount = 89900,
       currency = CurrencyValues.RUB,
-      description = "Обучение Niffler 2.0 юбилейный поток!"
+      description = "Обучение Niffler 10.0 юбилейный поток!"
   )
   @Test
   void spendingDescriptionShouldBeEditedByTableAction(SpendJson spending) {
     final String newDescription = "Обучение Niffler Next Generation";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .login("duck", "12345")
+        .login("fishka", "Querty67")
         .editSpending(spending.description())
         .setNewSpendingDescription(newDescription)
         .save()

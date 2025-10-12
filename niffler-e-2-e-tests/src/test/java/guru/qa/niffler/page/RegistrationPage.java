@@ -14,6 +14,7 @@ public class RegistrationPage {
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement passwordSubmitInput = $("#passwordSubmit");
     private final SelenideElement registerBtn = $("#register-button");
+    private final String formErrorCssSelector = ".form__error";
 
     public RegistrationPage registerUser(String username, String password) {
         setUserName(username);
@@ -55,11 +56,16 @@ public class RegistrationPage {
     }
 
     public RegistrationPage checkUserAlreadyExistsRegistrationError(String userName) {
-        var element = $(".form__error");
+        var element = $(formErrorCssSelector);
         element.shouldBe(visible);
         element.shouldHave(text("Username `%s` already exists".formatted(userName)));
         return this;
     }
 
-
+    public RegistrationPage checkPasswordShouldBeEqualRegistrationError() {
+        var element = $(formErrorCssSelector);
+        element.shouldBe(visible);
+        element.shouldHave(text("Passwords should be equal"));
+        return this;
+    }
 }
