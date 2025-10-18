@@ -1,9 +1,8 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.api.SpendApi;
+import guru.qa.niffler.api.CategoryApi;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.SpendJson;
-import lombok.extern.slf4j.Slf4j;
+import guru.qa.niffler.model.CategoryJson;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.Assertions;
@@ -13,10 +12,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
-@Slf4j
-public class SpendApiClient implements SpendClient {
+public class CategoryApiClient implements CategoryClient {
 
     private static final Config CFG = Config.getInstance();
 
@@ -33,13 +31,13 @@ public class SpendApiClient implements SpendClient {
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
-    private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    private final CategoryApi categoryApi = retrofit.create(CategoryApi.class);
 
     @Override
-    public SpendJson createSpend(SpendJson spend) {
-        final Response<SpendJson> response;
+    public List<CategoryJson> getAllCategories(String username) {
+        final Response<List<CategoryJson>> response;
         try {
-            response = spendApi.createSpend(spend)
+            response = categoryApi.getAllCategories(username)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
             return response.body();
@@ -49,10 +47,10 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson getSpendById(UUID spendId, String userName) {
-        final Response<SpendJson> response;
+    public CategoryJson createCategory(CategoryJson categoryJson) {
+        final Response<CategoryJson> response;
         try {
-            response = spendApi.getSpend(spendId, userName)
+            response = categoryApi.createCategory(categoryJson)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
             return response.body();
@@ -62,10 +60,10 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public List<SpendJson> getAllSpends(String username) {
-        final Response<List<SpendJson>> response;
+    public CategoryJson updateCategory(CategoryJson categoryJson) {
+        final Response<CategoryJson> response;
         try {
-            response = spendApi.getAllSpends(username)
+            response = categoryApi.updateCategory(categoryJson)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
             return response.body();
@@ -75,29 +73,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson updateSpend(SpendJson spend) {
-        final Response<SpendJson> response;
-        try {
-            response = spendApi.editSpend(spend)
-                    .execute();
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
-        } catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
+    public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
+        throw new UnsupportedOperationException("Not implemented :(");
     }
-
-    @Override
-    public SpendJson deleteSpend(SpendJson spendJson) {
-        final Response<SpendJson> response;
-        try {
-            response = spendApi.removeSpend(spendJson)
-                    .execute();
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
-        } catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
-    }
-
 }

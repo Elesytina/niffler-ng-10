@@ -7,20 +7,23 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
-  private final SelenideElement spendingTable = $("#spendings");
 
-  public MainPage checkThatPageLoaded() {
-    spendingTable.should(visible);
-    return this;
-  }
+    private final SelenideElement spendingTable = $("#spendings");
+    private final SelenideElement statistics = $("#chart");
 
-  public EditSpendingPage editSpending(String description) {
-    spendingTable.$$("tbody tr").find(text(description)).$$("td").get(5).click();
-    return new EditSpendingPage();
-  }
+    public MainPage checkThatPageLoaded() {
+        spendingTable.shouldBe(visible);
+        statistics.shouldBe(visible);
+        return this;
+    }
 
-  public MainPage checkThatTableContains(String description) {
-    spendingTable.$$("tbody tr").find(text(description)).should(visible);
-    return this;
-  }
+    public EditSpendingPage editSpending(String description) {
+        spendingTable.$$("tbody tr").find(text(description)).$$("td").get(5).click();
+        return new EditSpendingPage();
+    }
+
+    public MainPage checkThatTableContains(String description) {
+        spendingTable.$$("tbody tr").find(text(description)).should(visible);
+        return this;
+    }
 }

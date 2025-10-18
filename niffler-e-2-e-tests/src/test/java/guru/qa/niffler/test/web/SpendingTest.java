@@ -9,8 +9,6 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-
 @WebTest
 public class SpendingTest {
 

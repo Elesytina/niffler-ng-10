@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestHelper {
-    public static final Faker FAKER = Faker.instance();
+    public static final Faker FAKER = new Faker();
 }
