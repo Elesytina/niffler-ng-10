@@ -7,6 +7,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,8 @@ public class ProfileTest {
   @Test
   void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
+        .login("duck", "12345")
+        .checkThatPageLoaded(MainPage.class);
 
     Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
         .checkArchivedCategoryExists(category.name());
@@ -40,8 +41,8 @@ public class ProfileTest {
   @Test
   void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
+        .login("duck", "12345")
+        .checkThatPageLoaded(MainPage.class);
 
     Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
         .checkCategoryExists(category.name());

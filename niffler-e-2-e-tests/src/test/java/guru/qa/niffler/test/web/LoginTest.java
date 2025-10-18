@@ -4,6 +4,7 @@ import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.test.helpers.TestHelper.FAKER;
@@ -24,7 +25,7 @@ public class LoginTest {
                 .registerUser(userName, password)
                 .followToSignIn()
                 .login(userName, password)
-                .checkThatPageLoaded();
+                .checkThatPageLoaded(MainPage.class);
     }
 
 

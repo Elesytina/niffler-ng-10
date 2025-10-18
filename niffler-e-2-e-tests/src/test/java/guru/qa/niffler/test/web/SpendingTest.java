@@ -15,7 +15,6 @@ public class SpendingTest {
   private static final Config CFG = Config.getInstance();
 
   @Spending(
-      username = "fishka",
       category = "Учеба",
       amount = 89900,
       currency = CurrencyValues.RUB,

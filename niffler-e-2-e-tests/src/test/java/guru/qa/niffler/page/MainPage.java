@@ -5,15 +5,17 @@ import com.codeborne.selenide.SelenideElement;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.page;
 
 public class MainPage {
 
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement statistics = $("#chart");
 
-    public void checkThatPageLoaded() {
+    public <T> T checkThatPageLoaded(Class<T> nextPage) {
         spendingTable.shouldBe(visible);
         statistics.shouldBe(visible);
+        return page(nextPage);
     }
 
     public EditSpendingPage editSpending(String description) {
