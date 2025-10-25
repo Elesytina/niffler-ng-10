@@ -1,13 +1,13 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.*;
+import static com.codeborne.selenide.Selectors.byAttribute;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -26,9 +26,8 @@ public class ProfilePage {
         return this;
     }
 
-    public ProfilePage checkThatArchivedCategoriesExist() {
+    public void checkThatArchivedCategoriesExist() {
         $$(byAttribute("data-testid", "UnarchiveOutlinedIcon"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1));
-        return this;
     }
 }

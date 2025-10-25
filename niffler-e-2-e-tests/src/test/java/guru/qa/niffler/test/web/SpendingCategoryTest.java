@@ -23,7 +23,11 @@ public class SpendingCategoryTest {
     void activeCategoryShouldBePresentInProfilePositiveTest() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, "Querty67")
-                .clickProfileIcon();
+                .clickProfileIcon()
+                .chooseProfile()
+                .checkThatPageIsDisplayed()
+                .showArchived()
+                .checkThatArchivedCategoriesExist();
     }
 
     @SpendingCategory(
@@ -35,6 +39,7 @@ public class SpendingCategoryTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, "Querty67")
                 .checkThatActiveCategoryPresent();
+
     }
 
 }
