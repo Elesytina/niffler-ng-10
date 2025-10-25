@@ -1,4 +1,4 @@
-package guru.qa.niffler.api.client;
+package guru.qa.niffler.service.category;
 
 import guru.qa.niffler.api.CategoryApi;
 import guru.qa.niffler.config.Config;

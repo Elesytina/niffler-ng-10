@@ -2,7 +2,7 @@ package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.api.client.CategoryApiClient;
+import guru.qa.niffler.service.category.CategoryApiClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 

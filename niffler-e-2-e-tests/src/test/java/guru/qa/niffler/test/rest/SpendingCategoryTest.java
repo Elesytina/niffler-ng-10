@@ -3,7 +3,7 @@ package guru.qa.niffler.test.rest;
 
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.api.client.CategoryApiClient;
+import guru.qa.niffler.service.category.CategoryApiClient;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
