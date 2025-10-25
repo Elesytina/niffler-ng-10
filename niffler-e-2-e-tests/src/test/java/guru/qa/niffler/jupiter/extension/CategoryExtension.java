@@ -6,7 +6,8 @@ import guru.qa.niffler.service.category.CategoryApiClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import static guru.qa.niffler.test.helpers.TestHelper.FAKER;
+import static guru.qa.niffler.test.TestConstantHolder.FAKER;
+
 
 public class CategoryExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 

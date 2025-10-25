@@ -1,6 +1,5 @@
 package guru.qa.niffler.service.category;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 
 import java.util.List;
@@ -8,8 +7,6 @@ import java.util.Optional;
 
 
 public class CategoryDbClient implements CategoryClient {
-
-    private static final Config CFG = Config.getInstance();
 
     @Override
     public CategoryJson createCategory(CategoryJson category) {

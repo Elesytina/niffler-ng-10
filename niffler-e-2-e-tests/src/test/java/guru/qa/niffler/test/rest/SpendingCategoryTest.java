@@ -33,7 +33,7 @@ public class SpendingCategoryTest {
             archived = true)
     @Test
     @Description("archived Category Should Be Present In Profile")
-    void test_archivedCategoryShouldBePresentInProfilePositiveTest() {
+    void archivedCategoryShouldBePresentInProfilePositiveTest() {
         List<CategoryJson> allCategories = categoryApiClient.getAllCategories(username);
 
         var archiveCategories = allCategories.stream().filter(CategoryJson::archived).toList();
