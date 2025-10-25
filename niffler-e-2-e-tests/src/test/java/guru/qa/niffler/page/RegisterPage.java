@@ -4,6 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.page;
 
 public class RegisterPage {
     private final SelenideElement usernameInput = $("input[name='username']");
@@ -13,17 +14,17 @@ public class RegisterPage {
     private final SelenideElement proceedLoginButton = $(".form_sign-in");
     private final SelenideElement errorContainer = $(".form__error");
 
-    public RegisterPage fillRegisterPage(String login, String password, String passwordSubmit) {
+    public RegisterPage registerUser(String login, String password) {
         usernameInput.setValue(login);
         passwordInput.setValue(password);
-        passwordSubmitInput.setValue(passwordSubmit);
+        passwordSubmitInput.setValue(password);
         return this;
     }
 
     public LoginPage successSubmit() {
         submit();
         proceedLoginButton.click();
-        return new LoginPage();
+        return page(LoginPage.class);
     }
 
     public void submit() {
