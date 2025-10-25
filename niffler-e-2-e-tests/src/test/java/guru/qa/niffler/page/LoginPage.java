@@ -35,9 +35,9 @@ public class LoginPage {
         return this;
     }
 
-    public RegistrationPage clickCreateAccount() {
+    public RegisterPage clickCreateAccount() {
         createNewBtn.click();
-        return page(RegistrationPage.class);
+        return page(RegisterPage.class);
     }
 
     //"Неверные учетные данные пользователя"
