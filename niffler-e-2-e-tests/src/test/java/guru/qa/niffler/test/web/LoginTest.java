@@ -39,6 +39,6 @@ public class LoginTest {
                 .inputUserName(userName)
                 .inputPassword(randomAlphanumeric(5))
                 .submit()
-                .checkIncorrectCredsDataError();
+                .checkIncorrectCredsDataError("Неверные учетные данные пользователя");
     }
 }

@@ -40,7 +40,7 @@ public class LoginPage {
         return page(RegisterPage.class);
     }
 
-    //"Неверные учетные данные пользователя"
+    //
     public LoginPage checkIncorrectCredsDataError(String message) {
         var element = $(".form__error");
         element.shouldBe(visible);
