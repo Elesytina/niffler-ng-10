@@ -40,11 +40,9 @@ public class LoginPage {
         return page(RegisterPage.class);
     }
 
-    //
-    public LoginPage checkIncorrectCredsDataError(String message) {
+    public void checkIncorrectCredsDataError(String message) {
         var element = $(".form__error");
         element.shouldBe(visible);
         element.shouldHave(text(message));
-        return this;
     }
 }

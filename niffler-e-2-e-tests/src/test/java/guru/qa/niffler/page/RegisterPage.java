@@ -9,7 +9,6 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
 public class RegisterPage {
-
     private final SelenideElement userNameInput = $("#username");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement passwordSubmitInput = $("#passwordSubmit");
@@ -54,17 +53,15 @@ public class RegisterPage {
         $(Selectors.byText("Congratulations! You've registered!")).shouldBe(visible);
     }
 
-    public RegisterPage checkUserAlreadyExistsRegistrationError(String userName) {
+    public void checkUserAlreadyExistsRegistrationError(String userName) {
         var element = $(formErrorCssSelector);
         element.shouldBe(visible);
         element.shouldHave(text("Username `%s` already exists".formatted(userName)));
-        return this;
     }
 
-    public RegisterPage checkPasswordShouldBeEqualRegistrationError() {
+    public void checkPasswordShouldBeEqualRegistrationError() {
         var element = $(formErrorCssSelector);
         element.shouldBe(visible);
         element.shouldHave(text("Passwords should be equal"));
-        return this;
     }
 }

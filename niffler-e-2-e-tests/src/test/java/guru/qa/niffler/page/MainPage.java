@@ -9,9 +9,8 @@ import static com.codeborne.selenide.Selenide.$;
 public class MainPage {
   private final SelenideElement spendingTable = $("#spendings");
 
-  public MainPage checkThatPageLoaded() {
+  public void checkThatPageLoaded() {
     spendingTable.should(visible);
-    return this;
   }
 
   public EditSpendingPage editSpending(String description) {
@@ -19,8 +18,7 @@ public class MainPage {
     return new EditSpendingPage();
   }
 
-  public MainPage checkThatTableContains(String description) {
+  public void checkThatTableContains(String description) {
     spendingTable.$$("tbody tr").find(text(description)).should(visible);
-    return this;
   }
 }
