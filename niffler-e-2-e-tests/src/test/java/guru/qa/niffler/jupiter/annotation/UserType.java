@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 public @interface UserType {
     Type value() default Type.EMPTY;
 
-    public enum Type {
+    enum Type {
         EMPTY,
         WITH_FRIEND,
         WITH_INCOME_REQUEST,

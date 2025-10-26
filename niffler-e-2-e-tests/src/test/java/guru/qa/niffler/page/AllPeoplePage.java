@@ -9,8 +9,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class AllPeoplePage {
     private final SelenideElement allPeopleTable = $("#all");
 
-    public AllPeoplePage checkThatOutcomeRequestsArePresent() {
+    public void checkThatOutcomeRequestsArePresent() {
         allPeopleTable.$$(Selectors.byText("Waiting...")).shouldHave(sizeGreaterThanOrEqual(1));
-        return this;
     }
 }
