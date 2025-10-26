@@ -48,4 +48,3 @@ public class MainPage {
         return new AllPeoplePage();
     }
 }
-}
