@@ -15,6 +15,6 @@ public @interface SpendingCategory {
 
     String username();
 
-    boolean archived();
+    boolean archived() default false;
 
 }

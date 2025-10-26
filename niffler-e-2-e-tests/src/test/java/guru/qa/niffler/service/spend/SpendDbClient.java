@@ -24,7 +24,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson getSpend(String id, String userName) {
+    public SpendJson getSpend(String id) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

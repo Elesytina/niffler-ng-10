@@ -17,11 +17,10 @@ public interface SpendApi {
 
     @DELETE("internal/spends/remove")
     Call<Void> deleteSpends(@Query("ids") List<String> ids,
-                            @Query("username") String user);
+                            @Query("username") String username);
 
     @GET("internal/spends/{id}")
-    Call<SpendJson> getSpend(@Path("id") String id,
-                             @Query("username") String user);
+    Call<SpendJson> getSpend(@Path("id") String id);
 
     @GET("internal/spends/all")
     Call<List<SpendJson>> getAllSpends(@Query("filterPeriod") DateFilterValues filterPeriod,

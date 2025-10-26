@@ -63,9 +63,9 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson getSpend(String id, String userName) {
+    public SpendJson getSpend(String id) {
         try {
-            Response<SpendJson> response = spendApi.getSpend(id, userName)
+            Response<SpendJson> response = spendApi.getSpend(id)
                     .execute();
 
             Assertions.assertEquals(200, response.code(), "Unexpected response code");

@@ -16,8 +16,7 @@ public class SpendingCategoryTest {
     private final String username = "fishka";
 
     @SpendingCategory(
-            username = username,
-            archived = false)
+            username = username)
     @Test
     @Description("active Category Should Be Present In Profile")
     void activeCategoryShouldBePresentInProfilePositiveTest() {

@@ -15,11 +15,10 @@ public class SpendingCategoryTest {
     private final String username = "fishka";
 
     @SpendingCategory(
-            username = username,
-            archived = false)
+            username = username)
     @Test
     @Description("active Category Should Be Present In Profile")
-    void activeCategoryShouldBePresentInProfilePositiveTest() {
+    void archivedCategoryShouldBePresentInProfilePositiveTest() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, "Querty67")
                 .clickProfileIcon()
@@ -34,7 +33,7 @@ public class SpendingCategoryTest {
             archived = true)
     @Test
     @Description("archived Category Should Be Present In Profile")
-    void archivedCategoryShouldBePresentInProfilePositiveTest() {
+    void activeCategoryShouldBePresentInProfilePositiveTest() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, "Querty67")
                 .checkThatActiveCategoryPresent();

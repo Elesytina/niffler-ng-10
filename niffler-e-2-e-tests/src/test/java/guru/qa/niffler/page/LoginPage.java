@@ -12,6 +12,7 @@ public class LoginPage {
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement submitBtn = $("#login-button");
     private final SelenideElement createNewBtn = $("#register-button");
+    private final SelenideElement formError = $(".form__error");
 
     public MainPage login(String username, String password) {
         inputUserName(username);
@@ -41,8 +42,7 @@ public class LoginPage {
     }
 
     public void checkIncorrectCredsDataError(String message) {
-        var element = $(".form__error");
-        element.shouldBe(visible);
-        element.shouldHave(text(message));
+        formError.shouldBe(visible)
+                .shouldHave(text(message));
     }
 }

@@ -14,7 +14,7 @@ public interface SpendClient {
 
     void deleteSpends(List<String> ids, String userName);
 
-    SpendJson getSpend(String id, String userName);
+    SpendJson getSpend(String id);
 
     List<SpendJson> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
 }

@@ -40,7 +40,7 @@ public class RegistrationTest {
                 .setPassword(password)
                 .setPasswordSubmit(password)
                 .clickRegisterBtn()
-                .checkUserAlreadyExistsRegistrationError(userName);
+                .checkRegisterError("Username `%s` already exists".formatted(userName));
     }
 
     @Test
@@ -55,6 +55,6 @@ public class RegistrationTest {
                 .setPassword(password)
                 .setPasswordSubmit(confirmPassword)
                 .clickRegisterBtn()
-                .checkPasswordShouldBeEqualRegistrationError();
+                .checkRegisterError("Passwords should be equal");
     }
 }
