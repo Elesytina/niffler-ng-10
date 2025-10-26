@@ -11,6 +11,9 @@ import static com.codeborne.selenide.Selenide.$;
 public class MainPage {
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
+    private final SelenideElement profileItem = $(byLinkText("Profile"));
+    private final SelenideElement friendsItem = $(byLinkText("Friends"));
+    private final SelenideElement allPeopleItem = $(byLinkText("All People"));
 
     public void checkThatPageLoaded() {
         spendingTable.should(visible);
@@ -25,29 +28,24 @@ public class MainPage {
         spendingTable.$$("tbody tr").find(text(description)).should(visible);
     }
 
-    public ProfilePopupMenuBlock openProfilePopupMenu() {
+    public MainPage openProfilePopupMenu() {
         personIcon.click();
-        return new ProfilePopupMenuBlock();
+        return this;
     }
 
-    public class ProfilePopupMenuBlock {
-        private final SelenideElement profileItem = $(byLinkText("Profile"));
-        private final SelenideElement friendsItem = $(byLinkText("Friends"));
-        private final SelenideElement allPeopleItem = $(byLinkText("All People"));
-
-        public ProfilePage chooseProfile() {
-            profileItem.click();
-            return new ProfilePage();
-        }
-
-        public FriendsPage chooseFriends() {
-            friendsItem.click();
-            return new FriendsPage();
-        }
-
-        public AllPeoplePage chooseAllPeople() {
-            allPeopleItem.click();
-            return new AllPeoplePage();
-        }
+    public ProfilePage chooseProfile() {
+        profileItem.click();
+        return new ProfilePage();
     }
+
+    public FriendsPage chooseFriends() {
+        friendsItem.click();
+        return new FriendsPage();
+    }
+
+    public AllPeoplePage chooseAllPeople() {
+        allPeopleItem.click();
+        return new AllPeoplePage();
+    }
+}
 }
