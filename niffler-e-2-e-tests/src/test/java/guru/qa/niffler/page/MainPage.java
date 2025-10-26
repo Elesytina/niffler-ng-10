@@ -1,12 +1,15 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.By;
 
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 public class MainPage {
     private final SelenideElement spendingTable = $("#spendings");
@@ -14,9 +17,15 @@ public class MainPage {
     private final SelenideElement profileItem = $(byLinkText("Profile"));
     private final SelenideElement friendsItem = $(byLinkText("Friends"));
     private final SelenideElement allPeopleItem = $(byLinkText("All People"));
+    private final SelenideElement createNewSpendingButton = $(byAttribute("href", "http://localhost:3000/spending"));
 
     public void checkThatPageLoaded() {
         spendingTable.should(visible);
+    }
+
+    public MainPage clickCreateNewSpendingButton() {
+        createNewSpendingButton.click();
+        return this;
     }
 
     public EditSpendingPage editSpending(String description) {
@@ -46,5 +55,9 @@ public class MainPage {
     public AllPeoplePage chooseAllPeople() {
         allPeopleItem.click();
         return new AllPeoplePage();
+    }
+
+    public void checkThatActiveCategoryPresent() {
+        $$(By.xpath("//table/tbody/tr")).shouldHave(sizeGreaterThanOrEqual(1));
     }
 }
