@@ -6,7 +6,8 @@ import guru.qa.niffler.service.category.CategoryApiClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import static guru.qa.niffler.test.TestConstantHolder.FAKER;
+import static guru.qa.niffler.helper.TestConstantHolder.FAKER;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
 
 public class CategoryExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
@@ -23,7 +24,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
                 SpendingCategory.class
         ).ifPresent(
                 anno -> {
-                    var newCategoryName = FAKER.food().dish();
+                    var newCategoryName = FAKER.food().dish() + randomNumeric(5);
 
                     var categoryJson = new CategoryJson(
                             null,

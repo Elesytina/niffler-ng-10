@@ -5,12 +5,11 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
-import static guru.qa.niffler.test.TestConstantHolder.FAKER;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+import static guru.qa.niffler.helper.TestConstantHolder.FAKER;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 public class LoginTest {
-
-    private static final Config CFG = Config.getInstance();
 
     @Test
     void mainPageShouldBeDisplayedAfterSuccessLoginPositiveTest() {

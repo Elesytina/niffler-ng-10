@@ -44,10 +44,10 @@ public class MainPage {
     }
 
     public static class ProfilePopupMenuBlock {
-        private final SelenideElement PROFILE_ITEM = $(byLinkText("Profile"));
+        private final SelenideElement profileItem = $(byLinkText("Profile"));
 
         public ProfilePage chooseProfile() {
-            PROFILE_ITEM.click();
+            profileItem.click();
             return new ProfilePage();
         }
     }

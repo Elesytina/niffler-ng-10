@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import java.time.Duration;
 
+import static com.codeborne.selenide.CollectionCondition.*;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byText;
@@ -28,6 +29,6 @@ public class ProfilePage {
 
     public void checkThatArchivedCategoriesExist() {
         $$(byAttribute("data-testid", "UnarchiveOutlinedIcon"))
-                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1));
+                .shouldHave(sizeGreaterThanOrEqual(1));
     }
 }

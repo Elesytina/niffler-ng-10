@@ -8,10 +8,10 @@ import guru.qa.niffler.page.LoginPage;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.Test;
 
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 @WebTest
 public class SpendingCategoryTest {
-
-    private static final Config CFG = Config.getInstance();
 
     private final String username = "fishka";
 
@@ -39,7 +39,6 @@ public class SpendingCategoryTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, "Querty67")
                 .checkThatActiveCategoryPresent();
-
     }
 
 }

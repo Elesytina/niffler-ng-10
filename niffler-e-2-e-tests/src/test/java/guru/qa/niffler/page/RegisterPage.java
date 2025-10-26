@@ -20,7 +20,7 @@ public class RegisterPage {
         setPassword(password);
         setPasswordSubmit(password);
         clickRegisterBtn();
-        checkThatRegistrationIsSuccessfull();
+        checkThatRegistrationIsSuccessful();
         return this;
     }
 
@@ -49,7 +49,7 @@ public class RegisterPage {
         return page(LoginPage.class);
     }
 
-    public void checkThatRegistrationIsSuccessfull() {
+    public void checkThatRegistrationIsSuccessful() {
         $(Selectors.byText("Congratulations! You've registered!")).shouldBe(visible);
     }
 
