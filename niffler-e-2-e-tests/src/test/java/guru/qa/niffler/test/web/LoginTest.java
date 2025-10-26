@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 public class LoginTest {
 
     @Test
-    void mainPageShouldBeDisplayedAfterSuccessLoginPositiveTest() {
+    void mainPageShouldBeDisplayedAfterSuccessLogin() {
         var userName = FAKER.name().username();
         var password = "password";
 
@@ -24,7 +24,7 @@ public class LoginTest {
     }
 
     @Test
-    void userShouldStayOnLoginPageAfterLoginWithIncorrectPasswordNegativeTest() {
+    void userShouldStayOnLoginPageAfterLoginWithIncorrectPassword() {
         var userName = FAKER.name().username() + randomAlphanumeric(5);
         var password = randomAlphanumeric(10);
 

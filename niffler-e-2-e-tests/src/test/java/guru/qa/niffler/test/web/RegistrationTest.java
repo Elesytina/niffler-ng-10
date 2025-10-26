@@ -13,7 +13,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 public class RegistrationTest {
 
     @Test
-    void shouldRegisterNewUserPositive() {
+    void shouldRegisterNewUser() {
         var userName = FAKER.name().username();
         var password = randomAlphanumeric(10);
 
@@ -27,7 +27,7 @@ public class RegistrationTest {
     }
 
     @Test
-    void shouldNotRegisterWithExistingUserNegative() {
+    void shouldNotRegisterWithExistingUser() {
         var userName = FAKER.name().username();
         var password = randomAlphanumeric(10);
 
@@ -44,7 +44,7 @@ public class RegistrationTest {
     }
 
     @Test
-    void shouldShowErrorWhenPasswordAndConfirmPasswordAreNotEqualNegative() {
+    void shouldShowErrorWhenPasswordAndConfirmPasswordAreNotEqual() {
         var userName = FAKER.name().username();
         var password = randomAlphanumeric(10);
         var confirmPassword = randomAlphanumeric(10);
