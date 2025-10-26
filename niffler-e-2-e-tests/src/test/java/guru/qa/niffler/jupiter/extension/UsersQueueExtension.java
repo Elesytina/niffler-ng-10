@@ -23,9 +23,6 @@ public class UsersQueueExtension implements
     public record StaticUser(String username, String password, String friend, String income, String outcome) {
     }
 
-//    private record IndexedUserType(int index, UserType userType) {
-//    }
-
     private static final Queue<StaticUser> EMPTY_USERS = new ConcurrentLinkedQueue<>();
     private static final Queue<StaticUser> WITH_FRIEND_USERS = new ConcurrentLinkedQueue<>();
     private static final Queue<StaticUser> WITH_INCOME_REQUEST_USERS = new ConcurrentLinkedQueue<>();
@@ -83,37 +80,6 @@ public class UsersQueueExtension implements
                         }
                 );
         context.getStore(NAMESPACE).put(context.getUniqueId(), usersMap);
-//        IntStream.range(0, params.length)
-//                .filter(i ->
-//                        AnnotationSupport.isAnnotated(params[i], UserType.class)
-//                                && params[i].getType().isAssignableFrom(StaticUser.class))
-//                .map(par ->)
-//                .mapToObj(i -> new IndexedUserType(i, params[i].getAnnotation(UserType.class)))
-//                .forEach(iut -> {
-//                    Optional<StaticUser> user = Optional.empty();
-//                    StopWatch sw = StopWatch.createStarted();
-//                    while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
-//                        user = switch (iut.userType.value()) {
-//                            case EMPTY -> Optional.ofNullable(EMPTY_USERS.poll());
-//                            case WITH_FRIEND -> Optional.ofNullable(WITH_FRIEND_USERS.poll());
-//                            case WITH_INCOME_REQUEST -> Optional.ofNullable(WITH_INCOME_REQUEST_USERS.poll());
-//                            case WITH_OUTCOME_REQUEST -> Optional.ofNullable(WITH_OUTCOME_REQUEST_USERS.poll());
-//                        };
-//                    }
-//                    Allure.getLifecycle().updateTestCase(testCase ->
-//                            testCase.setStart(new Date().getTime())
-//                    );
-//                    user.ifPresentOrElse(
-//                            u ->
-//                                    ((Map<IndexedUserType, StaticUser>) context.getStore(NAMESPACE).getOrComputeIfAbsent(
-//                                            context.getUniqueId(),
-//                                            key -> new HashMap<>()
-//                                    )).put(iut, u),
-//                            () -> {
-//                                throw new IllegalStateException("Can`t obtain user after 30s.");
-//                            }
-//                    );
-//                });
     }
 
     @Override
@@ -131,22 +97,6 @@ public class UsersQueueExtension implements
             };
             assert isResultSuccess;
         }
-
-
-//        Map<IndexedUserType, StaticUser> usersFromTest = context.getStore(NAMESPACE).get(
-//                context.getUniqueId(),
-//                Map.class
-//        );
-//        if (usersFromTest != null) {
-//            for (Map.Entry<IndexedUserType, StaticUser> e : usersFromTest.entrySet()) {
-//                switch (e.getKey().userType.value()) {
-//                    case EMPTY -> EMPTY_USERS.add(e.getValue());
-//                    case WITH_FRIEND -> WITH_FRIEND_USERS.add(e.getValue());
-//                    case WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS.add(e.getValue());
-//                    case WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS.add(e.getValue());
-//                }
-//            }
-//        }
     }
 
     @Override
@@ -158,13 +108,6 @@ public class UsersQueueExtension implements
     @Override
     @SuppressWarnings("unchecked")
     public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-//        final Map<IndexedUserType, StaticUser> usersForTest = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
-//        return usersForTest.get(
-//                new IndexedUserType(
-//                        parameterContext.getIndex(),
-//                        parameterContext.getParameter().getAnnotation(UserType.class)
-//                )
-//        );
         final Map<UserType.Type, StaticUser> userTypeStaticUserMap = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
         return userTypeStaticUserMap.get(parameterContext.getParameter().getAnnotation(UserType.class).value());
     }
