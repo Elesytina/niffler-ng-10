@@ -16,7 +16,8 @@ public class FriendsTest {
                 .login(user.username(), user.password())
                 .openProfilePopupMenu()
                 .chooseFriends()
-                .checkFriendsArePresent();
+                .checkFriendsArePresent()
+                .checkNameIsPresentInFriendsTable(user.friend());
     }
 
     @Test
@@ -25,7 +26,8 @@ public class FriendsTest {
                 .login(user.username(), user.password())
                 .openProfilePopupMenu()
                 .chooseFriends()
-                .checkRequestsArePresent();
+                .checkRequestsArePresent()
+                .checkNameIsPresentInRequestTable(user.income());
     }
 
     @Test
@@ -34,7 +36,8 @@ public class FriendsTest {
                 .login(user.username(), user.password())
                 .openProfilePopupMenu()
                 .chooseAllPeople()
-                .checkThatOutcomeRequestsArePresent();
+                .checkThatOutcomeRequestsArePresent()
+                .checkNameIsPresentInOutcomeRequests(user.outcome());
     }
 
     @Test
