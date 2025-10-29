@@ -7,6 +7,5 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestConstantHolder {
-    public static final Faker FAKER = new Faker();
     public static final Config CFG = Config.getInstance();
 }
