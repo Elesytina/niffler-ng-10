@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.service.category.CategoryApiClient;
@@ -59,19 +58,24 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
     public void afterEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(
                 context.getRequiredTestMethod(),
-                SpendingCategory.class
+                User.class
         ).ifPresent(
                 anno -> {
-                    if (!anno.archived()) {
-                        var categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+                    if (anno.categories().length != 0) {
+                        var categoryAnno = anno.categories()[0];
+                        var username = anno.username();
 
-                        var categoryJsonForUpdate = new CategoryJson(
-                                categoryJson.id(),
-                                categoryJson.name(),
-                                categoryJson.username(),
-                                true);
+                        if (categoryAnno.archived()) {
+                            var categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
 
-                        categoryClient.updateCategory(categoryJsonForUpdate);
+                            var categoryJsonForUpdate = new CategoryJson(
+                                    categoryJson.id(),
+                                    username,
+                                    categoryJson.username(),
+                                    true);
+
+                            categoryClient.updateCategory(categoryJsonForUpdate);
+                        }
                     }
                 }
         );
