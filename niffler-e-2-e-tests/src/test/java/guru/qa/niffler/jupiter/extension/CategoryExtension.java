@@ -49,7 +49,6 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
                         context.getStore(NAMESPACE).put(context.getUniqueId(), created);
 
                     }
-
                 }
         );
     }
@@ -70,8 +69,8 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
 
                             var categoryJsonForUpdate = new CategoryJson(
                                     categoryJson.id(),
+                                    categoryJson.name(),
                                     username,
-                                    categoryJson.username(),
                                     true);
 
                             categoryClient.updateCategory(categoryJsonForUpdate);
