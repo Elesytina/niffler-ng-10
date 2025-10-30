@@ -62,12 +62,8 @@ public class UsersQueueExtension implements
                             StopWatch sw = StopWatch.createStarted();
                             StaticUser user = null;
                             while (user == null && sw.getTime(TimeUnit.SECONDS) < 40) {
-                                user = switch (userType) {
-                                    case EMPTY -> EMPTY_USERS.poll();
-                                    case WITH_FRIEND -> WITH_FRIEND_USERS.poll();
-                                    case WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS.poll();
-                                    case WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS.poll();
-                                };
+                                Queue<StaticUser> queue = getUserQueueByType(userType);
+                                user = queue.poll();
                             }
 
                             Allure.getLifecycle().updateTestCase(testCase ->
@@ -89,12 +85,8 @@ public class UsersQueueExtension implements
                 .get(context.getUniqueId(), Map.class);
 
         for (Type userType : usersMap.keySet()) {
-            boolean isResultSuccess = switch (userType) {
-                case Type.EMPTY -> EMPTY_USERS.add(usersMap.get(userType));
-                case Type.WITH_FRIEND -> WITH_FRIEND_USERS.add(usersMap.get(userType));
-                case Type.WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS.add(usersMap.get(userType));
-                case Type.WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS.add(usersMap.get(userType));
-            };
+            Queue<StaticUser> queue = getUserQueueByType(userType);
+            boolean isResultSuccess = queue.add(usersMap.get(userType));
             assert isResultSuccess;
         }
     }
@@ -110,6 +102,15 @@ public class UsersQueueExtension implements
     public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         final Map<UserType.Type, StaticUser> userTypeStaticUserMap = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
         return userTypeStaticUserMap.get(parameterContext.getParameter().getAnnotation(UserType.class).value());
+    }
+
+    private Queue<StaticUser> getUserQueueByType(Type userType) {
+        return switch (userType) {
+            case EMPTY -> EMPTY_USERS;
+            case WITH_FRIEND -> WITH_FRIEND_USERS;
+            case WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS;
+            case WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS;
+        };
     }
 
 }
