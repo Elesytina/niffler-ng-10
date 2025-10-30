@@ -1,9 +1,9 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
 
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
@@ -13,21 +13,19 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class MainPage {
     private final SelenideElement spendingTable = $("#spendings");
-    private final SelenideElement profileIcon = $(byAttribute("data-testid", "PersonIcon"));
+    private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
+    private final SelenideElement profileItem = $(byLinkText("Profile"));
+    private final SelenideElement friendsItem = $(byLinkText("Friends"));
+    private final SelenideElement allPeopleItem = $(byLinkText("All People"));
     private final SelenideElement createNewSpendingButton = $(byAttribute("href", "http://localhost:3000/spending"));
+
+    public void checkThatPageLoaded() {
+        spendingTable.should(visible);
+    }
 
     public MainPage clickCreateNewSpendingButton() {
         createNewSpendingButton.click();
         return this;
-    }
-
-    public ProfilePopupMenuBlock clickProfileIcon() {
-        profileIcon.click();
-        return new ProfilePopupMenuBlock();
-    }
-
-    public void checkThatPageLoaded() {
-        spendingTable.should(visible);
     }
 
     public EditSpendingPage editSpending(String description) {
@@ -39,16 +37,27 @@ public class MainPage {
         spendingTable.$$("tbody tr").find(text(description)).should(visible);
     }
 
-    public void checkThatActiveCategoryPresent(){
-        $$(By.xpath("//table/tbody/tr")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1));
+    public MainPage openProfilePopupMenu() {
+        personIcon.click();
+        return this;
     }
 
-    public static class ProfilePopupMenuBlock {
-        private final SelenideElement profileItem = $(byLinkText("Profile"));
+    public ProfilePage chooseProfile() {
+        profileItem.click();
+        return new ProfilePage();
+    }
 
-        public ProfilePage chooseProfile() {
-            profileItem.click();
-            return new ProfilePage();
-        }
+    public FriendsPage chooseFriends() {
+        friendsItem.click();
+        return new FriendsPage();
+    }
+
+    public AllPeoplePage chooseAllPeople() {
+        allPeopleItem.click();
+        return new AllPeoplePage();
+    }
+
+    public void checkThatActiveCategoryPresent() {
+        $$(By.xpath("//table/tbody/tr")).shouldHave(sizeGreaterThanOrEqual(1));
     }
 }

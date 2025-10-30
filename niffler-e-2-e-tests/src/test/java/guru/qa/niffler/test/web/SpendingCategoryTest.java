@@ -22,7 +22,7 @@ public class SpendingCategoryTest {
     void archivedCategoryShouldBePresentInProfilePositiveTest() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, "Querty67")
-                .clickProfileIcon()
+                .openProfilePopupMenu()
                 .chooseProfile()
                 .checkThatPageIsDisplayed()
                 .showArchived()
