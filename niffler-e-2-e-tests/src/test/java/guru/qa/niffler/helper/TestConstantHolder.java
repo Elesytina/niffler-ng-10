@@ -1,6 +1,5 @@
 package guru.qa.niffler.helper;
 
-import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

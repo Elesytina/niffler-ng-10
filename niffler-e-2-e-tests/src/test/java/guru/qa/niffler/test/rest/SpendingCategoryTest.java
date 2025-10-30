@@ -2,6 +2,7 @@ package guru.qa.niffler.test.rest;
 
 
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.service.category.CategoryApiClient;
 import io.qameta.allure.Description;
@@ -15,8 +16,8 @@ public class SpendingCategoryTest {
     private final CategoryApiClient categoryApiClient = new CategoryApiClient();
     private final String username = "fishka";
 
-    @SpendingCategory(
-            username = username)
+    @User(username = username,
+            categories = @SpendingCategory)
     @Test
     @Description("active Category Should Be Present In Profile")
     void activeCategoryShouldBePresentInProfilePositiveTest() {
@@ -27,9 +28,9 @@ public class SpendingCategoryTest {
         Assertions.assertFalse(activeCategories.isEmpty(), "There are no active categories");
     }
 
-    @SpendingCategory(
-            username = username,
-            archived = true)
+    @User(username = username,
+            categories = @SpendingCategory(
+                    archived = true))
     @Test
     @Description("archived Category Should Be Present In Profile")
     void archivedCategoryShouldBePresentInProfilePositiveTest() {

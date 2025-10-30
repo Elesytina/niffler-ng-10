@@ -1,6 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.jupiter.annotation.Spending;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.spend.SpendApiClient;
@@ -13,37 +13,42 @@ import java.util.Date;
 
 public class CreateSpendingExtension implements BeforeEachCallback {
 
-  public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CreateSpendingExtension.class);
-  private final SpendClient spendClient = new SpendApiClient();
+    public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CreateSpendingExtension.class);
+    private final SpendClient spendClient = new SpendApiClient();
 
-  @Override
-  public void beforeEach(ExtensionContext context) throws Exception {
-    AnnotationSupport.findAnnotation(
-        context.getRequiredTestMethod(),
-        Spending.class
-    ).ifPresent(
-        anno -> {
-          final SpendJson created = spendClient.createSpend(
-              new SpendJson(
-                  null,
-                  new Date(),
-                  new CategoryJson(
-                      null,
-                      anno.category(),
-                      anno.username(),
-                      false
-                  ),
-                  anno.currency(),
-                  anno.amount(),
-                  anno.description(),
-                  anno.username()
-              )
-          );
-          context.getStore(NAMESPACE).put(
-              context.getUniqueId(),
-              created
-          );
-        }
-    );
-  }
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        AnnotationSupport.findAnnotation(
+                context.getRequiredTestMethod(),
+                User.class
+        ).ifPresent(
+                anno -> {
+                    if (anno.spendings().length != 0) {
+                        var annoSpending = anno.spendings()[0];
+                        var username = anno.username();
+
+                        final SpendJson created = spendClient.createSpend(
+                                new SpendJson(
+                                        null,
+                                        new Date(),
+                                        new CategoryJson(
+                                                null,
+                                                annoSpending.category(),
+                                                username,
+                                                false
+                                        ),
+                                        annoSpending.currency(),
+                                        annoSpending.amount(),
+                                        annoSpending.description(),
+                                        username
+                                )
+                        );
+                        context.getStore(NAMESPACE).put(
+                                context.getUniqueId(),
+                                created
+                        );
+                    }
+                }
+        );
+    }
 }

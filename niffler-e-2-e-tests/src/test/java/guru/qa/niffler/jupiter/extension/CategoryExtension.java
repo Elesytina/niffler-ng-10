@@ -1,13 +1,12 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.service.category.CategoryApiClient;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
-
-import static guru.qa.niffler.helper.TestConstantHolder.FAKER;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
 
 public class CategoryExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
@@ -21,30 +20,37 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(
                 context.getRequiredTestMethod(),
-                SpendingCategory.class
+                User.class
         ).ifPresent(
                 anno -> {
-                    var newCategoryName = FAKER.food().dish() + randomNumeric(5);
+                    if (anno.categories().length != 0) {
+                        var annoCategory = anno.categories()[0];
+                        var username = anno.username();
 
-                    var categoryJson = new CategoryJson(
-                            null,
-                            newCategoryName,
-                            anno.username(),
-                            false);
+                        var newCategoryName = RandomDataUtils.randomCategoryName();
 
-                    CategoryJson created = categoryClient.createCategory(categoryJson);
+                        var categoryJson = new CategoryJson(
+                                null,
+                                newCategoryName,
+                                username,
+                                false);
 
-                    if (anno.archived()) {
-                        var archivedCategoryJson = new CategoryJson(
-                                created.id(),
-                                created.name(),
-                                anno.username(),
-                                true);
+                        CategoryJson created = categoryClient.createCategory(categoryJson);
 
-                        created = categoryClient.updateCategory(archivedCategoryJson);
+                        if (annoCategory.archived()) {
+                            var archivedCategoryJson = new CategoryJson(
+                                    created.id(),
+                                    created.name(),
+                                    username,
+                                    true);
+
+                            created = categoryClient.updateCategory(archivedCategoryJson);
+                        }
+
+                        context.getStore(NAMESPACE).put(context.getUniqueId(), created);
+
                     }
 
-                    context.getStore(NAMESPACE).put(context.getUniqueId(), created);
                 }
         );
     }
