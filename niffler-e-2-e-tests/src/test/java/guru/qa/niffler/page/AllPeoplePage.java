@@ -2,9 +2,9 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import org.hibernate.AssertionFailure;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byTagName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
@@ -19,12 +19,9 @@ public class AllPeoplePage {
     }
 
     public void checkNameIsPresentInOutcomeRequests(String name) {
-        var lineList = allPeopleTable.$$(byTagName("tr"));
-        for (SelenideElement element : lineList) {
-            if (element.getText().contains(name) && element.getText().contains("Waiting...")) {
-                return;
-            }
-        }
-        throw new AssertionFailure("No such outcome request: " + name);
+        allPeopleTable.$$(byTagName("tr"))
+                .filterBy(text(name))
+                .filterBy(text("Waiting..."))
+                .shouldHave(sizeGreaterThanOrEqual(1));
     }
 }
