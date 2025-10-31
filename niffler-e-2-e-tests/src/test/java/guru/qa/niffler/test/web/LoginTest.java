@@ -5,14 +5,14 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static guru.qa.niffler.helper.TestConstantHolder.FAKER;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 public class LoginTest {
 
     @Test
     void mainPageShouldBeDisplayedAfterSuccessLogin() {
-        var userName = FAKER.name().username();
+        var userName = randomUsername();
         var password = "password";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
@@ -25,7 +25,7 @@ public class LoginTest {
 
     @Test
     void userShouldStayOnLoginPageAfterLoginWithIncorrectPassword() {
-        var userName = FAKER.name().username() + randomAlphanumeric(5);
+        var userName = randomUsername();
         var password = randomAlphanumeric(10);
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)

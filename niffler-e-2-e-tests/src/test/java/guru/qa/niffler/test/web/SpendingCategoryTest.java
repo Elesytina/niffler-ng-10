@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
 import io.qameta.allure.Description;
@@ -14,8 +15,8 @@ public class SpendingCategoryTest {
 
     private final String username = "fishka";
 
-    @SpendingCategory(
-            username = username)
+    @User(username = username,
+            categories = @SpendingCategory)
     @Test
     @Description("active Category Should Be Present In Profile")
     void archivedCategoryShouldBePresentInProfilePositiveTest() {
@@ -28,9 +29,9 @@ public class SpendingCategoryTest {
                 .checkThatArchivedCategoriesExist();
     }
 
-    @SpendingCategory(
-            username = username,
-            archived = true)
+    @User(username = username,
+            categories = @SpendingCategory(
+                    archived = true))
     @Test
     @Description("archived Category Should Be Present In Profile")
     void activeCategoryShouldBePresentInProfilePositiveTest() {
