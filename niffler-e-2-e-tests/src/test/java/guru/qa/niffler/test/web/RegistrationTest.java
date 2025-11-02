@@ -6,7 +6,7 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static guru.qa.niffler.helper.TestConstantHolder.FAKER;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 @WebTest
@@ -14,7 +14,7 @@ public class RegistrationTest {
 
     @Test
     void shouldRegisterNewUser() {
-        var userName = FAKER.name().username();
+        var userName = randomUsername();
         var password = randomAlphanumeric(10);
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
@@ -28,7 +28,7 @@ public class RegistrationTest {
 
     @Test
     void shouldNotRegisterWithExistingUser() {
-        var userName = FAKER.name().username();
+        var userName = randomUsername();
         var password = randomAlphanumeric(10);
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
@@ -45,7 +45,7 @@ public class RegistrationTest {
 
     @Test
     void shouldShowErrorWhenPasswordAndConfirmPasswordAreNotEqual() {
-        var userName = FAKER.name().username();
+        var userName = randomUsername();
         var password = randomAlphanumeric(10);
         var confirmPassword = randomAlphanumeric(10);
 

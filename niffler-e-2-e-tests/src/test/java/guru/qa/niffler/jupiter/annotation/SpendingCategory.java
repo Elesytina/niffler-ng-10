@@ -13,8 +13,6 @@ import java.lang.annotation.Target;
 @ExtendWith(CategoryExtension.class)
 public @interface SpendingCategory {
 
-    String username();
-
     boolean archived() default false;
 
 }
