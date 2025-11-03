@@ -11,6 +11,8 @@ import guru.qa.niffler.model.DateFilterValues;
 import guru.qa.niffler.model.SpendJson;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class SpendDbClient implements SpendClient {
 
@@ -31,22 +33,40 @@ public class SpendDbClient implements SpendClient {
 
     @Override
     public SpendJson updateSpend(SpendJson spendJson) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        SpendEntity spendEntity = SpendEntity.fromJson(spendJson);
+        spendDao.updateSpend(spendEntity);
+
+        return SpendJson.fromEntity(spendDao.create(spendEntity));
     }
 
     @Override
     public void deleteSpends(List<String> ids, String userName) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<UUID> uuids = ids.stream().map(UUID::fromString).toList();
+        boolean isSuccess = spendDao.deleteSpends(uuids, userName);
+
+        if (!isSuccess) {
+            throw new RuntimeException("Failed to delete spends");
+        }
     }
 
     @Override
     public SpendJson getSpend(String id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Optional<SpendEntity> spendEntity = spendDao.getSpend(UUID.fromString(id));
+
+        if (spendEntity.isPresent()) {
+
+            return SpendJson.fromEntity(spendEntity.get());
+        }
+        throw new RuntimeException("Failed to find spend");
     }
 
     @Override
     public List<SpendJson> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<SpendEntity> spendEntities = spendDao.getSpends(currencyFilter, dateFilterValues, userName);
+
+        return spendEntities.stream()
+                .map(SpendJson::fromEntity)
+                .toList();
     }
 
 }
