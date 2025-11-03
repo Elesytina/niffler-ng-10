@@ -34,6 +34,22 @@ enum LocalConfig implements Config {
     }
 
     @Override
+    public String userdataJdbcUrl() {
+        return "jdbc:postgresql://localhost:5432/niffler-userdata";
+    }
+
+    @Override
+    public String currencyJdbcUrl() {
+        return "jdbc:postgresql://localhost:5432/niffler-currency";
+    }
+
+    @Override
+    public String authJdbcUrl() {
+        return "jdbc:postgresql://localhost:5432/niffler-auth";
+    }
+
+
+    @Override
     public String githubUrl() {
         return "";
     }

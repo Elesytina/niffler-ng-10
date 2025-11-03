@@ -56,35 +56,7 @@ public class CategoryDbClient implements CategoryClient {
 //            throw new DaoLayerException("Error of sql query in findAllByCustomerId!");
 //        }
 //    }
-//
-//    public AccountModel create(int customerId, String name, BigDecimal balance) {
-//        try (Connection conn = dataSource.getConnection();
-//             PreparedStatement ps = conn.prepareStatement("insert into account" +
-//                             "(name, customer_id, balance) values (?, ?, ?);",
-//                     RETURN_GENERATED_KEYS)) {
-//            ps.setString(1, name);
-//            ps.setInt(2, customerId);
-//            ps.setBigDecimal(3, balance);
-//            AccountModel accountModel;
-//            if (ps.executeUpdate() != 0) {
-//                ResultSet rs = ps.getGeneratedKeys();
-//                if (rs.next()) {
-//                    accountModel = new AccountModel();
-//                    accountModel.setId(rs.getInt(1));
-//                    accountModel.setName(name);
-//                    accountModel.setBalance(balance);
-//                    accountModel.setCustomerId(customerId);
-//                } else {
-//                    throw new DaoLayerException("Account model wasn't create");
-//                }
-//            } else {
-//                throw new DaoLayerException("Account model wasn't created");
-//            }
-//            return accountModel;
-//        } catch (SQLException ex) {
-//            throw new DaoLayerException(ex);
-//        }
-//    }
+
 //
 //    public boolean delete(int customerId, int id) {
 //        try (Connection conn = dataSource.getConnection();
@@ -98,41 +70,4 @@ public class CategoryDbClient implements CategoryClient {
 //        }
 //    }
 
-//
-//    public class ConnectionManager {
-//
-//        private ConnectionManager() {
-//        }
-//
-//        public Connection getConnection() {
-//            try {
-//                DataSource dataSource = getDataSource();
-//                return dataSource.getConnection();
-//            } catch (SQLException ex) {
-//                throw new ConnectionException("Data base connection error!");
-//            }
-//        }
-//
-//        public static ConnectionManager getInstance() {
-//            return InstanceHolder.connectionManager;
-//        }
-//
-//        public static DataSource getDataSource() {
-//            return InstanceHolder.dataSource;
-//        }
-//
-//        private static HikariConfig getConfig() {
-//            HikariConfig config = new HikariConfig();
-//            config.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
-//            config.setUsername("postgres");
-//            config.setPassword("111");
-//            return config;
-//        }
-//
-//        private static class InstanceHolder {
-//            public static final DataSource dataSource = new HikariDataSource(getConfig());
-//            public static final ConnectionManager connectionManager = new ConnectionManager();
-//        }
-//
-//    }
 }

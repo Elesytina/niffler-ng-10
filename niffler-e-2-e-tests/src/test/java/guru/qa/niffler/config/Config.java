@@ -19,4 +19,10 @@ public interface Config {
     String spendJdbcUrl();
 
     String githubUrl();
+
+    String userdataJdbcUrl();
+
+    String currencyJdbcUrl();
+
+    String authJdbcUrl();
 }
