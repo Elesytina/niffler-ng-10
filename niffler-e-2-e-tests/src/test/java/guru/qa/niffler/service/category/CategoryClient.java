@@ -4,6 +4,7 @@ import guru.qa.niffler.model.CategoryJson;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface CategoryClient {
 
@@ -14,4 +15,8 @@ public interface CategoryClient {
     Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username);
 
     List<CategoryJson> getAllCategories(String username);
+
+    Optional<CategoryJson> findCategoryById(UUID categoryId);
+
+    Optional<CategoryJson> findCategoryByName(String categoryName, String username);
 }

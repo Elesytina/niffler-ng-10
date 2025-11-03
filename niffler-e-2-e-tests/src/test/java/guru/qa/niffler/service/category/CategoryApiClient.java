@@ -13,6 +13,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CategoryApiClient implements CategoryClient {
 
@@ -44,6 +45,16 @@ public class CategoryApiClient implements CategoryClient {
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
+    }
+
+    @Override
+    public Optional<CategoryJson> findCategoryById(UUID categoryId) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Optional<CategoryJson> findCategoryByName(String categoryName, String username) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override

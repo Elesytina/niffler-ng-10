@@ -1,73 +1,78 @@
 package guru.qa.niffler.service.category;
 
+import guru.qa.niffler.data.dao.CategoryDao;
+import guru.qa.niffler.data.dao.impl.CategoryDaoJdbc;
+import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.model.CategoryJson;
 
-import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import java.util.UUID;
 
 
 public class CategoryDbClient implements CategoryClient {
 
+    private final CategoryDao categoryDao = new CategoryDaoJdbc();
+
     @Override
     public CategoryJson createCategory(CategoryJson category) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        CategoryEntity entity = CategoryEntity.fromJson(category);
+        CategoryEntity categoryEntity = categoryDao.create(entity);
+
+        return CategoryJson.fromEntity(categoryEntity);
     }
 
     @Override
     public CategoryJson updateCategory(CategoryJson categoryJson) {
-        throw new UnsupportedOperationException("Not implemented :(");
+        CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
+        CategoryEntity categoryEntity = categoryDao.update(entity);
+
+        return CategoryJson.fromEntity(categoryEntity);
     }
 
     @Override
     public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Optional<CategoryEntity> entity = categoryDao.findCategoryByName(categoryName, username);
+
+        if (entity.isPresent()) {
+            CategoryJson categoryJson = CategoryJson.fromEntity(entity.get());
+            return Optional.of(categoryJson);
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public List<CategoryJson> getAllCategories(String username) {
-        throw new UnsupportedOperationException("Not implemented :(");
+        List<CategoryEntity> categoryEntities = categoryDao.findAllCategories(username);
+
+        return categoryEntities.stream()
+                .map(CategoryJson::fromEntity)
+                .toList();
     }
 
-//    public List<AccountModel> findAllByCustomerId(int customerId) {
-//        List<AccountModel> accounts = new ArrayList<>();
-//        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(
-//                "select * from account a where a.customer_id = ?")) {
-//            ps.setInt(1, customerId);
-//            ResultSet rs = ps.executeQuery();
-//            while (rs.next()) {
-//                AccountModel accountModel = new AccountModel();
-//                accountModel.setId(rs.getInt("id"));
-//                accountModel.setName(rs.getString("name"));
-//                accountModel.setCustomerId(customerId);
-//                accountModel.setBalance(rs.getBigDecimal("balance"));
-//                accounts.add(accountModel);
-//            }
-//            return accounts;
-//        } catch (SQLException ex) {
-//            throw new DaoLayerException("Error of sql query in findAllByCustomerId!");
-//        }
-//    }
+    @Override
+    public Optional<CategoryJson> findCategoryById(UUID categoryId) {
+        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryById(categoryId);
 
-//
-//    public boolean delete(int customerId, int id) {
-//        try (Connection conn = dataSource.getConnection();
-//             PreparedStatement s = conn.prepareStatement("delete from account " +
-//                     " where id = ? and customer_id = ?;")) {
-//            s.setInt(1, id);
-//            s.setInt(2, customerId);
-//            return s.executeUpdate() == 1;
-//        } catch (SQLException ex) {
-//            throw new DaoLayerException("Deleting failed!");
-//        }
-//    }
+        if (categoryEntity.isPresent()) {
+            CategoryJson categoryJson = CategoryJson.fromEntity(categoryEntity.get());
+            return Optional.of(categoryJson);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<CategoryJson> findCategoryByName(String categoryName, String username) {
+        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryByName(categoryName, username);
+
+        if (categoryEntity.isPresent()) {
+            CategoryJson categoryJson = CategoryJson.fromEntity(categoryEntity.get());
+            return Optional.of(categoryJson);
+        }
+
+        return Optional.empty();
+    }
 
 }
