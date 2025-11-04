@@ -13,7 +13,7 @@ import java.util.UUID;
 public class SpendEntity {
     private UUID id;
     private String username;
-    private CurrencyValues currency;
+    private String currency;
     private Date spendDate;
     private Double amount;
     private String description;

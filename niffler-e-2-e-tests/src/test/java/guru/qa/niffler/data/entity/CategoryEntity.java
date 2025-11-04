@@ -18,7 +18,7 @@ public class CategoryEntity {
         CategoryEntity entity = new CategoryEntity();
         entity.setId(json.id());
         entity.setName(json.name());
-        entity.setUsername(json.name());
+        entity.setUsername(json.username());
         entity.setArchived(json.archived());
         return entity;
     }

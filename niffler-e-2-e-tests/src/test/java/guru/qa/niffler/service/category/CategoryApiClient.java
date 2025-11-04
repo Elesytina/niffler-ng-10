@@ -82,9 +82,4 @@ public class CategoryApiClient implements CategoryClient {
             throw new AssertionError(exception);
         }
     }
-
-    @Override
-    public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
-        throw new UnsupportedOperationException("Not implemented :(");
-    }
 }

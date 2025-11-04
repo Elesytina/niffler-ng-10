@@ -32,7 +32,7 @@ public class SpendDaoJdbc implements SpendDao {
                      RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setDate(2, entity.getSpendDate());
-            ps.setString(3, entity.getCurrency().name());
+            ps.setString(3, entity.getCurrency());
             ps.setDouble(4, entity.getAmount());
             ps.setString(5, entity.getDescription());
             ps.setObject(6, entity.getCategory().getId());
@@ -57,7 +57,7 @@ public class SpendDaoJdbc implements SpendDao {
         try (Connection connection = getConnection(CFG.spendJdbcUrl());
              PreparedStatement ps = connection.prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
-            ps.setString(2, entity.getCurrency().name());
+            ps.setString(2, entity.getCurrency());
             ps.setDouble(3, entity.getAmount());
             ps.setString(4, entity.getDescription());
             ps.setObject(5, entity.getCategory().getId());
@@ -75,15 +75,21 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public boolean deleteSpends(List<UUID> ids, String userName) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id in(?) and username = ?")) {
-            ps.setObject(1, ids);
-            ps.setObject(2, userName);
+        for (UUID id : ids) {
+            try (Connection connection = getConnection(CFG.spendJdbcUrl());
+                 PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ? and username = ?")) {
+                ps.setObject(1, id);
+                ps.setObject(2, userName);
 
-            return ps.executeUpdate() != 0;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+                if (ps.executeUpdate() == 0) {
+
+                    return false;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
+        return true;
     }
 
     @Override
@@ -136,19 +142,23 @@ public class SpendDaoJdbc implements SpendDao {
                              AND (? is null OR currency = ?)
                              AND (? is null OR spend_date BETWEEN ? AND ?)
                              """)) {
+            var currency = currencyFilter == null ? null : currencyFilter.name();
+            var date = dateFilterValues == null ? null : dateFilterValues.name();
+            var dateStart = dateFilterValues == null ? null : java.sql.Date.valueOf(now());
+            var dateEnd = dateFilterValues == null ? null : java.sql.Date.valueOf(getSpendEndDate(dateFilterValues));
             ps.setString(1, userName);
-            ps.setString(2, currencyFilter.name());
-            ps.setString(3, currencyFilter.name());
-            ps.setString(4, dateFilterValues.name());
-            ps.setDate(5, java.sql.Date.valueOf(now()));
-            ps.setDate(6, java.sql.Date.valueOf(getSpendEndDate(dateFilterValues)));
+            ps.setString(2, currency);
+            ps.setString(3, currency);
+            ps.setString(4, date);
+            ps.setDate(5, dateStart);
+            ps.setDate(6, dateEnd);
             ResultSet resultSet = ps.executeQuery();
             List<SpendEntity> spends = new ArrayList<>();
 
             while (resultSet.next()) {
                 SpendEntity spend = new SpendEntity();
                 spend.setId(resultSet.getObject("id", UUID.class));
-                spend.setCurrency(resultSet.getObject("currency", CurrencyValues.class));
+                spend.setCurrency(resultSet.getString("currency"));
                 spend.setUsername(resultSet.getString("username"));
                 spend.setAmount(resultSet.getDouble("amount"));
                 spend.setSpendDate(resultSet.getDate("spend_date"));

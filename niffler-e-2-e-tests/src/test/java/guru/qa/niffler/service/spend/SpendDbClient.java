@@ -9,11 +9,13 @@ import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.DateFilterValues;
 import guru.qa.niffler.model.SpendJson;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 public class SpendDbClient implements SpendClient {
 
     private final SpendDao spendDao = new SpendDaoJdbc();
@@ -34,9 +36,9 @@ public class SpendDbClient implements SpendClient {
     @Override
     public SpendJson updateSpend(SpendJson spendJson) {
         SpendEntity spendEntity = SpendEntity.fromJson(spendJson);
-        spendDao.updateSpend(spendEntity);
+        SpendEntity updated = spendDao.updateSpend(spendEntity);
 
-        return SpendJson.fromEntity(spendDao.create(spendEntity));
+        return SpendJson.fromEntity(updated);
     }
 
     @Override
@@ -63,6 +65,10 @@ public class SpendDbClient implements SpendClient {
     @Override
     public List<SpendJson> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
         List<SpendEntity> spendEntities = spendDao.getSpends(currencyFilter, dateFilterValues, userName);
+
+        if (spendEntities.isEmpty()) {
+            log.info("No spends found");
+        }
 
         return spendEntities.stream()
                 .map(SpendJson::fromEntity)

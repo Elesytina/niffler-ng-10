@@ -98,7 +98,7 @@ public class CategoryDaoJdbc implements CategoryDao {
             ps.setObject(3, entity.getId());
             ps.setString(4, entity.getUsername());
 
-            if (ps.executeUpdate() != 0) {
+            if (ps.executeUpdate() == 1) {
 
                 return entity;
             }

@@ -30,17 +30,6 @@ public class CategoryDbClient implements CategoryClient {
         return CategoryJson.fromEntity(categoryEntity);
     }
 
-    @Override
-    public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
-        Optional<CategoryEntity> entity = categoryDao.findCategoryByName(categoryName, username);
-
-        if (entity.isPresent()) {
-            CategoryJson categoryJson = CategoryJson.fromEntity(entity.get());
-            return Optional.of(categoryJson);
-        }
-
-        return Optional.empty();
-    }
 
     @Override
     public List<CategoryJson> getAllCategories(String username) {

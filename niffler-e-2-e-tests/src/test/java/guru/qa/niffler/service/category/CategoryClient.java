@@ -12,8 +12,6 @@ public interface CategoryClient {
 
     CategoryJson updateCategory(CategoryJson categoryJson);
 
-    Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username);
-
     List<CategoryJson> getAllCategories(String username);
 
     Optional<CategoryJson> findCategoryById(UUID categoryId);

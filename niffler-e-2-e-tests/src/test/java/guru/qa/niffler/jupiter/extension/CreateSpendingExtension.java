@@ -17,7 +17,7 @@ public class CreateSpendingExtension implements BeforeEachCallback {
     private final SpendClient spendClient = new SpendApiClient();
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(
                 context.getRequiredTestMethod(),
                 User.class
