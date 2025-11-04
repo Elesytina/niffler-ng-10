@@ -3,6 +3,8 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.service.category.CategoryApiClient;
+import guru.qa.niffler.service.category.CategoryClient;
+import guru.qa.niffler.service.category.CategoryDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -12,7 +14,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
-    private final CategoryApiClient categoryClient = new CategoryApiClient();
+    private final CategoryClient categoryClient = new CategoryDbClient();
 
 
     @Override
