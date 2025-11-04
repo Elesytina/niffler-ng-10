@@ -3,7 +3,6 @@ package guru.qa.niffler.service.category;
 import guru.qa.niffler.model.CategoryJson;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface CategoryClient {
