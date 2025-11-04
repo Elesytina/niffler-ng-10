@@ -12,7 +12,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class CategoryApiClient implements CategoryClient {
@@ -35,7 +34,17 @@ public class CategoryApiClient implements CategoryClient {
     private final CategoryApi categoryApi = retrofit.create(CategoryApi.class);
 
     @Override
-    public List<CategoryJson> getAllCategories(String username) {
+    public CategoryJson getCategoryById(UUID categoryId) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public CategoryJson getCategoryByNameAndUsername(String categoryName, String username) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public List<CategoryJson> getAllCategoriesByUsername(String username) {
         final Response<List<CategoryJson>> response;
         try {
             response = categoryApi.getAllCategories(username)
@@ -45,16 +54,6 @@ public class CategoryApiClient implements CategoryClient {
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
-    }
-
-    @Override
-    public Optional<CategoryJson> findCategoryById(UUID categoryId) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    @Override
-    public Optional<CategoryJson> findCategoryByName(String categoryName, String username) {
-        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
@@ -81,5 +80,10 @@ public class CategoryApiClient implements CategoryClient {
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
+    }
+
+    @Override
+    public void deleteCategory(CategoryJson categoryJson) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

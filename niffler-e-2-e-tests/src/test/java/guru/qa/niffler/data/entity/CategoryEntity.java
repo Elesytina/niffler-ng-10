@@ -20,6 +20,7 @@ public class CategoryEntity {
         entity.setName(json.name());
         entity.setUsername(json.username());
         entity.setArchived(json.archived());
+
         return entity;
     }
 }

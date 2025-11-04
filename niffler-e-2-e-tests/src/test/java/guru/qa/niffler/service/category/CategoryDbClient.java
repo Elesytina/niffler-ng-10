@@ -15,6 +15,37 @@ public class CategoryDbClient implements CategoryClient {
     private final CategoryDao categoryDao = new CategoryDaoJdbc();
 
     @Override
+    public CategoryJson getCategoryById(UUID categoryId) {
+        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryById(categoryId);
+
+        if (categoryEntity.isPresent()) {
+
+            return CategoryJson.fromEntity(categoryEntity.get());
+        }
+        throw new RuntimeException("Failed to find spend");
+    }
+
+    @Override
+    public CategoryJson getCategoryByNameAndUsername(String categoryName, String username) {
+        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryByNameAndUsername(categoryName, username);
+
+        if (categoryEntity.isPresent()) {
+
+            return CategoryJson.fromEntity(categoryEntity.get());
+        }
+        throw new RuntimeException("Failed to find spend");
+    }
+
+    @Override
+    public List<CategoryJson> getAllCategoriesByUsername(String username) {
+        List<CategoryEntity> categoryEntities = categoryDao.findAllCategoriesByUsername(username);
+
+        return categoryEntities.stream()
+                .map(CategoryJson::fromEntity)
+                .toList();
+    }
+
+    @Override
     public CategoryJson createCategory(CategoryJson category) {
         CategoryEntity entity = CategoryEntity.fromJson(category);
         CategoryEntity categoryEntity = categoryDao.create(entity);
@@ -30,38 +61,14 @@ public class CategoryDbClient implements CategoryClient {
         return CategoryJson.fromEntity(categoryEntity);
     }
 
-
     @Override
-    public List<CategoryJson> getAllCategories(String username) {
-        List<CategoryEntity> categoryEntities = categoryDao.findAllCategories(username);
+    public void deleteCategory(CategoryJson categoryJson) {
+        CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
+        boolean isSuccess = categoryDao.delete(entity);
 
-        return categoryEntities.stream()
-                .map(CategoryJson::fromEntity)
-                .toList();
-    }
-
-    @Override
-    public Optional<CategoryJson> findCategoryById(UUID categoryId) {
-        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryById(categoryId);
-
-        if (categoryEntity.isPresent()) {
-            CategoryJson categoryJson = CategoryJson.fromEntity(categoryEntity.get());
-            return Optional.of(categoryJson);
+        if (!isSuccess) {
+            throw new RuntimeException("Failed to delete category");
         }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<CategoryJson> findCategoryByName(String categoryName, String username) {
-        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryByName(categoryName, username);
-
-        if (categoryEntity.isPresent()) {
-            CategoryJson categoryJson = CategoryJson.fromEntity(categoryEntity.get());
-            return Optional.of(categoryJson);
-        }
-
-        return Optional.empty();
     }
 
 }

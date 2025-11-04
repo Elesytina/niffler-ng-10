@@ -5,16 +5,22 @@ import guru.qa.niffler.model.DateFilterValues;
 import guru.qa.niffler.model.SpendJson;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface SpendClient {
+
+    SpendJson getSpendById(UUID id);
+
+    List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
+
+    List<SpendJson> getAllSpendsByUsername(String userName);
 
     SpendJson createSpend(SpendJson spend);
 
     SpendJson updateSpend(SpendJson spendJson);
 
-    void deleteSpends(List<String> ids, String userName);
+    void deleteSpends(List<UUID> ids, String userName);
 
-    SpendJson getSpend(String id);
+    void deleteSpend(SpendJson spend);
 
-    List<SpendJson> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
 }

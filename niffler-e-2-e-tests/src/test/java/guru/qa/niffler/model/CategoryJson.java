@@ -6,16 +6,13 @@ import guru.qa.niffler.data.entity.CategoryEntity;
 import java.util.UUID;
 
 public record CategoryJson(
-        @JsonProperty("id")
         UUID id,
-        @JsonProperty("name")
         String name,
-        @JsonProperty("username")
         String username,
-        @JsonProperty("archived")
         boolean archived) {
 
     public static CategoryJson fromEntity(CategoryEntity entity) {
+
         return new CategoryJson(
                 entity.getId(),
                 entity.getName(),

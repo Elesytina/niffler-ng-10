@@ -18,12 +18,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.Databases.getConnection;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 
 public class SpendDaoJdbc implements SpendDao {
 
-    private final Config CFG = Config.getInstance();
 
     @Override
     public SpendEntity create(SpendEntity entity) {
@@ -53,7 +53,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public SpendEntity updateSpend(SpendEntity entity) {
+    public SpendEntity update(SpendEntity entity) {
         try (Connection connection = getConnection(CFG.spendJdbcUrl());
              PreparedStatement ps = connection.prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
@@ -93,7 +93,20 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public Optional<SpendEntity> getSpend(UUID id) {
+    public boolean deleteSpend(SpendEntity spendEntity) {
+        try (Connection connection = getConnection(CFG.spendJdbcUrl());
+             PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ? and username = ?")) {
+            ps.setObject(1, spendEntity.getId());
+            ps.setObject(2, spendEntity.getUsername());
+
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Optional<SpendEntity> findSpendById(UUID id) {
         try (Connection connection = getConnection(CFG.spendJdbcUrl());
              PreparedStatement ps = connection.prepareStatement("""
                      SELECT *
@@ -131,7 +144,47 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
+    public List<SpendEntity> findAllSpendsByUsername(String userName) {
+        try (Connection connection = getConnection(CFG.spendJdbcUrl());
+             PreparedStatement ps = connection.prepareStatement(
+                     """
+                             SELECT * FROM spend
+                             LEFT JOIN category
+                             ON spend.category_id = category.id
+                             WHERE spend.username = ?
+                             """)) {
+            ps.setString(1, userName);
+
+            ResultSet resultSet = ps.executeQuery();
+            List<SpendEntity> spends = new ArrayList<>();
+
+            while (resultSet.next()) {
+                SpendEntity spend = new SpendEntity();
+                spend.setId(resultSet.getObject("id", UUID.class));
+                spend.setCurrency(resultSet.getString("currency"));
+                spend.setUsername(resultSet.getString("username"));
+                spend.setAmount(resultSet.getDouble("amount"));
+                spend.setSpendDate(resultSet.getDate("spend_date"));
+                spend.setDescription(resultSet.getString("description"));
+                if (resultSet.getObject("category_id") != null) {
+                    CategoryEntity category = new CategoryEntity();
+                    category.setId(resultSet.getObject("category_id", UUID.class));
+                    category.setName(resultSet.getString("name"));
+                    category.setUsername(resultSet.getString("username"));
+                    category.setArchived(resultSet.getBoolean("archived"));
+                    spend.setCategory(category);
+                    spends.add(spend);
+                }
+            }
+
+            return spends;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<SpendEntity> findAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
         try (Connection connection = getConnection(CFG.spendJdbcUrl());
              PreparedStatement ps = connection.prepareStatement(
                      """

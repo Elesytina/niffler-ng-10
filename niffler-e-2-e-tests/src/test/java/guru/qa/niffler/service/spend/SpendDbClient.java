@@ -22,6 +22,35 @@ public class SpendDbClient implements SpendClient {
     private final CategoryDao categoryDao = new CategoryDaoJdbc();
 
     @Override
+    public SpendJson getSpendById(UUID id) {
+        Optional<SpendEntity> spendEntity = spendDao.findSpendById(id);
+
+        if (spendEntity.isPresent()) {
+
+            return SpendJson.fromEntity(spendEntity.get());
+        }
+        throw new RuntimeException("Failed to find spend");
+    }
+
+    @Override
+    public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
+        List<SpendEntity> spendEntities = spendDao.findAllSpendsByFiltersAndUsername(currencyFilter, dateFilterValues, userName);
+
+        return spendEntities.stream()
+                .map(SpendJson::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public List<SpendJson> getAllSpendsByUsername(String userName) {
+        List<SpendEntity> spendEntities = spendDao.findAllSpendsByUsername(userName);
+
+        return spendEntities.stream()
+                .map(SpendJson::fromEntity)
+                .toList();
+    }
+
+    @Override
     public SpendJson createSpend(SpendJson spend) {
         SpendEntity spendEntity = SpendEntity.fromJson(spend);
 
@@ -36,15 +65,14 @@ public class SpendDbClient implements SpendClient {
     @Override
     public SpendJson updateSpend(SpendJson spendJson) {
         SpendEntity spendEntity = SpendEntity.fromJson(spendJson);
-        SpendEntity updated = spendDao.updateSpend(spendEntity);
+        SpendEntity updated = spendDao.update(spendEntity);
 
         return SpendJson.fromEntity(updated);
     }
 
     @Override
-    public void deleteSpends(List<String> ids, String userName) {
-        List<UUID> uuids = ids.stream().map(UUID::fromString).toList();
-        boolean isSuccess = spendDao.deleteSpends(uuids, userName);
+    public void deleteSpends(List<UUID> ids, String userName) {
+        boolean isSuccess = spendDao.deleteSpends(ids, userName);
 
         if (!isSuccess) {
             throw new RuntimeException("Failed to delete spends");
@@ -52,27 +80,13 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson getSpend(String id) {
-        Optional<SpendEntity> spendEntity = spendDao.getSpend(UUID.fromString(id));
+    public void deleteSpend(SpendJson spend) {
+        SpendEntity spendEntity = SpendEntity.fromJson(spend);
+        boolean isSuccess = spendDao.deleteSpend(spendEntity);
 
-        if (spendEntity.isPresent()) {
-
-            return SpendJson.fromEntity(spendEntity.get());
+        if (!isSuccess) {
+            throw new RuntimeException("Failed to delete spends");
         }
-        throw new RuntimeException("Failed to find spend");
-    }
-
-    @Override
-    public List<SpendJson> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        List<SpendEntity> spendEntities = spendDao.getSpends(currencyFilter, dateFilterValues, userName);
-
-        if (spendEntities.isEmpty()) {
-            log.info("No spends found");
-        }
-
-        return spendEntities.stream()
-                .map(SpendJson::fromEntity)
-                .toList();
     }
 
 }

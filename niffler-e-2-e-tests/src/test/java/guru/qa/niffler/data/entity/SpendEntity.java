@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.entity;
 
-import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,10 +23,11 @@ public class SpendEntity {
         entity.setId(json.id());
         entity.setAmount(json.amount());
         entity.setDescription(json.description());
-        entity.setCategory(CategoryEntity.fromJson(json.category()));
         entity.setSpendDate(new java.sql.Date(json.spendDate().getTime()));
         entity.setCurrency(json.currency());
         entity.setUsername(json.username());
+        entity.setCategory(CategoryEntity.fromJson(json.category()));
+
         return entity;
     }
 }

@@ -12,6 +12,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class SpendApiClient implements SpendClient {
 
@@ -23,6 +24,38 @@ public class SpendApiClient implements SpendClient {
             .build();
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
+
+    @Override
+    public SpendJson getSpendById(UUID id) {
+        try {
+            Response<SpendJson> response = spendApi.getSpend(id.toString())
+                    .execute();
+
+            Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
+            return response.body();
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    @Override
+    public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
+        try {
+            Response<List<SpendJson>> response = spendApi.getAllSpends(dateFilterValues, currencyFilter, userName)
+                    .execute();
+
+            Assertions.assertEquals(200, response.code(), "Unexpected response code");
+            return response.body();
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    @Override
+    public List<SpendJson> getAllSpendsByUsername(String userName) {
+        throw new RuntimeException("Not implemented yet");
+    }
 
     @Override
     public SpendJson createSpend(SpendJson spend) {
@@ -51,7 +84,8 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public void deleteSpends(List<String> ids, String userName) {
+    public void deleteSpends(List<UUID> uuids, String userName) {
+        var ids = uuids.stream().map(UUID::toString).toList();
         try {
             Response<Void> response = spendApi.deleteSpends(ids, userName)
                     .execute();
@@ -63,28 +97,8 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson getSpend(String id) {
-        try {
-            Response<SpendJson> response = spendApi.getSpend(id)
-                    .execute();
-
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
-        } catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
+    public void deleteSpend(SpendJson spend) {
+        throw new RuntimeException("Not implemented yet");
     }
 
-    @Override
-    public List<SpendJson> getSpends(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        try {
-            Response<List<SpendJson>> response = spendApi.getAllSpends(dateFilterValues, currencyFilter, userName)
-                    .execute();
-
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
-        } catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
-    }
 }

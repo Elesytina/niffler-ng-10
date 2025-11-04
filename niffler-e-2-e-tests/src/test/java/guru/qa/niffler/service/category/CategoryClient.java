@@ -8,13 +8,16 @@ import java.util.UUID;
 
 public interface CategoryClient {
 
+    CategoryJson getCategoryById(UUID categoryId);
+
+    CategoryJson getCategoryByNameAndUsername(String categoryName, String username);
+
+    List<CategoryJson> getAllCategoriesByUsername(String username);
+
     CategoryJson createCategory(CategoryJson category);
 
     CategoryJson updateCategory(CategoryJson categoryJson);
 
-    List<CategoryJson> getAllCategories(String username);
+    void deleteCategory(CategoryJson categoryJson);
 
-    Optional<CategoryJson> findCategoryById(UUID categoryId);
-
-    Optional<CategoryJson> findCategoryByName(String categoryName, String username);
 }
