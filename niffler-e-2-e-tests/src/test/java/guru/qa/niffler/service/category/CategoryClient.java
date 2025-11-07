@@ -3,15 +3,20 @@ package guru.qa.niffler.service.category;
 import guru.qa.niffler.model.CategoryJson;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 public interface CategoryClient {
+
+    CategoryJson getCategoryById(UUID categoryId);
+
+    CategoryJson getCategoryByNameAndUsername(String categoryName, String username);
+
+    List<CategoryJson> getAllCategoriesByUsername(String username);
 
     CategoryJson createCategory(CategoryJson category);
 
     CategoryJson updateCategory(CategoryJson categoryJson);
 
-    Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username);
+    void deleteCategory(CategoryJson categoryJson);
 
-    List<CategoryJson> getAllCategories(String username);
 }

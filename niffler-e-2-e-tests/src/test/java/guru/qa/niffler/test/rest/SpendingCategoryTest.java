@@ -21,7 +21,7 @@ public class SpendingCategoryTest {
     @Test
     @Description("active Category Should Be Present In Profile")
     void activeCategoryShouldBePresentInProfilePositiveTest() {
-        List<CategoryJson> allCategories = categoryApiClient.getAllCategories(username);
+        List<CategoryJson> allCategories = categoryApiClient.getAllCategoriesByUsername(username);
 
         var activeCategories = allCategories.stream().filter(cat -> !cat.archived()).toList();
 
@@ -34,7 +34,7 @@ public class SpendingCategoryTest {
     @Test
     @Description("archived Category Should Be Present In Profile")
     void archivedCategoryShouldBePresentInProfilePositiveTest() {
-        List<CategoryJson> allCategories = categoryApiClient.getAllCategories(username);
+        List<CategoryJson> allCategories = categoryApiClient.getAllCategoriesByUsername(username);
 
         var archiveCategories = allCategories.stream().filter(CategoryJson::archived).toList();
 
