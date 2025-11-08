@@ -5,12 +5,12 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static guru.qa.niffler.model.CurrencyValues.RUB;
+import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 
 @ExtendWith(BrowserExtension.class)
 public class SpendingTest {

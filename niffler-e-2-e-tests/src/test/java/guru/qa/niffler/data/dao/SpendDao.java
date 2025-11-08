@@ -1,8 +1,8 @@
 package guru.qa.niffler.data.dao;
 
-import guru.qa.niffler.data.entity.SpendEntity;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.DateFilterValues;
+import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.enums.DateFilterValues;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,8 @@
 package guru.qa.niffler.service.spend;
 
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.DateFilterValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.model.spend.SpendJson;
 
 import java.util.List;
 import java.util.UUID;

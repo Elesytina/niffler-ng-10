@@ -2,9 +2,9 @@ package guru.qa.niffler.service.spend;
 
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.DateFilterValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.model.spend.SpendJson;
 import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
 import retrofit2.Retrofit;

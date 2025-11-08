@@ -1,15 +1,12 @@
 package guru.qa.niffler.service.userdata;
 
-import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.UserdataUserDao;
 import guru.qa.niffler.data.dao.impl.UserdataUserDaoJdbc;
-import guru.qa.niffler.data.entity.UserEntity;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.model.userdata.UserJson;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 public class UserDataUserDbClient implements UserDataUserClient {
 

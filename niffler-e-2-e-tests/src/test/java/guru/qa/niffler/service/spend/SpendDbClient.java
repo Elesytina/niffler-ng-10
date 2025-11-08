@@ -3,11 +3,11 @@ package guru.qa.niffler.service.spend;
 import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.impl.CategoryDaoJdbc;
 import guru.qa.niffler.data.dao.impl.SpendDaoJdbc;
-import guru.qa.niffler.data.entity.CategoryEntity;
-import guru.qa.niffler.data.entity.SpendEntity;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.DateFilterValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
+import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

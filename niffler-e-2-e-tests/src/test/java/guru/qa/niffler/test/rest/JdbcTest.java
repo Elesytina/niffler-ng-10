@@ -1,9 +1,9 @@
 package guru.qa.niffler.test.rest;
 
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.spend.SpendJson;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.category.CategoryClient;
 import guru.qa.niffler.service.category.CategoryDbClient;
 import guru.qa.niffler.service.spend.SpendClient;

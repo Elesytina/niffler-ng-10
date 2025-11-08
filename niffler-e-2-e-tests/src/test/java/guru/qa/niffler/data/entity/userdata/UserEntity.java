@@ -1,6 +1,6 @@
-package guru.qa.niffler.data.entity;
+package guru.qa.niffler.data.entity.userdata;
 
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.userdata.UserJson;
 import lombok.Getter;
 import lombok.Setter;
 
