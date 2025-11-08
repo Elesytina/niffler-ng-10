@@ -10,6 +10,7 @@ public record AuthorityJson(
         UUID userId) {
 
     public static AuthorityJson fromEntity(AuthorityEntity entity) {
+
         return new AuthorityJson(
                 entity.getId(),
                 entity.getAuthority(),
