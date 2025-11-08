@@ -14,9 +14,9 @@ public class AuthorityEntity {
 
     public static AuthorityEntity fromJson(AuthorityJson json) {
         AuthorityEntity entity = new AuthorityEntity();
-        entity.setId(json.getId());
-        entity.setAuthority(json.getAuthority());
-        entity.setUserId(json.getUserId());
+        entity.setId(json.id());
+        entity.setAuthority(json.authority());
+        entity.setUserId(json.userId());
         return entity;
     }
 }
