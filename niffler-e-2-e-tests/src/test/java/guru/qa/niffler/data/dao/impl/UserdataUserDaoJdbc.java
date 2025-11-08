@@ -18,7 +18,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl());
+        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
              PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = ?")) {
             ps.setObject(1, id);
             ResultSet resultSet = ps.executeQuery();
@@ -37,7 +37,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl());
+        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
              PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
             ps.setString(1, username);
             ResultSet resultSet = ps.executeQuery();
@@ -56,7 +56,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public UserEntity create(UserEntity entity) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl());
+        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
              PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
                      RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
@@ -84,7 +84,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public boolean delete(UserEntity entity) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl());
+        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
              PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" where id = ?")) {
             ps.setObject(1, entity.getId());
 

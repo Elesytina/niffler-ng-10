@@ -29,7 +29,7 @@ public class SpendDbClient implements SpendClient {
                 return SpendJson.fromEntity(spendEntity.get());
             }
             throw new RuntimeException("Failed to find spend");
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(), 1));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SpendDbClient implements SpendClient {
             return spendEntities.stream()
                     .map(SpendJson::fromEntity)
                     .toList();
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(), 1));
     }
 
     @Override
@@ -51,7 +51,8 @@ public class SpendDbClient implements SpendClient {
             return spendEntities.stream()
                     .map(SpendJson::fromEntity)
                     .toList();
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(),
+                1));
     }
 
     @Override
@@ -66,7 +67,8 @@ public class SpendDbClient implements SpendClient {
 
             SpendEntity created = new SpendDaoJdbc(connect).create(spendEntity);
             return SpendJson.fromEntity(created);
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(),
+                1));
     }
 
     @Override
@@ -76,7 +78,8 @@ public class SpendDbClient implements SpendClient {
             SpendEntity updated = new SpendDaoJdbc(connect).update(spendEntity);
 
             return SpendJson.fromEntity(updated);
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(),
+                1));
     }
 
     public void deleteSpends(List<UUID> ids) {
@@ -86,7 +89,8 @@ public class SpendDbClient implements SpendClient {
             if (!isSuccess) {
                 throw new RuntimeException("Failed to delete spends");
             }
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(),
+                1));
     }
 
     @Override
@@ -98,7 +102,8 @@ public class SpendDbClient implements SpendClient {
             if (!isSuccess) {
                 throw new RuntimeException("Failed to delete spends");
             }
-        }, CFG.spendJdbcUrl()));
+        }, CFG.spendJdbcUrl(),
+                1));
     }
 
 }

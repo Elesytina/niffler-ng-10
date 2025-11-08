@@ -24,10 +24,10 @@ public class Databases {
     private final static Map<String, DataSource> dataSources = new ConcurrentHashMap<>();
     private final static Map<Long, Map<String, Connection>> threadConnections = new ConcurrentHashMap<>();
 
-    public record XaFunction<T>(Function<Connection, T> function, String jdbcUrl) {
+    public record XaFunction<T>(Function<Connection, T> function, String jdbcUrl, int isolationLevel) {
     }
 
-    public record XaConsumer(Consumer<Connection> consumer, String jdbcUrl) {
+    public record XaConsumer(Consumer<Connection> consumer, String jdbcUrl, int isolationLevel) {
     }
 
     @SafeVarargs
@@ -37,7 +37,7 @@ public class Databases {
             userTransaction.begin();
             T result = null;
             for (XaFunction<T> function : functions) {
-                result = function.function.apply(getConnection(function.jdbcUrl));
+                result = function.function.apply(getConnection(function.jdbcUrl, function.isolationLevel));
             }
             userTransaction.commit();
             return result;
@@ -56,7 +56,7 @@ public class Databases {
         try {
             userTransaction.begin();
             for (XaConsumer consumer : consumers) {
-                consumer.consumer.accept(getConnection(consumer.jdbcUrl()));
+                consumer.consumer.accept(getConnection(consumer.jdbcUrl(), consumer.isolationLevel));
             }
             userTransaction.commit();
         } catch (Exception exception) {
@@ -83,14 +83,17 @@ public class Databases {
                 });
     }
 
-    public static Connection getConnection(String jdbcUrl) throws SQLException {
+    public static Connection getConnection(String jdbcUrl, int isolation) {
         return threadConnections.computeIfAbsent(
                 Thread.currentThread().threadId(),
                 key -> {
                     try {
+                        var connect = getDataSource(jdbcUrl).getConnection();
+                        connect.setTransactionIsolation(isolation);
                         return new HashMap<>(Map.of(
                                 jdbcUrl,
-                                getDataSource(jdbcUrl).getConnection()));
+                                connect
+                        ));
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
