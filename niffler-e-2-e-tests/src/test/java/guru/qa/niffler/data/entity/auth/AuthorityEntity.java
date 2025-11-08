@@ -17,6 +17,7 @@ public class AuthorityEntity {
         entity.setId(json.id());
         entity.setAuthority(json.authority());
         entity.setUserId(json.userId());
+
         return entity;
     }
 }
