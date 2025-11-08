@@ -1,6 +1,6 @@
 package guru.qa.niffler.service.category;
 
-import guru.qa.niffler.data.dao.CategoryDao;
+import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.impl.CategoryDaoJdbc;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.model.CategoryJson;
@@ -9,66 +9,78 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 
 public class CategoryDbClient implements CategoryClient {
 
-    private final CategoryDao categoryDao = new CategoryDaoJdbc();
-
     @Override
     public CategoryJson getCategoryById(UUID categoryId) {
-        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryById(categoryId);
+        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+            Optional<CategoryEntity> categoryEntity = new CategoryDaoJdbc(connect).findById(categoryId);
 
-        if (categoryEntity.isPresent()) {
+            if (categoryEntity.isPresent()) {
 
-            return CategoryJson.fromEntity(categoryEntity.get());
-        }
-        throw new RuntimeException("Failed to find spend");
+                return CategoryJson.fromEntity(categoryEntity.get());
+            }
+            throw new RuntimeException("Failed to find category");
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public CategoryJson getCategoryByNameAndUsername(String categoryName, String username) {
-        Optional<CategoryEntity> categoryEntity = categoryDao.findCategoryByNameAndUsername(categoryName, username);
+        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+            Optional<CategoryEntity> categoryEntity = new CategoryDaoJdbc(connect).findByNameAndUsername(categoryName, username);
 
-        if (categoryEntity.isPresent()) {
+            if (categoryEntity.isPresent()) {
 
-            return CategoryJson.fromEntity(categoryEntity.get());
-        }
-        throw new RuntimeException("Failed to find spend");
+                return CategoryJson.fromEntity(categoryEntity.get());
+            }
+            throw new RuntimeException("Failed to find category");
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public List<CategoryJson> getAllCategoriesByUsername(String username) {
-        List<CategoryEntity> categoryEntities = categoryDao.findAllCategoriesByUsername(username);
+        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+            List<CategoryEntity> categoryEntities = new CategoryDaoJdbc(connect).findAllByUsername(username);
 
-        return categoryEntities.stream()
-                .map(CategoryJson::fromEntity)
-                .toList();
+            return categoryEntities.stream()
+                    .map(CategoryJson::fromEntity)
+                    .toList();
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public CategoryJson createCategory(CategoryJson category) {
-        CategoryEntity entity = CategoryEntity.fromJson(category);
-        CategoryEntity categoryEntity = categoryDao.create(entity);
+        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+            CategoryEntity entity = CategoryEntity.fromJson(category);
+            CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).create(entity);
 
-        return CategoryJson.fromEntity(categoryEntity);
+            return CategoryJson.fromEntity(categoryEntity);
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public CategoryJson updateCategory(CategoryJson categoryJson) {
-        CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
-        CategoryEntity categoryEntity = categoryDao.update(entity);
+        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+            CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
+            CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).update(entity);
 
-        return CategoryJson.fromEntity(categoryEntity);
+            return CategoryJson.fromEntity(categoryEntity);
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public void deleteCategory(CategoryJson categoryJson) {
-        CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
-        boolean isSuccess = categoryDao.delete(entity);
+        Databases.transaction(new Databases.XaConsumer(connect -> {
+            CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
+            boolean isSuccess = new CategoryDaoJdbc(connect).delete(entity);
 
-        if (!isSuccess) {
-            throw new RuntimeException("Failed to delete category");
-        }
+            if (!isSuccess) {
+                throw new RuntimeException("Failed to delete category");
+            }
+        }, CFG.spendJdbcUrl()));
     }
 
 }

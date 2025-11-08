@@ -1,5 +1,6 @@
 package guru.qa.niffler.service.userdata;
 
+import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.UserdataUserDao;
 import guru.qa.niffler.data.dao.impl.UserdataUserDaoJdbc;
 import guru.qa.niffler.data.entity.UserEntity;
@@ -7,6 +8,8 @@ import guru.qa.niffler.model.UserJson;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 public class UserDataUserDbClient implements UserDataUserClient {
 
@@ -16,7 +19,7 @@ public class UserDataUserDbClient implements UserDataUserClient {
     public UserJson getUserById(UUID id) {
         Optional<UserEntity> userEntity = userDao.findById(id);
 
-        if (userEntity.isPresent()) {
+            if (userEntity.isPresent()) {
 
             return UserJson.fromEntity(userEntity.get());
         }
@@ -27,7 +30,7 @@ public class UserDataUserDbClient implements UserDataUserClient {
     public UserJson getUserByUsername(String username) {
         Optional<UserEntity> userEntity = userDao.findByUsername(username);
 
-        if (userEntity.isPresent()) {
+            if (userEntity.isPresent()) {
 
             return UserJson.fromEntity(userEntity.get());
         }

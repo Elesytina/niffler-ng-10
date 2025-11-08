@@ -16,5 +16,5 @@ public @interface Spending {
   String category();
   String description();
   double amount();
-  String currency();
+  CurrencyValues currency();
 }

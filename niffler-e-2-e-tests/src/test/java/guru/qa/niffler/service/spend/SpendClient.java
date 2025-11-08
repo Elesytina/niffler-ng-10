@@ -19,8 +19,6 @@ public interface SpendClient {
 
     SpendJson updateSpend(SpendJson spendJson);
 
-    void deleteSpends(List<UUID> ids, String userName);
-
     void deleteSpend(SpendJson spend);
 
 }

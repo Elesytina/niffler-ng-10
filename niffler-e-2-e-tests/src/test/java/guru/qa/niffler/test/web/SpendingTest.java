@@ -10,6 +10,8 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static guru.qa.niffler.model.CurrencyValues.RUB;
+
 @ExtendWith(BrowserExtension.class)
 public class SpendingTest {
 
@@ -18,7 +20,7 @@ public class SpendingTest {
     @User(username = "duck", spendings = @Spending(
             category = "Учеба",
             amount = 89900,
-            currency = "RUB",
+            currency = RUB,
             description = "Обучение Niffler 2.0 юбилейный поток!"
     ))
     @Test

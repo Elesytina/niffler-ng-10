@@ -10,18 +10,18 @@ import java.util.UUID;
 
 public interface SpendDao {
 
-    Optional<SpendEntity> findSpendById(UUID id);
+    Optional<SpendEntity> findById(UUID id);
 
-    List<SpendEntity> findAllSpendsByUsername(String userName);
+    List<SpendEntity> findByUsername(String userName);
 
-    List<SpendEntity> findAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
+    List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
 
     SpendEntity create(SpendEntity entity);
 
     SpendEntity update(SpendEntity spendEntity);
 
-    boolean deleteSpends(List<UUID> ids, String userName);
+    boolean delete(List<UUID> ids);
 
-    boolean deleteSpend(SpendEntity spendEntity);
+    boolean delete(SpendEntity spendEntity);
 
 }

@@ -83,7 +83,7 @@ public class SpendApiClient implements SpendClient {
         }
     }
 
-    @Override
+
     public void deleteSpends(List<UUID> uuids, String userName) {
         var ids = uuids.stream().map(UUID::toString).toList();
         try {

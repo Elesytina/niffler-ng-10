@@ -107,15 +107,20 @@ public class JdbcTest {
 
     @Test
     void shouldCreteSpendWithCategory() {
-        CategoryJson categoryJson = dbClient.getCategoryById(UUID.fromString("3a6bde3b-2ec7-460b-9864-8745b3d0a333"));
+        CategoryJson categoryJson = dbClient.createCategory(new CategoryJson(
+                null,
+                "new category "+randomAlphanumeric(2),
+                "fishka",
+                false
+        ));
 
         SpendJson spend = new SpendJson(null,
                 Date.from(Instant.now()),
                 categoryJson,
                 CurrencyValues.EUR.name(),
-                10000.1,
-                "restorant",
-                "fishka");
+                100.1,
+                "restorant 3",
+                null);
 
         SpendJson created = spendDbClient.createSpend(spend);
         log.info(created.toString());
@@ -129,8 +134,8 @@ public class JdbcTest {
                 Date.from(Instant.now().minusSeconds(100)),
                 categoryJson,
                 CurrencyValues.KZT.name(),
-                10006.1,
-                "dinner2",
+                3000.1,
+                "dinner",
                 "fishka");
 
         SpendJson updated = spendDbClient.updateSpend(spend);
@@ -140,7 +145,7 @@ public class JdbcTest {
     @Test
     void shouldCreteUser() {
         UserJson userJson = new UserJson(null,
-                "user111",
+                "user" + randomAlphanumeric(4),
                 CurrencyValues.EUR.name(),
                 "Olga",
                 "Petrova",
