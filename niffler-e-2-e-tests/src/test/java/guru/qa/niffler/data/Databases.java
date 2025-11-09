@@ -51,7 +51,7 @@ public class Databases {
         }
     }
 
-    public static <T> void transaction(XaConsumer... consumers) {
+    public static void transaction(XaConsumer... consumers) {
         UserTransaction userTransaction = new UserTransactionImp();
         try {
             userTransaction.begin();
@@ -121,7 +121,7 @@ public class Databases {
                     Properties properties = new Properties();
                     properties.setProperty("URL", jdbcUrl);
                     properties.setProperty("user", "postgres");
-                    properties.setProperty("user", "secret");
+                    properties.setProperty("password", "secret");
                     datasourceBean.setXaProperties(properties);
                     datasourceBean.setPoolSize(10);
 

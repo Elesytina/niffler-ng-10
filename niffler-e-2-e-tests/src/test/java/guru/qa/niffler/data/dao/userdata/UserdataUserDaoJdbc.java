@@ -1,7 +1,7 @@
-package guru.qa.niffler.data.dao.impl;
+package guru.qa.niffler.data.dao.userdata;
 
-import guru.qa.niffler.data.dao.UserdataUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.model.enums.CurrencyValues;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,16 +10,19 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.Databases.getConnection;
-import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class UserdataUserDaoJdbc implements UserdataUserDao {
 
+    private final Connection connection;
+
+    public UserdataUserDaoJdbc(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
-             PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = ?")) {
             ps.setObject(1, id);
             ResultSet resultSet = ps.executeQuery();
 
@@ -37,8 +40,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
-             PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
             ps.setString(1, username);
             ResultSet resultSet = ps.executeQuery();
 
@@ -56,11 +58,10 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public UserEntity create(UserEntity entity) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
-             PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
-                     RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
+                RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
-            ps.setString(2, entity.getCurrency());
+            ps.setString(2, entity.getCurrency().name());
             ps.setString(3, entity.getFirstName());
             ps.setString(4, entity.getSurname());
             ps.setBytes(5, entity.getPhoto());
@@ -84,8 +85,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public boolean delete(UserEntity entity) {
-        try (Connection connection = getConnection(CFG.userdataJdbcUrl(), 1);
-             PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" where id = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" where id = ?")) {
             ps.setObject(1, entity.getId());
 
             return ps.executeUpdate() == 1;
@@ -96,14 +96,14 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     private UserEntity getUserEntity(ResultSet resultSet) throws SQLException {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId(resultSet.getObject("id", UUID.class));
-        userEntity.setFullName(resultSet.getString("full_name"));
-        userEntity.setUsername(resultSet.getString("username"));
-        userEntity.setFirstName(resultSet.getString("firstname"));
-        userEntity.setSurname(resultSet.getString("surname"));
-        userEntity.setCurrency(resultSet.getString("currency"));
-        userEntity.setPhoto(resultSet.getBytes("photo"));
-        userEntity.setPhotoSmall(resultSet.getBytes("photo_small"));
+        userEntity.setId(resultSet.getObject(1, UUID.class));
+        userEntity.setUsername(resultSet.getString(2));
+        userEntity.setCurrency(resultSet.getObject(3, CurrencyValues.class));
+        userEntity.setFirstName(resultSet.getString(4));
+        userEntity.setSurname(resultSet.getString(5));
+        userEntity.setPhoto(resultSet.getBytes(6));
+        userEntity.setPhotoSmall(resultSet.getBytes(7));
+        userEntity.setFullName(resultSet.getString(8));
 
         return userEntity;
     }

@@ -48,7 +48,6 @@ enum LocalConfig implements Config {
         return "jdbc:postgresql://localhost:5432/niffler-auth";
     }
 
-
     @Override
     public String githubUrl() {
         return "";

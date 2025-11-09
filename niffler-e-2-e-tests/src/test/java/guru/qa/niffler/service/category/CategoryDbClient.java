@@ -1,7 +1,7 @@
 package guru.qa.niffler.service.category;
 
 import guru.qa.niffler.data.Databases;
-import guru.qa.niffler.data.dao.impl.CategoryDaoJdbc;
+import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.model.spend.CategoryJson;
 
@@ -24,7 +24,7 @@ public class CategoryDbClient implements CategoryClient {
                 return CategoryJson.fromEntity(categoryEntity.get());
             }
             throw new RuntimeException("Failed to find category");
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class CategoryDbClient implements CategoryClient {
                 return CategoryJson.fromEntity(categoryEntity.get());
             }
             throw new RuntimeException("Failed to find category");
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CategoryDbClient implements CategoryClient {
             return categoryEntities.stream()
                     .map(CategoryJson::fromEntity)
                     .toList();
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CategoryDbClient implements CategoryClient {
             CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).create(entity);
 
             return CategoryJson.fromEntity(categoryEntity);
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CategoryDbClient implements CategoryClient {
             CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).update(entity);
 
             return CategoryJson.fromEntity(categoryEntity);
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class CategoryDbClient implements CategoryClient {
             if (!isSuccess) {
                 throw new RuntimeException("Failed to delete category");
             }
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
 }

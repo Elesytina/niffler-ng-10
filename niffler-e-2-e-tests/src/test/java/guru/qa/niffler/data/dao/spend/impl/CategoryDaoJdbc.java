@@ -1,6 +1,6 @@
-package guru.qa.niffler.data.dao.impl;
+package guru.qa.niffler.data.dao.spend.impl;
 
-import guru.qa.niffler.data.dao.CategoryDao;
+import guru.qa.niffler.data.dao.spend.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
 import java.sql.Connection;

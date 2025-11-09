@@ -1,8 +1,8 @@
 package guru.qa.niffler.service.spend;
 
 import guru.qa.niffler.data.Databases;
-import guru.qa.niffler.data.dao.impl.CategoryDaoJdbc;
-import guru.qa.niffler.data.dao.impl.SpendDaoJdbc;
+import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
+import guru.qa.niffler.data.dao.spend.impl.SpendDaoJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
@@ -29,7 +29,7 @@ public class SpendDbClient implements SpendClient {
                 return SpendJson.fromEntity(spendEntity.get());
             }
             throw new RuntimeException("Failed to find spend");
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SpendDbClient implements SpendClient {
             return spendEntities.stream()
                     .map(SpendJson::fromEntity)
                     .toList();
-        }, CFG.spendJdbcUrl(), 1));
+        }, CFG.spendJdbcUrl(), 2));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SpendDbClient implements SpendClient {
                     .map(SpendJson::fromEntity)
                     .toList();
         }, CFG.spendJdbcUrl(),
-                1));
+                2));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SpendDbClient implements SpendClient {
             SpendEntity created = new SpendDaoJdbc(connect).create(spendEntity);
             return SpendJson.fromEntity(created);
         }, CFG.spendJdbcUrl(),
-                1));
+                2));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SpendDbClient implements SpendClient {
 
             return SpendJson.fromEntity(updated);
         }, CFG.spendJdbcUrl(),
-                1));
+                2));
     }
 
     public void deleteSpends(List<UUID> ids) {
@@ -90,7 +90,7 @@ public class SpendDbClient implements SpendClient {
                 throw new RuntimeException("Failed to delete spends");
             }
         }, CFG.spendJdbcUrl(),
-                1));
+                2));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SpendDbClient implements SpendClient {
                 throw new RuntimeException("Failed to delete spends");
             }
         }, CFG.spendJdbcUrl(),
-                1));
+                2));
     }
 
 }

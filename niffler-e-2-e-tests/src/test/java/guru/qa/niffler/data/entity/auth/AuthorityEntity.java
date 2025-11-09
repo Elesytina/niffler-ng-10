@@ -1,6 +1,7 @@
 package guru.qa.niffler.data.entity.auth;
 
 import guru.qa.niffler.model.auth.AuthorityJson;
+import guru.qa.niffler.model.enums.Authority;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import java.util.UUID;
 @Setter
 public class AuthorityEntity {
     private UUID id;
-    private String authority;
+    private Authority authority;
     private UUID userId;
 
     public static AuthorityEntity fromJson(AuthorityJson json) {

@@ -1,4 +1,4 @@
-package guru.qa.niffler.data.dao;
+package guru.qa.niffler.data.dao.userdata;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
