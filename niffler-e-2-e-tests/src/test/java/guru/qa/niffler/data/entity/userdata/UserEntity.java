@@ -14,7 +14,7 @@ public class UserEntity {
     private String username;
     private String firstName;
     private String surname;
-    private CurrencyValues currency;
+    private String currency;
     private String fullName;
     private byte[] photo;
     private byte[] photoSmall;

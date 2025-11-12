@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 public class AuthorityEntity {
     private UUID id;
-    private Authority authority;
+    private String authority;
     private UUID userId;
 
     public static AuthorityEntity fromJson(AuthorityJson json) {

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record AuthorityJson(
         UUID id,
-        Authority authority,
+        String authority,
         UUID userId) {
 
     public static AuthorityJson fromEntity(AuthorityEntity entity) {

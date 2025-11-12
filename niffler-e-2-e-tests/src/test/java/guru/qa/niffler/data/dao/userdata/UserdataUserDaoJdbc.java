@@ -61,7 +61,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
         try (PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
                 RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
-            ps.setString(2, entity.getCurrency().name());
+            ps.setString(2, entity.getCurrency());
             ps.setString(3, entity.getFirstName());
             ps.setString(4, entity.getSurname());
             ps.setBytes(5, entity.getPhoto());
@@ -98,7 +98,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(resultSet.getObject(1, UUID.class));
         userEntity.setUsername(resultSet.getString(2));
-        userEntity.setCurrency(resultSet.getObject(3, CurrencyValues.class));
+        userEntity.setCurrency(resultSet.getString(3));
         userEntity.setFirstName(resultSet.getString(4));
         userEntity.setSurname(resultSet.getString(5));
         userEntity.setPhoto(resultSet.getBytes(6));

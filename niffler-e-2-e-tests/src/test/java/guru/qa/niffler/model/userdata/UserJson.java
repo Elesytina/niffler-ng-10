@@ -8,7 +8,7 @@ import java.util.UUID;
 public record UserJson(
         UUID id,
         String username,
-        CurrencyValues currency,
+        String currency,
         String firstName,
         String surname,
         String fullName,
