@@ -1,7 +1,6 @@
 package guru.qa.niffler.model.auth;
 
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
-import guru.qa.niffler.model.enums.Authority;
 
 import java.util.UUID;
 

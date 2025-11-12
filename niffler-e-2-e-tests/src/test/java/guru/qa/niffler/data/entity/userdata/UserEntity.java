@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.entity.userdata;
 
-import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.Getter;
 import lombok.Setter;

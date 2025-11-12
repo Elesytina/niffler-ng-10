@@ -1,7 +1,6 @@
 package guru.qa.niffler.data.entity.auth;
 
 import guru.qa.niffler.model.auth.AuthorityJson;
-import guru.qa.niffler.model.enums.Authority;
 import lombok.Getter;
 import lombok.Setter;
 
