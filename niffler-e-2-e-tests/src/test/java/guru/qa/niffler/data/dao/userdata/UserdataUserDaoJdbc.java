@@ -95,14 +95,14 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     private UserEntity getUserEntity(ResultSet resultSet) throws SQLException {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId(resultSet.getObject(1, UUID.class));
-        userEntity.setUsername(resultSet.getString(2));
-        userEntity.setCurrency(resultSet.getString(3));
-        userEntity.setFirstName(resultSet.getString(4));
-        userEntity.setSurname(resultSet.getString(5));
-        userEntity.setPhoto(resultSet.getBytes(6));
-        userEntity.setPhotoSmall(resultSet.getBytes(7));
-        userEntity.setFullName(resultSet.getString(8));
+        userEntity.setId(resultSet.getObject("id", UUID.class));
+        userEntity.setFullName(resultSet.getString("full_name"));
+        userEntity.setUsername(resultSet.getString("username"));
+        userEntity.setFirstName(resultSet.getString("firstname"));
+        userEntity.setSurname(resultSet.getString("surname"));
+        userEntity.setCurrency(resultSet.getString("currency"));
+        userEntity.setPhoto(resultSet.getBytes("photo"));
+        userEntity.setPhotoSmall(resultSet.getBytes("photo_small"));
 
         return userEntity;
     }

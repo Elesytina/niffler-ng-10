@@ -14,7 +14,7 @@ public class UserDataUserDbClient implements UserDataUserClient {
 
     @Override
     public UserJson getUserById(UUID id) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             Optional<UserEntity> userEntity = new UserdataUserDaoJdbc(connect).findById(id);
 
             if (userEntity.isPresent()) {
@@ -22,12 +22,12 @@ public class UserDataUserDbClient implements UserDataUserClient {
                 return UserJson.fromEntity(userEntity.get());
             }
             throw new RuntimeException("Failed to find user");
-        }, CFG.userdataJdbcUrl(), 2));
+        }, CFG.userdataJdbcUrl()));
     }
 
     @Override
     public UserJson getUserByUsername(String username) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             Optional<UserEntity> userEntity = new UserdataUserDaoJdbc(connect).findByUsername(username);
 
             if (userEntity.isPresent()) {
@@ -35,28 +35,28 @@ public class UserDataUserDbClient implements UserDataUserClient {
                 return UserJson.fromEntity(userEntity.get());
             }
             throw new RuntimeException("Failed to find user");
-        }, CFG.userdataJdbcUrl(), 2));
+        }, CFG.userdataJdbcUrl()));
     }
 
     @Override
     public UserJson createUser(UserJson userJson) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             UserEntity entity = UserEntity.fromJson(userJson);
             UserEntity userEntity = new UserdataUserDaoJdbc(connect).create(entity);
 
             return UserJson.fromEntity(userEntity);
-        }, CFG.userdataJdbcUrl(), 2));
+        }, CFG.userdataJdbcUrl()));
     }
 
     @Override
     public void deleteUser(UserJson userJson) {
-        Databases.transaction(new Databases.XaConsumer(connect -> {
+        Databases.xaTransaction(new Databases.XaConsumer(connect -> {
             UserEntity entity = UserEntity.fromJson(userJson);
             boolean isSuccess = new UserdataUserDaoJdbc(connect).delete(entity);
 
             if (!isSuccess) {
                 throw new RuntimeException("Failed to delete user");
             }
-        }, CFG.userdataJdbcUrl(), 2));
+        }, CFG.userdataJdbcUrl()));
     }
 }

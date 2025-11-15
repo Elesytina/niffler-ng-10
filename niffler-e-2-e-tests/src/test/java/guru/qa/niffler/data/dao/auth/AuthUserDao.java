@@ -8,7 +8,5 @@ public interface AuthUserDao {
 
     Optional<AuthUserEntity> findByUsername(String username);
 
-    Optional<AuthUserEntity> findByUsernameAndPassword(String username, String password);
-
-    AuthUserEntity save(AuthUserEntity authUser);
+    AuthUserEntity create(AuthUserEntity authUser);
 }

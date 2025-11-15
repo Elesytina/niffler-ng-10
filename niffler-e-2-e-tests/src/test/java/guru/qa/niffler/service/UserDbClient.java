@@ -12,6 +12,7 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.enums.Authority;
+import guru.qa.niffler.model.enums.TrnIsolationLevel;
 import guru.qa.niffler.model.userdata.UserJson;
 
 import java.util.List;
@@ -19,16 +20,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.Databases.getConnection;
-import static guru.qa.niffler.data.Databases.transaction;
+import static guru.qa.niffler.data.Databases.xaTransaction;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
-import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
+import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
 
 public class UserDbClient {
 
     public void register(UserJson userJson, String password) {
-        transaction(
+        xaTransaction(TrnIsolationLevel.REPEATABLE_READ,
                 new Databases.XaConsumer(connect -> {
                     AuthUserDao userDao = new AuthUserDaoJdbc(connect);
                     AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(connect);
@@ -40,24 +41,24 @@ public class UserDbClient {
                     }
 
                     AuthUserEntity entity = getAuthUserEntity(userJson, password);
-                    AuthUserEntity savedUser = userDao.save(entity);
+                    AuthUserEntity savedUser = userDao.create(entity);
 
                     AuthorityEntity authorityEntityRead = getAuthorityEntity(savedUser, read);
                     AuthorityEntity authorityEntityWrite = getAuthorityEntity(savedUser, write);
-                    authorityDao.addAll(List.of(authorityEntityRead, authorityEntityWrite));
+                    authorityDao.create(List.of(authorityEntityRead, authorityEntityWrite));
 
-                }, CFG.authJdbcUrl(), TRANSACTION_READ_COMMITTED),
+                }, CFG.authJdbcUrl()),
 
                 new Databases.XaConsumer(connect -> {
                     UserEntity entity = UserEntity.fromJson(userJson);
                     new UserdataUserDaoJdbc(connect)
                             .create(entity);
 
-                }, CFG.userdataJdbcUrl(), TRANSACTION_READ_COMMITTED));
+                }, CFG.userdataJdbcUrl()));
     }
 
     public List<AuthorityJson> getAuthoritiesByUserId(UUID id) {
-        AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(getConnection(CFG.authJdbcUrl(), TRANSACTION_READ_COMMITTED));
+        AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(getConnection(CFG.authJdbcUrl(), READ_COMMITED));
         List<AuthorityEntity> authorityEntities = authorityDao.findAllByUserId(id);
 
         return authorityEntities.stream()
@@ -66,7 +67,7 @@ public class UserDbClient {
     }
 
     public AuthUserJson getAuthUserByName(String name) {
-        AuthUserDaoJdbc authUserDao = new AuthUserDaoJdbc(getConnection(CFG.authJdbcUrl(), TRANSACTION_READ_COMMITTED));
+        AuthUserDaoJdbc authUserDao = new AuthUserDaoJdbc(getConnection(CFG.authJdbcUrl(), READ_COMMITED));
         Optional<AuthUserEntity> authEntity = authUserDao.findByUsername(name);
 
         if (authEntity.isPresent()) {

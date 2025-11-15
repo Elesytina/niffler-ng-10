@@ -44,28 +44,34 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public List<AuthorityEntity> addAll(List<AuthorityEntity> entities) {
-        List<AuthorityEntity> result = new ArrayList<>();
-        for (AuthorityEntity entity : entities) {
-            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
-                    RETURN_GENERATED_KEYS)) {
+    public List<AuthorityEntity> create(List<AuthorityEntity> entities) {
+        List<AuthorityEntity> createdEntities = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
+                RETURN_GENERATED_KEYS)) {
+
+            for (AuthorityEntity entity : entities) {
                 ps.setObject(1, entity.getUserId());
                 ps.setString(2, entity.getAuthority());
-
-                if (ps.executeUpdate() != 0) {
-                    ResultSet resultSet = ps.getGeneratedKeys();
-
-                    if (resultSet.next()) {
-                        entity.setId(resultSet.getObject(1, UUID.class));
-                        result.add(entity);
-                    } else {
-                        throw new RuntimeException("Failed to insert new authority");
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                ps.addBatch();
+                ps.clearParameters();
             }
+            ps.executeBatch();
+            ResultSet resultSet = ps.getGeneratedKeys();
+
+            for (AuthorityEntity entity : entities) {
+                if (resultSet.next()) {
+                    entity.setId(resultSet.getObject("id", UUID.class));
+                    createdEntities.add(entity);
+                } else {
+                    throw new RuntimeException("Failed to create authority");
+                }
+            }
+
+            return createdEntities;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return result;
     }
 }
+
+

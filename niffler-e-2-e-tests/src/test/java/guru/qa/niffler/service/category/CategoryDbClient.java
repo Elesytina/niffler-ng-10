@@ -16,7 +16,7 @@ public class CategoryDbClient implements CategoryClient {
 
     @Override
     public CategoryJson getCategoryById(UUID categoryId) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             Optional<CategoryEntity> categoryEntity = new CategoryDaoJdbc(connect).findById(categoryId);
 
             if (categoryEntity.isPresent()) {
@@ -24,12 +24,12 @@ public class CategoryDbClient implements CategoryClient {
                 return CategoryJson.fromEntity(categoryEntity.get());
             }
             throw new RuntimeException("Failed to find category");
-        }, CFG.spendJdbcUrl(), 2));
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public CategoryJson getCategoryByNameAndUsername(String categoryName, String username) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             Optional<CategoryEntity> categoryEntity = new CategoryDaoJdbc(connect).findByNameAndUsername(categoryName, username);
 
             if (categoryEntity.isPresent()) {
@@ -37,50 +37,50 @@ public class CategoryDbClient implements CategoryClient {
                 return CategoryJson.fromEntity(categoryEntity.get());
             }
             throw new RuntimeException("Failed to find category");
-        }, CFG.spendJdbcUrl(), 2));
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public List<CategoryJson> getAllCategoriesByUsername(String username) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             List<CategoryEntity> categoryEntities = new CategoryDaoJdbc(connect).findAllByUsername(username);
 
             return categoryEntities.stream()
                     .map(CategoryJson::fromEntity)
                     .toList();
-        }, CFG.spendJdbcUrl(), 2));
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public CategoryJson createCategory(CategoryJson category) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             CategoryEntity entity = CategoryEntity.fromJson(category);
             CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).create(entity);
 
             return CategoryJson.fromEntity(categoryEntity);
-        }, CFG.spendJdbcUrl(), 2));
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public CategoryJson updateCategory(CategoryJson categoryJson) {
-        return Databases.transaction(new Databases.XaFunction<>(connect -> {
+        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
             CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
             CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).update(entity);
 
             return CategoryJson.fromEntity(categoryEntity);
-        }, CFG.spendJdbcUrl(), 2));
+        }, CFG.spendJdbcUrl()));
     }
 
     @Override
     public void deleteCategory(CategoryJson categoryJson) {
-        Databases.transaction(new Databases.XaConsumer(connect -> {
+        Databases.xaTransaction(new Databases.XaConsumer(connect -> {
             CategoryEntity entity = CategoryEntity.fromJson(categoryJson);
             boolean isSuccess = new CategoryDaoJdbc(connect).delete(entity);
 
             if (!isSuccess) {
                 throw new RuntimeException("Failed to delete category");
             }
-        }, CFG.spendJdbcUrl(), 2));
+        }, CFG.spendJdbcUrl()));
     }
 
 }

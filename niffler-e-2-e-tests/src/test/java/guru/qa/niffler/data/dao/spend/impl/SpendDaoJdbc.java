@@ -11,10 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
@@ -75,19 +72,18 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public boolean delete(List<UUID> ids) {
-        for (UUID id : ids) {
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ?")) {
+            for (UUID id : ids) {
                 ps.setObject(1, id);
-
-                if (ps.executeUpdate() == 0) {
-
-                    return false;
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                ps.addBatch();
+                ps.clearParameters();
             }
+            int[] deletingResults = ps.executeBatch();
+
+            return Arrays.stream(deletingResults).allMatch(r -> r == 1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return true;
     }
 
     @Override
