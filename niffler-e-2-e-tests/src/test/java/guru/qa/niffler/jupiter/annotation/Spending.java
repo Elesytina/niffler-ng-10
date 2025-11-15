@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter.annotation;
 
 import guru.qa.niffler.jupiter.extension.CreateSpendingExtension;
-import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.enums.CurrencyValues;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
@@ -16,5 +16,5 @@ public @interface Spending {
   String category();
   String description();
   double amount();
-  String currency();
+  CurrencyValues currency();
 }

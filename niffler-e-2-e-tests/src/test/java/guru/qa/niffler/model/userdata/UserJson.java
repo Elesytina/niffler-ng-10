@@ -1,6 +1,6 @@
-package guru.qa.niffler.model;
+package guru.qa.niffler.model.userdata;
 
-import guru.qa.niffler.data.entity.UserEntity;
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import java.util.UUID;
 

@@ -2,7 +2,7 @@ package guru.qa.niffler.service.category;
 
 import guru.qa.niffler.api.CategoryApi;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.spend.CategoryJson;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.Assertions;

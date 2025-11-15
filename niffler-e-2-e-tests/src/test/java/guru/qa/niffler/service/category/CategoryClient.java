@@ -1,6 +1,6 @@
 package guru.qa.niffler.service.category;
 
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.spend.CategoryJson;
 
 import java.util.List;
 import java.util.UUID;
