@@ -175,7 +175,7 @@ public class Databases {
         );
     }
 
-    private static DataSource getDataSource(String jdbcUrl) {
+    public static DataSource getDataSource(String jdbcUrl) {
         return dataSources.computeIfAbsent(jdbcUrl,
                 key -> {
                     AtomikosDataSourceBean datasourceBean = new AtomikosDataSourceBean();

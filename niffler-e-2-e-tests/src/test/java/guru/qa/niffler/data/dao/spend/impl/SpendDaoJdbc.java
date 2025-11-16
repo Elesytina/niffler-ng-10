@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
+import static guru.qa.niffler.model.enums.DateFilterValues.*;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 
@@ -110,18 +111,10 @@ public class SpendDaoJdbc implements SpendDao {
             ResultSet resultSet = ps.executeQuery();
 
             if (resultSet.next()) {
-                SpendEntity spend = new SpendEntity();
-                spend.setId(id);
-                spend.setDescription(resultSet.getString("description"));
-                spend.setUsername(resultSet.getString("username"));
-                spend.setAmount(resultSet.getDouble("amount"));
-                spend.setSpendDate(resultSet.getDate("spend_date"));
+                SpendEntity spend = getSpendEntity(resultSet);
+
                 if (resultSet.getObject("category_id") != null) {
-                    CategoryEntity category = new CategoryEntity();
-                    category.setId(resultSet.getObject("category_id", UUID.class));
-                    category.setName(resultSet.getString("name"));
-                    category.setUsername(resultSet.getString("username"));
-                    category.setArchived(resultSet.getBoolean("archived"));
+                    CategoryEntity category = getCategoryEntity(resultSet);
                     spend.setCategory(category);
                 }
 
@@ -149,22 +142,12 @@ public class SpendDaoJdbc implements SpendDao {
             List<SpendEntity> spends = new ArrayList<>();
 
             while (resultSet.next()) {
-                SpendEntity spend = new SpendEntity();
-                spend.setId(resultSet.getObject("id", UUID.class));
-                spend.setCurrency(resultSet.getString("currency"));
-                spend.setUsername(resultSet.getString("username"));
-                spend.setAmount(resultSet.getDouble("amount"));
-                spend.setSpendDate(resultSet.getDate("spend_date"));
-                spend.setDescription(resultSet.getString("description"));
+                SpendEntity spend = getSpendEntity(resultSet);
                 if (resultSet.getObject("category_id") != null) {
-                    CategoryEntity category = new CategoryEntity();
-                    category.setId(resultSet.getObject("category_id", UUID.class));
-                    category.setName(resultSet.getString("name"));
-                    category.setUsername(resultSet.getString("username"));
-                    category.setArchived(resultSet.getBoolean("archived"));
+                    CategoryEntity category = getCategoryEntity(resultSet);
                     spend.setCategory(category);
-                    spends.add(spend);
                 }
+                spends.add(spend);
             }
 
             return spends;
@@ -187,7 +170,7 @@ public class SpendDaoJdbc implements SpendDao {
             var currency = currencyFilter == null ? null : currencyFilter.name();
             var date = dateFilterValues == null ? null : dateFilterValues.name();
             var dateStart = dateFilterValues == null ? null : java.sql.Date.valueOf(now());
-            var dateEnd = dateFilterValues == null ? null : java.sql.Date.valueOf(getSpendEndDate(dateFilterValues));
+            var dateEnd = dateFilterValues == null ? null : getSpendEndDate(dateFilterValues);
             ps.setString(1, userName);
             ps.setString(2, currency);
             ps.setString(3, currency);
@@ -198,22 +181,12 @@ public class SpendDaoJdbc implements SpendDao {
             List<SpendEntity> spends = new ArrayList<>();
 
             while (resultSet.next()) {
-                SpendEntity spend = new SpendEntity();
-                spend.setId(resultSet.getObject("id", UUID.class));
-                spend.setCurrency(resultSet.getString("currency"));
-                spend.setUsername(resultSet.getString("username"));
-                spend.setAmount(resultSet.getDouble("amount"));
-                spend.setSpendDate(resultSet.getDate("spend_date"));
-                spend.setDescription(resultSet.getString("description"));
+                SpendEntity spend = getSpendEntity(resultSet);
                 if (resultSet.getObject("category_id") != null) {
-                    CategoryEntity category = new CategoryEntity();
-                    category.setId(resultSet.getObject("category_id", UUID.class));
-                    category.setName(resultSet.getString("name"));
-                    category.setUsername(resultSet.getString("username"));
-                    category.setArchived(resultSet.getBoolean("archived"));
+                    CategoryEntity category = getCategoryEntity(resultSet);
                     spend.setCategory(category);
-                    spends.add(spend);
                 }
+                spends.add(spend);
             }
 
             return spends;
@@ -222,13 +195,43 @@ public class SpendDaoJdbc implements SpendDao {
         }
     }
 
+    @Override
+    public List<SpendEntity> findAll() {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM spend")) {
 
-    private LocalDate getSpendEndDate(DateFilterValues dateFilterValues) {
+            ResultSet resultSet = ps.executeQuery();
+            List<SpendEntity> spends = new ArrayList<>();
 
-        return switch (dateFilterValues) {
-            case TODAY -> now();
-            case WEEK -> now().plusWeeks(1);
-            case MONTH -> now().plusMonths(1);
-        };
+            while (resultSet.next()) {
+                SpendEntity spend = getSpendEntity(resultSet);
+                spends.add(spend);
+            }
+
+            return spends;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private SpendEntity getSpendEntity(ResultSet resultSet) throws SQLException {
+        SpendEntity spend = new SpendEntity();
+        spend.setId(resultSet.getObject("id", UUID.class));
+        spend.setCurrency(resultSet.getString("currency"));
+        spend.setUsername(resultSet.getString("username"));
+        spend.setAmount(resultSet.getDouble("amount"));
+        spend.setSpendDate(resultSet.getDate("spend_date"));
+        spend.setDescription(resultSet.getString("description"));
+
+        return spend;
+    }
+
+    private CategoryEntity getCategoryEntity(ResultSet resultSet) throws SQLException {
+        CategoryEntity category = new CategoryEntity();
+        category.setId(resultSet.getObject("category_id", UUID.class));
+        category.setName(resultSet.getString("name"));
+        category.setUsername(resultSet.getString("username"));
+        category.setArchived(resultSet.getBoolean("archived"));
+        return category;
     }
 }

@@ -41,4 +41,27 @@ public class JdbcTest {
         Assertions.assertEquals(2, authorityJsonList.size(), "Authorities list should be 2");
     }
 
+    @Test
+    void shouldRegisterNewUserWithSpringJdbc() {
+        var username = "valik-7";//randomUsername();
+        UserJson userJson = new UserJson(null,
+                username,
+                randomCurrency().name(),
+                randomName(),
+                randomSurname(),
+                randomFullName(),
+                null,
+                null);
+        userDbClient.createUserSpringJdbc(userJson, "123");
+        UserJson userJsonByName = userDataUserClient.getUserByUsername(username);
+        Assertions.assertNotNull(userJsonByName, "User not found");
+
+        AuthUserJson authUserJson = userDbClient.getAuthUserByName(username);
+        Assertions.assertNotNull(authUserJson, "User not found");
+
+        List<AuthorityJson> authorityJsonList = userDbClient.getAuthoritiesByUserId(authUserJson.id());
+        Assertions.assertEquals(2, authorityJsonList.size(), "Authorities list should be 2");
+    }
+
+
 }
