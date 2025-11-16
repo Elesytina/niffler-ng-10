@@ -2,6 +2,7 @@ package guru.qa.niffler.service.category;
 
 import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
+import guru.qa.niffler.data.dao.spend.impl.CategoryDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.model.spend.CategoryJson;
 
@@ -81,6 +82,13 @@ public class CategoryDbClient implements CategoryClient {
                 throw new RuntimeException("Failed to delete category");
             }
         }, CFG.spendJdbcUrl()));
+    }
+
+    public List<CategoryJson> getAllCategories() {
+        return new CategoryDaoSpringJdbc().findAll()
+                .stream()
+                .map(CategoryJson::fromEntity)
+                .toList();
     }
 
 }
