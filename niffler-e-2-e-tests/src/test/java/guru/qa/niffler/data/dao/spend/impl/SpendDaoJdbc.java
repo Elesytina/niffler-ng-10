@@ -10,10 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.*;
 
-import static guru.qa.niffler.model.enums.DateFilterValues.*;
+import static guru.qa.niffler.model.enums.DateFilterValues.getSpendEndDate;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 

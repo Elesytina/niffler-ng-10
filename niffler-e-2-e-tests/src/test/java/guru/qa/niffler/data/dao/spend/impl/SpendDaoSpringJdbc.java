@@ -7,7 +7,6 @@ import guru.qa.niffler.data.mapper.SpendRowMapper;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
