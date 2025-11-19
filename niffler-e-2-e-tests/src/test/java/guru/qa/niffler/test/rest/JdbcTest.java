@@ -7,8 +7,8 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UserDbClient;
-import guru.qa.niffler.service.category.CategoryDbClient;
-import guru.qa.niffler.service.spend.SpendDbClient;
+import guru.qa.niffler.service.category.CategorySpringJdbcClient;
+import guru.qa.niffler.service.spend.SpendSpringJdbcClient;
 import guru.qa.niffler.service.userdata.UserDataUserClient;
 import guru.qa.niffler.service.userdata.UserDataUserDbClient;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +26,8 @@ import static java.time.Instant.now;
 public class JdbcTest {
     private final UserDbClient userDbClient = new UserDbClient();
     private final UserDataUserClient userDataUserClient = new UserDataUserDbClient();
-    private final CategoryDbClient categoryClient = new CategoryDbClient();
-    private final SpendDbClient spendDbClient = new SpendDbClient();
+    private final CategorySpringJdbcClient categoryClient = new CategorySpringJdbcClient();
+    private final SpendSpringJdbcClient spendDbClient = new SpendSpringJdbcClient();
 
     @Test
     void shouldRegisterNewUser() {
@@ -78,6 +78,7 @@ public class JdbcTest {
     void shouldGetAllCategoriesWithSpringJdbc() {
         List<CategoryJson> categoryJsons = categoryClient.getAllCategories();
         log.info(categoryJsons.toString());
+
         Assertions.assertFalse(categoryJsons.isEmpty(), "Category list should not be empty");
     }
 
@@ -91,14 +92,15 @@ public class JdbcTest {
                         true
                 ));
 
-        Assertions.assertNotNull(created, "Category should not be null");
         log.info(created.toString());
+        Assertions.assertNotNull(created, "Category should not be null");
     }
 
     @Test
     void shouldGetAllSpendsWithSpringJdbc() {
-        List<SpendJson> spendJsons = spendDbClient.getAllSpendsWithSpringJdbc();
+        List<SpendJson> spendJsons = spendDbClient.getAllSpends();
         log.info(spendJsons.toString());
+
         Assertions.assertFalse(spendJsons.isEmpty(), "Spend list should not be empty");
     }
 
@@ -106,7 +108,7 @@ public class JdbcTest {
     void shouldCreateSpendWithSpringJdbc() {
         CategoryJson categoryJson = categoryClient.getCategoryById(UUID.fromString("ee6bad98-f842-462c-98d7-848e9c4334c8"));
 
-        var created = spendDbClient.createWithSpringJdbc(
+        var created = spendDbClient.createSpend(
                 new SpendJson(
                         null,
                         Date.from(now()),
@@ -117,7 +119,7 @@ public class JdbcTest {
                         "fishka"
                 ));
 
-        Assertions.assertNotNull(created, "Spend should not be null");
         log.info(created.toString());
+        Assertions.assertNotNull(created, "Spend should not be null");
     }
 }

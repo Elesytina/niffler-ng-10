@@ -84,11 +84,14 @@ public class CategoryDbClient implements CategoryClient {
         }, CFG.spendJdbcUrl()));
     }
 
-    public List<CategoryJson> getAllCategories() {
-        return new CategoryDaoSpringJdbc().findAll()
-                .stream()
-                .map(CategoryJson::fromEntity)
-                .toList();
+    public List<CategoryJson> findAll() {
+        return Databases.transaction(connect -> {
+            List<CategoryEntity> categoryEntities = new CategoryDaoJdbc(connect).findAll();
+
+            return categoryEntities.stream()
+                    .map(CategoryJson::fromEntity)
+                    .toList();
+        }, CFG.spendJdbcUrl());
     }
 
 }

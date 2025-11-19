@@ -4,6 +4,7 @@ import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.mapper.AuthorityRowMapper;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -35,7 +36,7 @@ public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
                 new BatchPreparedStatementSetter() {
 
                     @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    public void setValues(@NotNull PreparedStatement ps, int i) throws SQLException {
                         ps.setObject(1, authorities.get(i).getUserId());
                         ps.setString(2, authorities.get(i).getAuthority());
                     }

@@ -102,18 +102,14 @@ public class SpendDbClient implements SpendClient {
         }, CFG.spendJdbcUrl()));
     }
 
-    public List<SpendJson> getAllSpendsWithSpringJdbc() {
-        List<SpendEntity> spendEntities = new SpendDaoSpringJdbc().findAll();
+    public List<SpendJson> getAllSpends() {
+        return Databases.transaction(connect -> {
+            List<SpendEntity> spendEntities = new SpendDaoJdbc(connect).findAll();
 
-        return spendEntities.stream()
-                .map(SpendJson::fromEntity)
-                .toList();
-    }
-
-    public SpendJson createWithSpringJdbc(SpendJson spend) {
-        SpendEntity created = new SpendDaoSpringJdbc().create(SpendEntity.fromJson(spend));
-
-        return SpendJson.fromEntity(created);
+            return spendEntities.stream()
+                    .map(SpendJson::fromEntity)
+                    .toList();
+        }, CFG.spendJdbcUrl());
     }
 
 }
