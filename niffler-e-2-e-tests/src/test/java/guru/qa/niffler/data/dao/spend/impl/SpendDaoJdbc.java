@@ -1,34 +1,33 @@
-package guru.qa.niffler.data.dao.impl;
+package guru.qa.niffler.data.dao.spend.impl;
 
-import guru.qa.niffler.data.dao.SpendDao;
-import guru.qa.niffler.data.entity.CategoryEntity;
-import guru.qa.niffler.data.entity.SpendEntity;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.DateFilterValues;
+import guru.qa.niffler.data.dao.spend.SpendDao;
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
+import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.enums.DateFilterValues;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static guru.qa.niffler.data.Databases.getConnection;
-import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 
 public class SpendDaoJdbc implements SpendDao {
 
+    private final Connection connection;
+
+    public SpendDaoJdbc(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public SpendEntity create(SpendEntity entity) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement("INSERT INTO spend(username, spend_date,currency, amount, description, category_id) values (?,?,?,?,?,?)",
-                     RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO spend(username, spend_date,currency, amount, description, category_id) values (?,?,?,?,?,?)",
+                RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setDate(2, entity.getSpendDate());
             ps.setString(3, entity.getCurrency());
@@ -53,8 +52,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public SpendEntity update(SpendEntity entity) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
             ps.setString(2, entity.getCurrency());
             ps.setDouble(3, entity.getAmount());
@@ -73,30 +71,25 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public boolean deleteSpends(List<UUID> ids, String userName) {
-        for (UUID id : ids) {
-            try (Connection connection = getConnection(CFG.spendJdbcUrl());
-                 PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ? and username = ?")) {
+    public boolean delete(List<UUID> ids) {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ?")) {
+            for (UUID id : ids) {
                 ps.setObject(1, id);
-                ps.setObject(2, userName);
-
-                if (ps.executeUpdate() == 0) {
-
-                    return false;
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                ps.addBatch();
+                ps.clearParameters();
             }
+            int[] deletingResults = ps.executeBatch();
+
+            return Arrays.stream(deletingResults).allMatch(r -> r == 1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return true;
     }
 
     @Override
-    public boolean deleteSpend(SpendEntity spendEntity) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ? and username = ?")) {
+    public boolean delete(SpendEntity spendEntity) {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ?")) {
             ps.setObject(1, spendEntity.getId());
-            ps.setObject(2, spendEntity.getUsername());
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -105,15 +98,14 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public Optional<SpendEntity> findSpendById(UUID id) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement("""
-                     SELECT *
-                     FROM spend
-                     LEFT JOIN category
-                     ON spend.category_id = category.id
-                     WHERE spend.id = ?
-                     """)) {
+    public Optional<SpendEntity> findById(UUID id) {
+        try (PreparedStatement ps = connection.prepareStatement("""
+                SELECT *
+                FROM spend
+                LEFT JOIN category
+                ON spend.category_id = category.id
+                WHERE spend.id = ?
+                """)) {
             ps.setObject(1, id);
             ResultSet resultSet = ps.executeQuery();
 
@@ -143,15 +135,14 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAllSpendsByUsername(String userName) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement(
-                     """
-                             SELECT * FROM spend
-                             LEFT JOIN category
-                             ON spend.category_id = category.id
-                             WHERE spend.username = ?
-                             """)) {
+    public List<SpendEntity> findByUsername(String userName) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                """
+                        SELECT * FROM spend
+                        LEFT JOIN category
+                        ON spend.category_id = category.id
+                        WHERE spend.username = ?
+                        """)) {
             ps.setString(1, userName);
 
             ResultSet resultSet = ps.executeQuery();
@@ -183,17 +174,16 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        try (Connection connection = getConnection(CFG.spendJdbcUrl());
-             PreparedStatement ps = connection.prepareStatement(
-                     """
-                             SELECT * FROM spend
-                             LEFT JOIN category
-                             ON spend.category_id = category.id
-                             WHERE spend.username = ?
-                             AND (? is null OR currency = ?)
-                             AND (? is null OR spend_date BETWEEN ? AND ?)
-                             """)) {
+    public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                """
+                        SELECT * FROM spend
+                        LEFT JOIN category
+                        ON spend.category_id = category.id
+                        WHERE spend.username = ?
+                        AND (? is null OR currency = ?)
+                        AND (? is null OR spend_date BETWEEN ? AND ?)
+                        """)) {
             var currency = currencyFilter == null ? null : currencyFilter.name();
             var date = dateFilterValues == null ? null : dateFilterValues.name();
             var dateStart = dateFilterValues == null ? null : java.sql.Date.valueOf(now());

@@ -1,0 +1,20 @@
+package guru.qa.niffler.model.auth;
+
+import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+
+import java.util.UUID;
+
+public record AuthorityJson(
+        UUID id,
+        String authority,
+        UUID userId) {
+
+    public static AuthorityJson fromEntity(AuthorityEntity entity) {
+
+        return new AuthorityJson(
+                entity.getId(),
+                entity.getAuthority(),
+                entity.getUserId());
+    }
+
+}
