@@ -1,9 +1,6 @@
 package guru.qa.niffler.service.spend;
 
-import guru.qa.niffler.data.Databases;
-import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
-import guru.qa.niffler.data.dao.spend.impl.SpendDaoJdbc;
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
+import guru.qa.niffler.data.dao.spend.impl.SpendDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
@@ -14,101 +11,65 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-
 @Slf4j
 public class SpendDbClient implements SpendClient {
 
+    private final SpendDaoSpringJdbc dao = new SpendDaoSpringJdbc();
+
     @Override
     public SpendJson getSpendById(UUID id) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            Optional<SpendEntity> spendEntity = new SpendDaoJdbc(connect).findById(id);
+        Optional<SpendEntity> entity = dao.findById(id);
 
-            if (spendEntity.isPresent()) {
-
-                return SpendJson.fromEntity(spendEntity.get());
-            }
-            throw new RuntimeException("Failed to find spend");
-        }, CFG.spendJdbcUrl()));
+        return entity.map(SpendJson::fromEntity)
+                .orElseThrow(() -> new RuntimeException("Spend not found"));
     }
 
     @Override
     public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            List<SpendEntity> spendEntities = new SpendDaoJdbc(connect).findAllByFiltersAndUsername(currencyFilter, dateFilterValues, userName);
+        List<SpendEntity> entities = dao.findAllByFiltersAndUsername(currencyFilter, dateFilterValues, userName);
 
-            return spendEntities.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
-        }, CFG.spendJdbcUrl()));
+        return entities.stream()
+                .map(SpendJson::fromEntity)
+                .toList();
     }
 
     @Override
     public List<SpendJson> getAllSpendsByUsername(String userName) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            List<SpendEntity> spendEntities = new SpendDaoJdbc(connect).findByUsername(userName);
+        List<SpendEntity> entities = dao.findByUsername(userName);
 
-            return spendEntities.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
-        }, CFG.spendJdbcUrl()));
+        return entities.stream()
+                .map(SpendJson::fromEntity)
+                .toList();
     }
 
     @Override
     public SpendJson createSpend(SpendJson spend) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spend);
+        SpendEntity entity = dao.create(SpendEntity.fromJson(spend));
 
-            if (spendEntity.getCategory().getId() == null) {
-                CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).create(spendEntity.getCategory());
-                spendEntity.setCategory(categoryEntity);
-            }
-
-            SpendEntity created = new SpendDaoJdbc(connect).create(spendEntity);
-            return SpendJson.fromEntity(created);
-        }, CFG.spendJdbcUrl()));
+        return SpendJson.fromEntity(entity);
     }
 
     @Override
     public SpendJson updateSpend(SpendJson spendJson) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spendJson);
-            SpendEntity updated = new SpendDaoJdbc(connect).update(spendEntity);
+        SpendEntity entity = dao.update(SpendEntity.fromJson(spendJson));
 
-            return SpendJson.fromEntity(updated);
-        }, CFG.spendJdbcUrl()));
-    }
-
-    public void deleteSpends(List<UUID> ids) {
-        Databases.xaTransaction(new Databases.XaConsumer(connect -> {
-            boolean isSuccess = new SpendDaoJdbc(connect).delete(ids);
-
-            if (!isSuccess) {
-                throw new RuntimeException("Failed to delete spends");
-            }
-        }, CFG.spendJdbcUrl()));
+        return SpendJson.fromEntity(entity);
     }
 
     @Override
     public void deleteSpend(SpendJson spend) {
-        Databases.xaTransaction(new Databases.XaConsumer(connect -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spend);
-            boolean isSuccess = new SpendDaoJdbc(connect).delete(spendEntity);
+        boolean isDeleted = dao.delete(SpendEntity.fromJson(spend));
 
-            if (!isSuccess) {
-                throw new RuntimeException("Failed to delete spends");
-            }
-        }, CFG.spendJdbcUrl()));
+        if (!isDeleted) {
+            throw new RuntimeException("Spend not found");
+        }
     }
 
     public List<SpendJson> getAllSpends() {
-        return Databases.transaction(connect -> {
-            List<SpendEntity> spendEntities = new SpendDaoJdbc(connect).findAll();
+        List<SpendEntity> spendEntities = new SpendDaoSpringJdbc().findAll();
 
-            return spendEntities.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
-        }, CFG.spendJdbcUrl());
+        return spendEntities.stream()
+                .map(SpendJson::fromEntity)
+                .toList();
     }
-
 }

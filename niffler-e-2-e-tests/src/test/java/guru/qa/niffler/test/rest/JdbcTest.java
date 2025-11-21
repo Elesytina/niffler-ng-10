@@ -7,8 +7,8 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UserDbClient;
-import guru.qa.niffler.service.category.CategorySpringJdbcClient;
-import guru.qa.niffler.service.spend.SpendSpringJdbcClient;
+import guru.qa.niffler.service.category.CategoryDbClient;
+import guru.qa.niffler.service.spend.SpendDbClient;
 import guru.qa.niffler.service.userdata.UserDataUserClient;
 import guru.qa.niffler.service.userdata.UserDataUserDbClient;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +26,8 @@ import static java.time.Instant.now;
 public class JdbcTest {
     private final UserDbClient userDbClient = new UserDbClient();
     private final UserDataUserClient userDataUserClient = new UserDataUserDbClient();
-    private final CategorySpringJdbcClient categoryClient = new CategorySpringJdbcClient();
-    private final SpendSpringJdbcClient spendDbClient = new SpendSpringJdbcClient();
+    private final CategoryDbClient categoryClient = new CategoryDbClient();
+    private final SpendDbClient spendDbClient = new SpendDbClient();
 
     @Test
     void shouldRegisterNewUser() {
@@ -113,7 +113,7 @@ public class JdbcTest {
                         null,
                         Date.from(now()),
                         categoryJson,
-                        CurrencyValues.RUB.name(),
+                        CurrencyValues.RUB,
                         1234.1234,
                         randomSentence(3),
                         "fishka"

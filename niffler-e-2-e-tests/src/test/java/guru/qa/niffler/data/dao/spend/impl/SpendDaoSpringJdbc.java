@@ -36,7 +36,8 @@ public class SpendDaoSpringJdbc implements SpendDao {
                         SELECT * FROM spend sp
                         LEFT JOIN category c
                         ON sp.category_id = c.id
-                        WHERE sp.id = ?""",
+                        WHERE sp.id = ?
+                        """,
                 SpendRowMapper.INSTANCE,
                 id));
     }
@@ -50,7 +51,8 @@ public class SpendDaoSpringJdbc implements SpendDao {
                         SELECT * FROM spend sp
                         LEFT JOIN category c
                         ON sp.category_id = c.id
-                        WHERE sp.username = ?""",
+                        WHERE sp.username = ?
+                        """,
                 SpendRowMapper.INSTANCE,
                 userName);
     }
@@ -67,7 +69,8 @@ public class SpendDaoSpringJdbc implements SpendDao {
                             ON spend.category_id = category.id
                             WHERE spend.username = ?
                             AND (? is null OR currency = ?)
-                            AND (? is null OR spend_date BETWEEN ? AND ?)""");
+                            AND (? is null OR spend_date BETWEEN ? AND ?)
+                            """);
             var currency = currencyFilter == null ? null : currencyFilter.name();
             var date = dateFilterValues == null ? null : dateFilterValues.name();
             var dateStart = dateFilterValues == null ? null : Date.valueOf(now());
@@ -101,7 +104,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, entity.getUsername());
             ps.setDate(2, entity.getSpendDate());
-            ps.setString(3, entity.getCurrency());
+            ps.setString(3, entity.getCurrency().name());
             ps.setDouble(4, entity.getAmount());
             ps.setString(5, entity.getDescription());
             ps.setObject(6, entity.getCategory().getId());
@@ -136,7 +139,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     @Override
     public boolean delete(List<UUID> ids) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
-        var result = template.update("DELETE FROM category where id IN (?)",
+        var result = template.update("DELETE FROM spend where id IN (?)",
                 ids.toArray());
 
         return result == 1;
@@ -145,7 +148,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     @Override
     public boolean delete(SpendEntity spendEntity) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
-        var result = template.update("DELETE FROM category where id = ?",
+        var result = template.update("DELETE FROM spend where id = ?",
                 spendEntity.getId());
 
         return result == 1;

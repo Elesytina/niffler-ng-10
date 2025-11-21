@@ -2,6 +2,7 @@ package guru.qa.niffler.data.mapper;
 
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.model.enums.CurrencyValues;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,7 +22,7 @@ public class SpendRowMapper implements RowMapper<SpendEntity> {
         entity.setId(rs.getObject("id", UUID.class));
         entity.setUsername(rs.getString("username"));
         entity.setSpendDate(rs.getDate("spend_date"));
-        entity.setCurrency(rs.getString("currency"));
+        entity.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
         entity.setAmount(rs.getDouble("amount"));
         entity.setDescription(rs.getString("description"));
 

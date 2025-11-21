@@ -30,7 +30,7 @@ public class SpendDaoJdbc implements SpendDao {
                 RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setDate(2, entity.getSpendDate());
-            ps.setString(3, entity.getCurrency());
+            ps.setString(3, entity.getCurrency().name());
             ps.setDouble(4, entity.getAmount());
             ps.setString(5, entity.getDescription());
             ps.setObject(6, entity.getCategory().getId());
@@ -54,7 +54,7 @@ public class SpendDaoJdbc implements SpendDao {
     public SpendEntity update(SpendEntity entity) {
         try (PreparedStatement ps = connection.prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
-            ps.setString(2, entity.getCurrency());
+            ps.setString(2, entity.getCurrency().name());
             ps.setDouble(3, entity.getAmount());
             ps.setString(4, entity.getDescription());
             ps.setObject(5, entity.getCategory().getId());
@@ -216,7 +216,7 @@ public class SpendDaoJdbc implements SpendDao {
     private SpendEntity getSpendEntity(ResultSet resultSet) throws SQLException {
         SpendEntity spend = new SpendEntity();
         spend.setId(resultSet.getObject("id", UUID.class));
-        spend.setCurrency(resultSet.getString("currency"));
+        spend.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
         spend.setUsername(resultSet.getString("username"));
         spend.setAmount(resultSet.getDouble("amount"));
         spend.setSpendDate(resultSet.getDate("spend_date"));

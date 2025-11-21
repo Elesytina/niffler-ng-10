@@ -9,5 +9,5 @@ public interface AuthAuthorityDao {
 
     List<AuthorityEntity> findAllByUserId(UUID userId);
 
-    List<AuthorityEntity> create(List<AuthorityEntity> authorities);
+    void create(List<AuthorityEntity> authorities);
 }

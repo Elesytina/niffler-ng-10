@@ -28,9 +28,8 @@ public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
                 userId);
     }
 
-
     @Override
-    public List<AuthorityEntity> create(List<AuthorityEntity> authorities) {
+    public void create(List<AuthorityEntity> authorities) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.batchUpdate("INSERT INTO authority(user_id, authority)  VALUES( ?, ?)",
                 new BatchPreparedStatementSetter() {
@@ -46,6 +45,5 @@ public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
                         return authorities.size();
                     }
                 });
-        return List.of();
     }
 }
