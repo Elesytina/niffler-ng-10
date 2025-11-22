@@ -44,8 +44,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public List<AuthorityEntity> create(List<AuthorityEntity> entities) {
-        List<AuthorityEntity> createdEntities = new ArrayList<>();
+    public void create(List<AuthorityEntity> entities) {
         try (PreparedStatement ps = connection.prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
                 RETURN_GENERATED_KEYS)) {
 
@@ -56,18 +55,6 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                 ps.clearParameters();
             }
             ps.executeBatch();
-            ResultSet resultSet = ps.getGeneratedKeys();
-
-            for (AuthorityEntity entity : entities) {
-                if (resultSet.next()) {
-                    entity.setId(resultSet.getObject("id", UUID.class));
-                    createdEntities.add(entity);
-                } else {
-                    throw new RuntimeException("Failed to create authority");
-                }
-            }
-
-            return createdEntities;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

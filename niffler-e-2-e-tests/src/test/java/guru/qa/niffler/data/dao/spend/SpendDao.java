@@ -16,6 +16,8 @@ public interface SpendDao {
 
     List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
 
+    List<SpendEntity> findAll();
+
     SpendEntity create(SpendEntity entity);
 
     SpendEntity update(SpendEntity spendEntity);

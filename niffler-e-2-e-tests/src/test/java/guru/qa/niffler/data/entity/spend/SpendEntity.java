@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.entity.spend;
 
+import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.UUID;
 public class SpendEntity {
     private UUID id;
     private String username;
-    private String currency;
+    private CurrencyValues currency;
     private Date spendDate;
     private Double amount;
     private String description;

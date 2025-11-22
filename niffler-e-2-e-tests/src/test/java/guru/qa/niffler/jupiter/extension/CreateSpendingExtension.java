@@ -37,7 +37,7 @@ public class CreateSpendingExtension implements BeforeEachCallback {
                                                 username,
                                                 false
                                         ),
-                                        annoSpending.currency().name(),
+                                        annoSpending.currency(),
                                         annoSpending.amount(),
                                         annoSpending.description(),
                                         username
