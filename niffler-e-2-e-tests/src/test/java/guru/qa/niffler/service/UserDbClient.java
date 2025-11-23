@@ -1,6 +1,5 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
 import guru.qa.niffler.data.dao.auth.AuthUserDao;
 import guru.qa.niffler.data.dao.auth.impl.AuthAuthorityDaoJdbc;
@@ -17,6 +16,8 @@ import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.enums.Authority;
 import guru.qa.niffler.model.enums.TrnIsolationLevel;
 import guru.qa.niffler.model.userdata.UserJson;
+import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,18 +28,28 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
 import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
+import static java.util.stream.Stream.of;
 
 public class UserDbClient {
 
-    public UserJson createUserSpringJdbc(UserJson userJson, String password) {
-        var savedAuthUser = new AuthUserSpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
-                .create(getAuthUserEntity(userJson, password));
+    private final TransactionTemplate transactionTemplate = new TransactionTemplate(
+            new JdbcTransactionManager(
+                    getDataSource(CFG.authJdbcUrl())
+            )
+    );
 
-        new AuthAuthoritySpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
-                .create(List.of(
-                        getAuthorityEntity(savedAuthUser, read),
-                        getAuthorityEntity(savedAuthUser, write)
-                ));
+    public UserJson createUserSpringJdbc(UserJson userJson, String password) {
+        transactionTemplate.execute(status -> {
+            var savedAuthUser = new AuthUserSpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
+                    .create(getAuthUserEntity(userJson, password));
+
+            new AuthAuthoritySpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
+                    .create(
+                            of(read, write)
+                                    .map(authority -> getAuthorityEntity(savedAuthUser, authority))
+                                    .toList());
+            return null;
+        });
 
         var user = new UserdataUserDaoSpringJdbc(getDataSource(CFG.userdataJdbcUrl()))
                 .create(UserEntity.fromJson(userJson));
@@ -48,7 +59,7 @@ public class UserDbClient {
 
     public void register(UserJson userJson, String password) {
         xaTransaction(TrnIsolationLevel.REPEATABLE_READ,
-                new Databases.XaConsumer(connect -> {
+                new XaConsumer(connect -> {
                     AuthUserDao userDao = new AuthUserDaoJdbc(connect);
                     AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(connect);
                     var username = userJson.username();
@@ -67,7 +78,7 @@ public class UserDbClient {
 
                 }, CFG.authJdbcUrl()),
 
-                new Databases.XaConsumer(connect -> {
+                new XaConsumer(connect -> {
                     UserEntity entity = UserEntity.fromJson(userJson);
                     new UserdataUserDaoJdbc(connect)
                             .create(entity);

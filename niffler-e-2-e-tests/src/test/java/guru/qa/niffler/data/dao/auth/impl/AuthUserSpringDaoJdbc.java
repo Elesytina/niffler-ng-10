@@ -10,23 +10,24 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 @RequiredArgsConstructor
 public class AuthUserSpringDaoJdbc implements AuthUserDao {
 
-    private final DataSource dataSource;
     private static final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
 
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
 
         return Optional.ofNullable(
                 template.queryForObject("SELECT * FROM \"user\" WHERE username = ?",
@@ -36,7 +37,7 @@ public class AuthUserSpringDaoJdbc implements AuthUserDao {
 
     @Override
     public AuthUserEntity create(AuthUserEntity authUser) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO \"user\"( username, password,enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)",

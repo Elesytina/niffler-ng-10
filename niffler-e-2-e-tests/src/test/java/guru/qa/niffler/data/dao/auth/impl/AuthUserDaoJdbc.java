@@ -5,28 +5,25 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.Connections.getHolder;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthUserDaoJdbc implements AuthUserDao {
 
-    private final Connection connection;
-
     private static final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-
-    public AuthUserDaoJdbc(Connection conn) {
-        this.connection = conn;
-    }
 
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
+        try (PreparedStatement ps = getHolder(CFG.authJdbcUrl())
+                .getConnection()
+                .prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
 
@@ -38,8 +35,10 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public AuthUserEntity create(AuthUserEntity entity) {
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\"( username, password,enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)",
-                RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = getHolder(CFG.authJdbcUrl())
+                .getConnection()
+                .prepareStatement("INSERT INTO \"user\"( username, password,enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)",
+                        RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setString(2, passwordEncoder.encode(entity.getPassword()));
             ps.setBoolean(3, entity.getEnabled());

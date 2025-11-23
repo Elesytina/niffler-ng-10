@@ -7,21 +7,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.Databases.getDataSource;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 @RequiredArgsConstructor
 public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
-    private final DataSource dataSource;
-
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
         return Optional.ofNullable(
                 template.queryForObject("SELECT * FROM \"user\" WHERE id = ?",
@@ -31,7 +31,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
         return Optional.ofNullable(
                 template.queryForObject("SELECT * FROM \"user\" WHERE username = ?",
@@ -41,7 +41,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
     @Override
     public UserEntity create(UserEntity entity) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
@@ -65,7 +65,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
     @Override
     public boolean delete(UserEntity spendEntity) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
         int result = template.update("DELETE FROM \"user\" WHERE id = ?", spendEntity.getId());
 
         return result == 1;

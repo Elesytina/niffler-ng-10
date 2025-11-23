@@ -62,6 +62,7 @@ public class JdbcTest {
                 randomFullName(),
                 null,
                 null);
+
         userDbClient.createUserSpringJdbc(userJson, "123");
         UserJson userJsonByName = userDataUserClient.getUserByUsername(username);
         Assertions.assertNotNull(userJsonByName, "User not found");

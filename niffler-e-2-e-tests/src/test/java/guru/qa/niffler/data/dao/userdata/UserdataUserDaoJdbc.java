@@ -2,26 +2,23 @@ package guru.qa.niffler.data.dao.userdata;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.Connections.getHolder;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class UserdataUserDaoJdbc implements UserdataUserDao {
 
-    private final Connection connection;
-
-    public UserdataUserDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
-
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = ?")) {
+        try (PreparedStatement ps = getHolder(CFG.userdataJdbcUrl())
+                .getConnection()
+                .prepareStatement("SELECT * FROM \"user\" WHERE id = ?")) {
             ps.setObject(1, id);
             ResultSet resultSet = ps.executeQuery();
 
@@ -39,7 +36,9 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
+        try (PreparedStatement ps = getHolder(CFG.userdataJdbcUrl())
+                .getConnection()
+                .prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
             ps.setString(1, username);
             ResultSet resultSet = ps.executeQuery();
 
@@ -57,8 +56,10 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public UserEntity create(UserEntity entity) {
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
-                RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = getHolder(CFG.userdataJdbcUrl())
+                .getConnection()
+                .prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
+                        RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setString(2, entity.getCurrency());
             ps.setString(3, entity.getFirstName());
@@ -84,7 +85,9 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
 
     @Override
     public boolean delete(UserEntity entity) {
-        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" where id = ?")) {
+        try (PreparedStatement ps = getHolder(CFG.userdataJdbcUrl())
+                .getConnection()
+                .prepareStatement("DELETE FROM \"user\" where id = ?")) {
             ps.setObject(1, entity.getId());
 
             return ps.executeUpdate() == 1;

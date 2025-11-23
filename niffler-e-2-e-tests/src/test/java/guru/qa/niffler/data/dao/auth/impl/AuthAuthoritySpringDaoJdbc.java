@@ -8,20 +8,21 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 @RequiredArgsConstructor
 public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
 
-    private final DataSource dataSource;
 
     @Override
     public List<AuthorityEntity> findAllByUserId(UUID userId) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
 
         return jdbcTemplate.query("SELECT * FROM authority where user_id = ?",
                 AuthorityRowMapper.INSTANCE,
@@ -30,7 +31,7 @@ public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void create(List<AuthorityEntity> authorities) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
         jdbcTemplate.batchUpdate("INSERT INTO authority(user_id, authority)  VALUES( ?, ?)",
                 new BatchPreparedStatementSetter() {
 
