@@ -42,4 +42,8 @@ public class RandomDataUtils {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static double randomDouble(double min, double max) {
+        return rand.nextDouble(min, max);
+    }
 }

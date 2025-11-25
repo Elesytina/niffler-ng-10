@@ -115,7 +115,7 @@ public class JdbcTest {
                         Date.from(now()),
                         categoryJson,
                         CurrencyValues.RUB,
-                        1234.1234,
+                        randomDouble(10, 10000),
                         randomSentence(3),
                         "fishka"
                 ));
