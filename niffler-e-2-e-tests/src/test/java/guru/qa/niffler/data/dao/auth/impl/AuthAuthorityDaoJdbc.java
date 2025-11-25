@@ -2,6 +2,7 @@ package guru.qa.niffler.data.dao.auth.impl;
 
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,11 +16,11 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
+    private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
     @Override
     public List<AuthorityEntity> findAllByUserId(UUID userId) {
-        try (PreparedStatement ps = getHolder(CFG.authJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("SELECT * FROM authority WHERE user_id = ?")) {
             ps.setObject(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -42,8 +43,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void create(List<AuthorityEntity> entities) {
-        try (PreparedStatement ps = getHolder(CFG.authJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
                         RETURN_GENERATED_KEYS)) {
 

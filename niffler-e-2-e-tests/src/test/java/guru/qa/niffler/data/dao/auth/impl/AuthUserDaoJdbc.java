@@ -2,6 +2,7 @@ package guru.qa.niffler.data.dao.auth.impl;
 
 import guru.qa.niffler.data.dao.auth.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,13 +17,12 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthUserDaoJdbc implements AuthUserDao {
-
+    private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
     private static final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
-        try (PreparedStatement ps = getHolder(CFG.authJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
@@ -35,8 +35,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public AuthUserEntity create(AuthUserEntity entity) {
-        try (PreparedStatement ps = getHolder(CFG.authJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO \"user\"( username, password,enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)",
                         RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());

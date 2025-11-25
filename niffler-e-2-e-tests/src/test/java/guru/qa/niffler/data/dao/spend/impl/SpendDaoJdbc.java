@@ -3,6 +3,7 @@ package guru.qa.niffler.data.dao.spend.impl;
 import guru.qa.niffler.data.dao.spend.SpendDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
 
@@ -18,12 +19,12 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 
 public class SpendDaoJdbc implements SpendDao {
+    private final JdbcConnectionHolder connectionHolder = getHolder(CFG.spendJdbcUrl());
 
     @Override
     public SpendEntity create(SpendEntity entity) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
-                .getConnection()
-                .prepareStatement("INSERT INTO spend(username, spend_date,currency, amount, description, category_id) values (?,?,?,?,?,?)",
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
                         RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setDate(2, entity.getSpendDate());
@@ -49,8 +50,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public SpendEntity update(SpendEntity entity) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
             ps.setString(2, entity.getCurrency().name());
@@ -71,8 +71,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public boolean delete(List<UUID> ids) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("DELETE FROM spend where id = ?")) {
             for (UUID id : ids) {
                 ps.setObject(1, id);
@@ -89,8 +88,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public boolean delete(SpendEntity spendEntity) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("DELETE FROM spend where id = ?")) {
             ps.setObject(1, spendEntity.getId());
 
@@ -102,8 +100,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public Optional<SpendEntity> findById(UUID id) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("""
                         SELECT *
                         FROM spend
@@ -133,8 +130,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findByUsername(String userName) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
-                .getConnection()
+        try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement(
                         """
                                 SELECT * FROM spend
@@ -164,7 +160,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
+        try (PreparedStatement ps = connectionHolder
                 .getConnection()
                 .prepareStatement(
                         """
@@ -205,7 +201,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        try (PreparedStatement ps = getHolder(CFG.spendJdbcUrl())
+        try (PreparedStatement ps = connectionHolder
                 .getConnection()
                 .prepareStatement("SELECT * FROM spend")) {
             ResultSet resultSet = ps.executeQuery();

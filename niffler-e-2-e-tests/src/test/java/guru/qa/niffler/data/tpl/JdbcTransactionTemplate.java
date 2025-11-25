@@ -10,26 +10,20 @@ import java.util.function.Supplier;
 import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
 
 public class JdbcTransactionTemplate {
-
     private final JdbcConnectionHolder holder;
-
     private final AtomicBoolean closeAfterAction = new AtomicBoolean(true);
 
     public JdbcTransactionTemplate(String jdbcUrl) {
         this.holder = Connections.getHolder(jdbcUrl);
     }
 
-    public JdbcTransactionTemplate holdConnectionAfterAction(JdbcConnectionHolder holder) {
-        this.closeAfterAction.set(false);
-        return this;
-    }
-
-    public <T> T transaction(Supplier<T> supplier, TrnIsolationLevel isolationLvl) {
+    public <T> T execute(Supplier<T> supplier, TrnIsolationLevel isolationLvl) {
         Connection connection = null;
         try {
             connection = holder.getConnection();
             connection.setTransactionIsolation(isolationLvl.getLevel());
             connection.setAutoCommit(false);
+
             T result = supplier.get();
             connection.commit();
             connection.setAutoCommit(true);
@@ -50,7 +44,12 @@ public class JdbcTransactionTemplate {
         }
     }
 
-    public <T> T transaction(Supplier<T> supplier) {
-        return transaction(supplier, READ_COMMITED);
+    public <T> T execute(Supplier<T> supplier) {
+        return execute(supplier, READ_COMMITED);
+    }
+
+    public JdbcTransactionTemplate holdConnectionAfterAction(JdbcConnectionHolder holder) {
+        this.closeAfterAction.set(false);
+        return this;
     }
 }

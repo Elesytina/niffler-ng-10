@@ -41,6 +41,7 @@ public class JdbcTest {
                 null,
                 null);
         userDbClient.register(userJson, "123");
+
         UserJson userJsonByName = userDataUserClient.getUserByUsername(username);
         Assertions.assertNotNull(userJsonByName, "User not found");
 
@@ -62,8 +63,8 @@ public class JdbcTest {
                 randomFullName(),
                 null,
                 null);
-
         userDbClient.createUserSpringJdbc(userJson, "123");
+
         UserJson userJsonByName = userDataUserClient.getUserByUsername(username);
         Assertions.assertNotNull(userJsonByName, "User not found");
 
@@ -92,8 +93,8 @@ public class JdbcTest {
                         "fishka",
                         true
                 ));
-
         log.info(created.toString());
+
         Assertions.assertNotNull(created, "Category should not be null");
     }
 
@@ -108,7 +109,6 @@ public class JdbcTest {
     @Test
     void shouldCreateSpendWithSpringJdbc() {
         CategoryJson categoryJson = categoryClient.getCategoryById(UUID.fromString("ee6bad98-f842-462c-98d7-848e9c4334c8"));
-
         var created = spendDbClient.createSpend(
                 new SpendJson(
                         null,
@@ -119,8 +119,8 @@ public class JdbcTest {
                         randomSentence(3),
                         "fishka"
                 ));
-
         log.info(created.toString());
+
         Assertions.assertNotNull(created, "Spend should not be null");
     }
 }

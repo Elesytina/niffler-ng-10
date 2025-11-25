@@ -3,7 +3,7 @@ package guru.qa.niffler.data.tpl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,11 +22,9 @@ public class Connections {
     }
 
     public static JdbcConnectionHolders getHolders(String... jdbcUrl) {
-        List<JdbcConnectionHolder> holdersList = new ArrayList<>();
-
-        for (String url : jdbcUrl) {
-            holdersList.add(getHolder(url));
-        }
+        List<JdbcConnectionHolder> holdersList = Arrays.stream(jdbcUrl)
+                .map(Connections::getHolder)
+                .toList();
 
         return new JdbcConnectionHolders(holdersList);
     }

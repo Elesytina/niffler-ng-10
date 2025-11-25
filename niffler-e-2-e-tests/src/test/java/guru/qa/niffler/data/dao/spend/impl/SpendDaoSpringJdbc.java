@@ -24,9 +24,10 @@ import static java.time.LocalDate.now;
 
 public class SpendDaoSpringJdbc implements SpendDao {
 
+    private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
+
     @Override
     public Optional<SpendEntity> findById(UUID id) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
         return Optional.ofNullable(template.queryForObject(
                 """
@@ -41,7 +42,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findByUsername(String userName) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
         return template.query(
                 """
@@ -56,7 +56,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
         return template.query(conn -> {
             PreparedStatement ps = conn.prepareStatement(
@@ -85,7 +84,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
         return template.query("SELECT * FROM spend s LEFT JOIN category c ON s.category_id = c.id",
                 SpendRowMapper.INSTANCE);
@@ -93,8 +91,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public SpendEntity create(SpendEntity entity) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
@@ -117,11 +113,9 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public SpendEntity update(SpendEntity spendEntity) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
-
         var result = template.update("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?",
                 spendEntity.getSpendDate(),
-                spendEntity.getCurrency(),
+                spendEntity.getCurrency().name(),
                 spendEntity.getAmount(),
                 spendEntity.getDescription(),
                 spendEntity.getCategory().getId());
@@ -135,7 +129,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public boolean delete(List<UUID> ids) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
         var result = template.update("DELETE FROM spend where id IN (?)",
                 ids.toArray());
 
@@ -144,7 +137,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public boolean delete(SpendEntity spendEntity) {
-        JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
         var result = template.update("DELETE FROM spend where id = ?",
                 spendEntity.getId());
 

@@ -6,7 +6,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class JdbcConnectionHolders implements AutoCloseable {
-
     private final List<JdbcConnectionHolder> holders;
 
     @Override

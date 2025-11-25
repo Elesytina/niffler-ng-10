@@ -1,94 +1,76 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
-import guru.qa.niffler.data.dao.auth.AuthUserDao;
 import guru.qa.niffler.data.dao.auth.impl.AuthAuthorityDaoJdbc;
-import guru.qa.niffler.data.dao.auth.impl.AuthAuthoritySpringDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthUserDaoJdbc;
-import guru.qa.niffler.data.dao.auth.impl.AuthUserSpringDaoJdbc;
-import guru.qa.niffler.data.dao.userdata.UserdataUserDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.data.tpl.JdbcTransactionTemplate;
+import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.enums.Authority;
-import guru.qa.niffler.model.enums.TrnIsolationLevel;
 import guru.qa.niffler.model.userdata.UserJson;
-import org.springframework.jdbc.support.JdbcTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-import static guru.qa.niffler.data.Databases.*;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
-import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
-import static java.util.stream.Stream.of;
+import static java.util.Arrays.stream;
 
 public class UserDbClient {
+    private final AuthUserDaoJdbc authUserDao = new AuthUserDaoJdbc();
+    private final AuthAuthorityDaoJdbc authotiryDao = new AuthAuthorityDaoJdbc();
+    private final UserdataUserDaoSpringJdbc udUserDao = new UserdataUserDaoSpringJdbc();
 
-    private final TransactionTemplate transactionTemplate = new TransactionTemplate(
-            new JdbcTransactionManager(
-                    getDataSource(CFG.authJdbcUrl())
-            )
-    );
+    private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
+            CFG.authJdbcUrl(),
+            CFG.userdataJdbcUrl());
+
+    private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(CFG.authJdbcUrl());
 
     public UserJson createUserSpringJdbc(UserJson userJson, String password) {
-        transactionTemplate.execute(status -> {
-            var savedAuthUser = new AuthUserSpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
-                    .create(getAuthUserEntity(userJson, password));
+        return xaTransactionTemplate.execute(() -> {
+            var savedAuthUser = authUserDao.create(getAuthUserEntity(userJson, password));
+            authotiryDao.create(
+                    Stream.of(read, write)
+                            .map(authority -> getAuthorityEntity(savedAuthUser, authority))
+                            .toList());
+            var user = udUserDao.create(UserEntity.fromJson(userJson));
 
-            new AuthAuthoritySpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
-                    .create(
-                            of(read, write)
-                                    .map(authority -> getAuthorityEntity(savedAuthUser, authority))
-                                    .toList());
-            return null;
+            return UserJson.fromEntity(user);
         });
-
-        var user = new UserdataUserDaoSpringJdbc(getDataSource(CFG.userdataJdbcUrl()))
-                .create(UserEntity.fromJson(userJson));
-
-        return UserJson.fromEntity(user);
     }
 
     public void register(UserJson userJson, String password) {
-        xaTransaction(TrnIsolationLevel.REPEATABLE_READ,
-                new XaConsumer(connect -> {
-                    AuthUserDao userDao = new AuthUserDaoJdbc(connect);
-                    AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(connect);
-                    var username = userJson.username();
-                    Optional<AuthUserEntity> userEntity = userDao.findByUsername(username);
+        jdbcTxTemplate.execute(() -> {
+            var username = userJson.username();
+            Optional<AuthUserEntity> userEntity = authUserDao.findByUsername(username);
 
-                    if (userEntity.isPresent()) {
-                        throw new RuntimeException("User already exists");
-                    }
+            if (userEntity.isPresent()) {
+                throw new RuntimeException("User already exists");
+            }
+            AuthUserEntity entity = getAuthUserEntity(userJson, password);
+            AuthUserEntity savedUser = authUserDao.create(entity);
 
-                    AuthUserEntity entity = getAuthUserEntity(userJson, password);
-                    AuthUserEntity savedUser = userDao.create(entity);
+            authotiryDao.create(stream(
+                    Authority.values())
+                    .map(a -> getAuthorityEntity(savedUser, a))
+                    .toList());
+            UserEntity udUserEntity = UserEntity.fromJson(userJson);
+            udUserDao.create(udUserEntity);
 
-                    AuthorityEntity authorityEntityRead = getAuthorityEntity(savedUser, read);
-                    AuthorityEntity authorityEntityWrite = getAuthorityEntity(savedUser, write);
-                    authorityDao.create(List.of(authorityEntityRead, authorityEntityWrite));
-
-                }, CFG.authJdbcUrl()),
-
-                new XaConsumer(connect -> {
-                    UserEntity entity = UserEntity.fromJson(userJson);
-                    new UserdataUserDaoJdbc(connect)
-                            .create(entity);
-
-                }, CFG.userdataJdbcUrl()));
+            return UserJson.fromEntity(udUserEntity);
+        });
     }
 
     public List<AuthorityJson> getAuthoritiesByUserId(UUID id) {
-        AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(getConnection(CFG.authJdbcUrl(), READ_COMMITED));
-        List<AuthorityEntity> authorityEntities = authorityDao.findAllByUserId(id);
+        List<AuthorityEntity> authorityEntities = authotiryDao.findAllByUserId(id);
 
         return authorityEntities.stream()
                 .map(AuthorityJson::fromEntity)
@@ -96,7 +78,6 @@ public class UserDbClient {
     }
 
     public AuthUserJson getAuthUserByName(String name) {
-        AuthUserDaoJdbc authUserDao = new AuthUserDaoJdbc(getConnection(CFG.authJdbcUrl(), READ_COMMITED));
         Optional<AuthUserEntity> authEntity = authUserDao.findByUsername(name);
 
         if (authEntity.isPresent()) {

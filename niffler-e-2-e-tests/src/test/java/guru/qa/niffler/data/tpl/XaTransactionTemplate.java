@@ -8,21 +8,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 public class XaTransactionTemplate {
-
     private final JdbcConnectionHolders holders;
-
-    private final AtomicBoolean closeAfterAction = new AtomicBoolean(true);
+    private AtomicBoolean closeAfterAction = new AtomicBoolean(true);
 
     public XaTransactionTemplate(String... jdbcUrls) {
         this.holders = Connections.getHolders(jdbcUrls);
     }
 
-    public XaTransactionTemplate holdConnectionAfterAction(JdbcConnectionHolder holder) {
-        this.closeAfterAction.set(false);
-        return this;
-    }
-
-    public <T> T transaction(Supplier<T>... suppliers) {
+    @SafeVarargs
+    public final <T> T execute(Supplier<T>... suppliers) {
         UserTransaction userTransaction = new UserTransactionImp();
         try {
             userTransaction.begin();
@@ -31,7 +25,6 @@ public class XaTransactionTemplate {
             for (Supplier<T> supplier : suppliers) {
                 result = supplier.get();
             }
-
             userTransaction.commit();
 
             return result;
@@ -47,5 +40,10 @@ public class XaTransactionTemplate {
                 holders.close();
             }
         }
+    }
+
+    public XaTransactionTemplate holdConnectionAfterAction(JdbcConnectionHolder holder) {
+        this.closeAfterAction.set(false);
+        return this;
     }
 }

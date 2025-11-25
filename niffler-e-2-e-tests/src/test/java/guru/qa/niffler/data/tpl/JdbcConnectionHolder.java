@@ -11,15 +11,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 public class JdbcConnectionHolder implements AutoCloseable {
-
     private final DataSource dataSource;
     private final Map<Long, Connection> connections = new ConcurrentHashMap<>();
 
     public Connection getConnection() {
         return connections.computeIfAbsent(Thread.currentThread().threadId(),
-                key ->
-                {
+                key -> {
                     try {
+
                         return dataSource.getConnection();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
@@ -36,7 +35,6 @@ public class JdbcConnectionHolder implements AutoCloseable {
                     } catch (SQLException ignored) {
                     }
                 });
-
     }
 
     public void closeAllConnections() {

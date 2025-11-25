@@ -18,11 +18,10 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @RequiredArgsConstructor
 public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
-
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
 
     @Override
     public List<AuthorityEntity> findAllByUserId(UUID userId) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
 
         return jdbcTemplate.query("SELECT * FROM authority where user_id = ?",
                 AuthorityRowMapper.INSTANCE,
@@ -31,7 +30,6 @@ public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void create(List<AuthorityEntity> authorities) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
         jdbcTemplate.batchUpdate("INSERT INTO authority(user_id, authority)  VALUES( ?, ?)",
                 new BatchPreparedStatementSetter() {
 

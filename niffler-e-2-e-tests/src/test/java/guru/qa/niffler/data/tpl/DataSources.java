@@ -16,17 +16,18 @@ public class DataSources {
     private final static Map<String, DataSource> dataSources = new ConcurrentHashMap<>();
 
     public static DataSource getDataSource(String jdbcUrl) {
+        final String dbName = StringUtils.substringAfter(jdbcUrl, "5432/");
+
         return dataSources.computeIfAbsent(jdbcUrl,
                 key -> {
-                    AtomikosDataSourceBean datasourceBean = new AtomikosDataSourceBean();
-                    final String dbName = StringUtils.substringAfter(jdbcUrl, "5432/");
-                    datasourceBean.setUniqueResourceName(dbName);
-                    datasourceBean.setXaDataSourceClassName("org.postgresql.xa.PGXADataSource");
-
                     Properties properties = new Properties();
                     properties.setProperty("URL", jdbcUrl);
                     properties.setProperty("user", "postgres");
                     properties.setProperty("password", "secret");
+
+                    AtomikosDataSourceBean datasourceBean = new AtomikosDataSourceBean();
+                    datasourceBean.setUniqueResourceName(dbName);
+                    datasourceBean.setXaDataSourceClassName("org.postgresql.xa.PGXADataSource");
                     datasourceBean.setXaProperties(properties);
                     datasourceBean.setPoolSize(4);
                     datasourceBean.setMaxPoolSize(10);

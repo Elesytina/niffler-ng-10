@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Slf4j
 public class SpendDbClient implements SpendClient {
-
     private final SpendDaoSpringJdbc dao = new SpendDaoSpringJdbc();
 
     @Override
@@ -26,7 +25,9 @@ public class SpendDbClient implements SpendClient {
 
     @Override
     public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        List<SpendEntity> entities = dao.findAllByFiltersAndUsername(currencyFilter, dateFilterValues, userName);
+        List<SpendEntity> entities = dao.findAllByFiltersAndUsername(currencyFilter,
+                dateFilterValues,
+                userName);
 
         return entities.stream()
                 .map(SpendJson::fromEntity)
@@ -66,7 +67,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     public List<SpendJson> getAllSpends() {
-        List<SpendEntity> spendEntities = new SpendDaoSpringJdbc().findAll();
+        List<SpendEntity> spendEntities = dao.findAll();
 
         return spendEntities.stream()
                 .map(SpendJson::fromEntity)
