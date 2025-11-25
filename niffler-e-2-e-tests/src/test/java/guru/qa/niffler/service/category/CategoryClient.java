@@ -18,5 +18,4 @@ public interface CategoryClient {
     CategoryJson updateCategory(CategoryJson categoryJson);
 
     void deleteCategory(CategoryJson categoryJson);
-
 }

@@ -4,8 +4,11 @@ import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
 import guru.qa.niffler.data.dao.auth.AuthUserDao;
 import guru.qa.niffler.data.dao.auth.impl.AuthAuthorityDaoJdbc;
+import guru.qa.niffler.data.dao.auth.impl.AuthAuthoritySpringDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthUserDaoJdbc;
+import guru.qa.niffler.data.dao.auth.impl.AuthUserSpringDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoJdbc;
+import guru.qa.niffler.data.dao.userdata.UserdataUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
@@ -19,14 +22,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.Databases.getConnection;
-import static guru.qa.niffler.data.Databases.xaTransaction;
+import static guru.qa.niffler.data.Databases.*;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
 import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
 
 public class UserDbClient {
+
+    public UserJson createUserSpringJdbc(UserJson userJson, String password) {
+        var savedAuthUser = new AuthUserSpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
+                .create(getAuthUserEntity(userJson, password));
+
+        new AuthAuthoritySpringDaoJdbc(getDataSource(CFG.authJdbcUrl()))
+                .create(List.of(
+                        getAuthorityEntity(savedAuthUser, read),
+                        getAuthorityEntity(savedAuthUser, write)
+                ));
+
+        var user = new UserdataUserDaoSpringJdbc(getDataSource(CFG.userdataJdbcUrl()))
+                .create(UserEntity.fromJson(userJson));
+
+        return UserJson.fromEntity(user);
+    }
 
     public void register(UserJson userJson, String password) {
         xaTransaction(TrnIsolationLevel.REPEATABLE_READ,
