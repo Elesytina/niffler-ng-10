@@ -45,4 +45,5 @@ public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
                     }
                 });
     }
+
 }
