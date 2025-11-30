@@ -4,8 +4,8 @@ import guru.qa.niffler.data.dao.spend.CategoryDao;
 import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
 import guru.qa.niffler.data.dao.spend.impl.CategoryDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
+import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
-import guru.qa.niffler.utils.RandomDataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,10 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 @Slf4j
 public class DbCategoryTest {
     CategoryDao dao = new CategoryDaoJdbc();
     CategoryDao springDao = new CategoryDaoSpringJdbc();
+
+    private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(CFG.spendJdbcUrl());
 
     @Test
     void shouldGetAllCategories() {
@@ -30,28 +34,35 @@ public class DbCategoryTest {
     }
 
     @Test
-    void shouldCreateAndDeleteCategory() {
-        CategoryEntity category1 = dao.create(CategoryEntity.fromJson(
-                new CategoryJson(null,
-                        RandomDataUtils.randomCategoryName(),
-                        "fishka",
-                        true)
-        ));
-        log.info(category1.toString());
+    void shouldNotCreateCategory() {
+        String categoryName1 = "categoryShouldNotCreated5";
+        String username = "fishka";
 
-        CategoryEntity category2 = springDao.create(CategoryEntity.fromJson(
-                new CategoryJson(null,
-                        RandomDataUtils.randomCategoryName(),
-                        "fishka",
-                        true)
-        ));
-        log.info(category2.toString());
+        try {
+            xaTransactionTemplate.execute(() -> {
+                CategoryEntity category1 = springDao.create(CategoryEntity.fromJson(
+                        new CategoryJson(null,
+                                categoryName1,
+                                username,
+                                true)
+                ));
+                log.info(category1.toString());
 
-        Assertions.assertNotNull(category1.getId(), "Category id should not be null");
-        Assertions.assertNotNull(category2.getId(), "Category id should not be null");
+                CategoryEntity category2 = springDao.create(CategoryEntity.fromJson(
+                        new CategoryJson(null,
+                                null,
+                                username,
+                                true)
+                ));
+                log.info(category2.toString());
 
-        Assertions.assertTrue(dao.delete(category1), "Category should have been deleted");
-        Assertions.assertTrue(springDao.delete(category2), "Category should have been deleted");
+                return null;
+            });
+        } catch (Exception ignored) {
+        }
+
+        Optional<CategoryEntity> categoryEntity = springDao.findByNameAndUsername(username, categoryName1);
+        Assertions.assertFalse(categoryEntity.isPresent(), "Category should not be present");
     }
 
     @Test
