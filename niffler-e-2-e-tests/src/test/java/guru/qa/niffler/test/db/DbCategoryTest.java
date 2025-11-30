@@ -18,9 +18,8 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @Slf4j
 public class DbCategoryTest {
-    CategoryDao dao = new CategoryDaoJdbc();
-    CategoryDao springDao = new CategoryDaoSpringJdbc();
-
+    private final CategoryDao dao = new CategoryDaoJdbc();
+    private final CategoryDao springDao = new CategoryDaoSpringJdbc();
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(CFG.spendJdbcUrl());
 
     @Test
@@ -34,10 +33,9 @@ public class DbCategoryTest {
     }
 
     @Test
-    void shouldNotCreateCategory() {
+    void shouldNotCreateCategoriesInTransaction() {
         String categoryName1 = "categoryShouldNotCreated5";
         String username = "fishka";
-
         try {
             xaTransactionTemplate.execute(() -> {
                 CategoryEntity category1 = springDao.create(CategoryEntity.fromJson(

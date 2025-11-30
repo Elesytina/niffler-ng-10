@@ -23,9 +23,9 @@ import java.util.UUID;
 
 @Slf4j
 public class DbSpendTest {
-    SpendDao dao = new SpendDaoJdbc();
-    CategoryDao categoryDao = new CategoryDaoJdbc();
-    SpendDaoSpringJdbc springDao = new SpendDaoSpringJdbc();
+    private final SpendDao dao = new SpendDaoJdbc();
+    private final CategoryDao categoryDao = new CategoryDaoJdbc();
+    private final SpendDaoSpringJdbc springDao = new SpendDaoSpringJdbc();
 
     @Test
     void shouldGetAllSpends() {
@@ -109,7 +109,6 @@ public class DbSpendTest {
         Assertions.assertTrue(spend.isPresent(), "Spend should have been found");
         Assertions.assertEquals(spend.get().getCurrency(), updated1.getCurrency(), "Spend should have a new currency");
         Assertions.assertEquals(spend.get().getDescription(), updated2.getDescription(), "Spend should have a new description");
-
     }
 
 }
