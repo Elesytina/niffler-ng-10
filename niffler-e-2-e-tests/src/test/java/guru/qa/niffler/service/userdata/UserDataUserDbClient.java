@@ -2,7 +2,6 @@ package guru.qa.niffler.service.userdata;
 
 import guru.qa.niffler.data.dao.userdata.UserdataUserDao;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoJdbc;
-import guru.qa.niffler.data.dao.userdata.UserdataUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.JdbcTransactionTemplate;
 import guru.qa.niffler.model.userdata.UserJson;

@@ -2,7 +2,6 @@ package guru.qa.niffler.data.dao.auth.impl;
 
 import guru.qa.niffler.data.dao.auth.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
-import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.mapper.AuthUserRowMapper;
 import guru.qa.niffler.data.tpl.DataSources;
 import lombok.RequiredArgsConstructor;
@@ -21,21 +20,14 @@ import java.sql.Statement;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static guru.qa.niffler.model.enums.Authority.read;
-import static guru.qa.niffler.model.enums.Authority.write;
 
 @RequiredArgsConstructor
 public class AuthUserSpringDaoJdbc implements AuthUserDao {
     private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
     private static final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    private final TransactionTemplate chainTransactionTemplate = new TransactionTemplate(
-            new ChainedTransactionManager(
-                    new JdbcTransactionManager(DataSources.getDataSource(CFG.authJdbcUrl()))
-            ));
 
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
