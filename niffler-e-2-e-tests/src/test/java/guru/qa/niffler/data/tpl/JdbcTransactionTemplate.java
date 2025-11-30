@@ -9,6 +9,9 @@ import java.util.function.Supplier;
 
 import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
 
+/**
+ * Для обычного jdbc без Spring
+ **/
 public class JdbcTransactionTemplate {
     private final JdbcConnectionHolder holder;
     private final AtomicBoolean closeAfterAction = new AtomicBoolean(true);

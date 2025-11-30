@@ -3,9 +3,10 @@ package guru.qa.niffler.data.entity.spend;
 import guru.qa.niffler.model.spend.CategoryJson;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.UUID;
-
+@ToString
 @Getter
 @Setter
 public class CategoryEntity {

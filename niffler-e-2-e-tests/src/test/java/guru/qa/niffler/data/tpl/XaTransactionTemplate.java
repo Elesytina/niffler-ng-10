@@ -7,6 +7,9 @@ import jakarta.transaction.UserTransaction;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+/**
+ * Для распределенных транзакций
+ **/
 public class XaTransactionTemplate {
     private final JdbcConnectionHolders holders;
     private AtomicBoolean closeAfterAction = new AtomicBoolean(true);

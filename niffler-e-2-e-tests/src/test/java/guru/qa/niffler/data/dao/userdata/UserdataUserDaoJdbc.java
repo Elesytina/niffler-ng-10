@@ -2,6 +2,7 @@ package guru.qa.niffler.data.dao.userdata;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
+import guru.qa.niffler.model.enums.CurrencyValues;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,7 +61,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
                 .prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
                         RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
-            ps.setString(2, entity.getCurrency());
+            ps.setString(2, entity.getCurrency().name());
             ps.setString(3, entity.getFirstName());
             ps.setString(4, entity.getSurname());
             ps.setBytes(5, entity.getPhoto());
@@ -101,7 +102,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
         userEntity.setUsername(resultSet.getString("username"));
         userEntity.setFirstName(resultSet.getString("firstname"));
         userEntity.setSurname(resultSet.getString("surname"));
-        userEntity.setCurrency(resultSet.getString("currency"));
+        userEntity.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
         userEntity.setPhoto(resultSet.getBytes("photo"));
         userEntity.setPhotoSmall(resultSet.getBytes("photo_small"));
 

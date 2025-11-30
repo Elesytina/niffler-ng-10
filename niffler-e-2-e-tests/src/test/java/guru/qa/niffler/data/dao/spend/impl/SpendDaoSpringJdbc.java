@@ -118,7 +118,8 @@ public class SpendDaoSpringJdbc implements SpendDao {
                 spendEntity.getCurrency().name(),
                 spendEntity.getAmount(),
                 spendEntity.getDescription(),
-                spendEntity.getCategory().getId());
+                spendEntity.getCategory().getId(),
+                spendEntity.getId());
 
         if (result != 1) {
             throw new RuntimeException("Update failed");

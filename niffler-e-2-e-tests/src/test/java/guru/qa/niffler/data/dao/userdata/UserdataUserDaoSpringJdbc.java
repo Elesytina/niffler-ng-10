@@ -46,7 +46,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, entity.getUsername());
-            ps.setString(2, entity.getCurrency());
+            ps.setString(2, entity.getCurrency().name());
             ps.setString(3, entity.getFirstName());
             ps.setString(4, entity.getSurname());
             ps.setBytes(5, entity.getPhoto());

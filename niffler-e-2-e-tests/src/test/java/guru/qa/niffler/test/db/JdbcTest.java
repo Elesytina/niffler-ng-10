@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.rest;
+package guru.qa.niffler.test.db;
 
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
@@ -31,10 +31,10 @@ public class JdbcTest {
 
     @Test
     void shouldRegisterNewUser() {
-        var username = randomUsername();
+        var username = "Nikolai-3";
         UserJson userJson = new UserJson(null,
                 username,
-                randomCurrency().name(),
+                randomCurrency(),
                 randomName(),
                 randomSurname(),
                 randomFullName(),
@@ -57,7 +57,7 @@ public class JdbcTest {
         var username = randomUsername();
         UserJson userJson = new UserJson(null,
                 username,
-                randomCurrency().name(),
+                randomCurrency(),
                 randomName(),
                 randomSurname(),
                 randomFullName(),
@@ -90,7 +90,7 @@ public class JdbcTest {
                 new CategoryJson(
                         null,
                         randomCategoryName(),
-                        "fishka",
+                        "jerrell.lowe",
                         true
                 ));
         log.info(created.toString());
