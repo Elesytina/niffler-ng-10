@@ -1,10 +1,7 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.user;
 
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
-import guru.qa.niffler.data.dao.auth.AuthUserDao;
-import guru.qa.niffler.data.dao.auth.impl.AuthAuthorityDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthAuthoritySpringDaoJdbc;
-import guru.qa.niffler.data.dao.auth.impl.AuthUserDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthUserSpringDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDao;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoJdbc;
@@ -32,7 +29,6 @@ import java.util.stream.Stream;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
-import static java.util.Arrays.stream;
 
 @Slf4j
 public class UserDbClient {
@@ -40,21 +36,12 @@ public class UserDbClient {
     private final AuthAuthorityDao authorityDaoSpring = new AuthAuthoritySpringDaoJdbc();
     private final UserdataUserDao udUserDaoSpring = new UserdataUserDaoSpringJdbc();
 
-    private final AuthUserDao authUserDao = new AuthUserDaoJdbc();
-    private final AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc();
-    private final UserdataUserDao udUserDao = new UserdataUserDaoJdbc();
+    private final UserdataUserDao userdataUserDao = new UserdataUserDaoJdbc();
+    private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(CFG.authJdbcUrl());
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl());
-
-    private final TransactionTemplate chainTransactionTemplate = new TransactionTemplate(
-            new ChainedTransactionManager(
-                    new JdbcTransactionManager(DataSources.getDataSource(CFG.authJdbcUrl())),
-                    new JdbcTransactionManager(DataSources.getDataSource(CFG.userdataJdbcUrl()))
-            ));
-
-    private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(CFG.authJdbcUrl());
 
     public UserJson createUserSpringJdbc(UserJson userJson, String password) {
         return xaTransactionTemplate.execute(() -> {
@@ -66,28 +53,6 @@ public class UserDbClient {
             var user = udUserDaoSpring.create(UserEntity.fromJson(userJson));
 
             return UserJson.fromEntity(user);
-        });
-    }
-
-    public void register(UserJson userJson, String password) {
-        jdbcTxTemplate.execute(() -> {
-            var username = userJson.username();
-            Optional<AuthUserEntity> userEntity = authUserDao.findByUsername(username);
-
-            if (userEntity.isPresent()) {
-                throw new RuntimeException("User already exists");
-            }
-            AuthUserEntity entity = getAuthUserEntity(userJson, password);
-            AuthUserEntity savedUser = authUserDao.create(entity);
-
-            authorityDao.create(stream(
-                    Authority.values())
-                    .map(a -> getAuthorityEntity(savedUser, a))
-                    .toList());
-            UserEntity udUserEntity = UserEntity.fromJson(userJson);
-            udUserDao.create(udUserEntity);
-
-            return UserJson.fromEntity(udUserEntity);
         });
     }
 
@@ -109,34 +74,17 @@ public class UserDbClient {
         throw new RuntimeException("Failed to find user");
     }
 
-    //внутренняя транзакция
-    public AuthUserEntity createUserAndAuthorityWithChain(UserJson userJson, String password) {
-        return chainTransactionTemplate.execute(status -> {
-            var savedAuthUser = authUserDaoSpring.create(getAuthUserEntity(userJson, password));
+    public UserJson getUserByUsername(String username) {
+        return jdbcTxTemplate.execute(() -> {
+            Optional<UserEntity> userEntity = userdataUserDao.findByUsername(username);
 
-            authorityDaoSpring.create(
-                    Stream.of(read, write)
-                            .map(authority -> getAuthorityEntity(savedAuthUser, authority))
-                            .toList());
-            return savedAuthUser;
-        });
-    }
+            if (userEntity.isPresent()) {
 
-    //внешняя транзакция
-    public void createUserWithChainedTransactionManager(UserJson userJson, String password) {
-        chainTransactionTemplate.execute(status -> {
-            AuthUserEntity authUserEntity = createUserAndAuthorityWithChain(userJson, password);
-
-            UserEntity user = udUserDaoSpring.create(UserEntity.fromJson(userJson));
-
-            //simulate error
-            if (user != null) {
-                throw new RuntimeException("Error simulation");
+                return UserJson.fromEntity(userEntity.get());
             }
-            return authUserEntity;
+            throw new RuntimeException("Failed to find user");
         });
     }
-
 
     private AuthUserEntity getAuthUserEntity(UserJson userJson, String password) {
         AuthUserEntity entity = new AuthUserEntity();
