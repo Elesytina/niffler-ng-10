@@ -6,6 +6,7 @@ import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.service.userdata.UserDataUserClient;
 import guru.qa.niffler.service.userdata.UserDataUserDbClient;
+import guru.qa.niffler.utils.RandomDataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class JdbcTest {
 
     @Test
     void shouldRegisterNewUser() {
-        var username = "Nikolai-3";
+        var username = RandomDataUtils.randomName();
         UserJson userJson = new UserJson(null,
                 username,
                 randomCurrency(),

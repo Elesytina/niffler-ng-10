@@ -23,7 +23,6 @@ import static guru.qa.niffler.model.enums.DateFilterValues.getSpendEndDate;
 import static java.time.LocalDate.now;
 
 public class SpendDaoSpringJdbc implements SpendDao {
-
     private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
     @Override

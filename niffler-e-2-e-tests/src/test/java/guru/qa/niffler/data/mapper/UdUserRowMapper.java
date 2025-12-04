@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UdUserRowMapper implements RowMapper<UserEntity> {
-
     public static final UdUserRowMapper INSTANCE = new UdUserRowMapper();
 
     @Override
@@ -21,11 +20,11 @@ public class UdUserRowMapper implements RowMapper<UserEntity> {
         user.setId(rs.getObject("id", UUID.class));
         user.setUsername(rs.getString("username"));
         user.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-        user.setFirstName(rs.getString("firstname"));
+        user.setFirstname(rs.getString("firstname"));
         user.setSurname(rs.getString("surname"));
         user.setPhoto(rs.getBytes("photo"));
         user.setPhotoSmall(rs.getBytes("photo_small"));
-        user.setFullName(rs.getString("full_name"));
+        user.setFullname(rs.getString("full_name"));
 
         return user;
     }

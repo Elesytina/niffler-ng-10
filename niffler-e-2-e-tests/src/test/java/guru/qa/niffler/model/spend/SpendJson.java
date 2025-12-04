@@ -4,6 +4,7 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 

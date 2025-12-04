@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class CreateSpendingExtension implements BeforeEachCallback {
@@ -30,7 +32,7 @@ public class CreateSpendingExtension implements BeforeEachCallback {
                         final SpendJson created = spendClient.createSpend(
                                 new SpendJson(
                                         null,
-                                        new Date(),
+                                        Date.from(Instant.now()),
                                         new CategoryJson(
                                                 null,
                                                 annoSpending.category(),

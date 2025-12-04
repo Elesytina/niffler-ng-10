@@ -56,8 +56,8 @@ public class UserDbClient {
 
     private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(CFG.authJdbcUrl());
 
-    public UserJson createUserSpringJdbc(UserJson userJson, String password) {
-        return xaTransactionTemplate.execute(() -> {
+    public void createUserSpringJdbc(UserJson userJson, String password) {
+        xaTransactionTemplate.execute(() -> {
             var savedAuthUser = authUserDaoSpring.create(getAuthUserEntity(userJson, password));
             authorityDaoSpring.create(
                     Stream.of(read, write)
@@ -150,10 +150,10 @@ public class UserDbClient {
         return entity;
     }
 
-    private AuthorityEntity getAuthorityEntity(AuthUserEntity savedEntity, Authority authority) {
+    private AuthorityEntity getAuthorityEntity(AuthUserEntity savedUser, Authority authority) {
         AuthorityEntity authorityEntity = new AuthorityEntity();
-        authorityEntity.setAuthority(authority.name());
-        authorityEntity.setUserId(savedEntity.getId());
+        authorityEntity.setAuthority(authority);
+        authorityEntity.setUser(savedUser);
 
         return authorityEntity;
     }
