@@ -85,7 +85,7 @@ public class ChainTransactionTest {
                 null);
         try {
             chainTransactionTemplate.execute(status -> {
-                AuthUserEntity authUserEntity = new AuthUserDaoJdbc().create(getAuthUserEntity(userJson, "123"));
+                AuthUserEntity authUserEntity = new AuthUserDaoJdbc().create(getAuthUserEntity(userJson, "1234"));
 
                 new AuthAuthorityDaoJdbc().create(
                         Stream.of(read, write)
