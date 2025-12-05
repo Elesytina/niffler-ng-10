@@ -1,28 +1,19 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
-import guru.qa.niffler.data.dao.auth.AuthUserDao;
-import guru.qa.niffler.data.dao.auth.impl.AuthAuthorityDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthAuthoritySpringDaoJdbc;
-import guru.qa.niffler.data.dao.auth.impl.AuthUserDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthUserSpringDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDao;
-import guru.qa.niffler.data.dao.userdata.UserdataUserDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.data.tpl.DataSources;
-import guru.qa.niffler.data.tpl.JdbcTransactionTemplate;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.enums.Authority;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.transaction.ChainedTransactionManager;
-import org.springframework.jdbc.support.JdbcTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +23,6 @@ import java.util.stream.Stream;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
-import static java.util.Arrays.stream;
 
 @Slf4j
 public class UserDbClient {
