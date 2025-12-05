@@ -3,7 +3,7 @@ package guru.qa.niffler.test.db;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.UserDbClient;
+import guru.qa.niffler.service.user.UserDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

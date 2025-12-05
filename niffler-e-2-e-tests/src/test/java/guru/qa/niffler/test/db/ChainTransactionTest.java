@@ -12,7 +12,7 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.DataSources;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.UserDbClient;
+import guru.qa.niffler.service.user.UserDbClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.transaction.ChainedTransactionManager;
@@ -24,8 +24,8 @@ import java.util.stream.Stream;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.Authority.read;
 import static guru.qa.niffler.model.enums.Authority.write;
-import static guru.qa.niffler.service.UserDbClient.getAuthUserEntity;
-import static guru.qa.niffler.service.UserDbClient.getAuthorityEntity;
+import static guru.qa.niffler.service.user.UserDbClient.getAuthUserEntity;
+import static guru.qa.niffler.service.user.UserDbClient.getAuthorityEntity;
 import static guru.qa.niffler.utils.RandomDataUtils.*;
 
 public class ChainTransactionTest {
