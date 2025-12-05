@@ -21,9 +21,9 @@ public record UserJson(
                 entity.getId(),
                 entity.getUsername(),
                 entity.getCurrency(),
-                entity.getFirstname(),
+                entity.getFirstName(),
                 entity.getSurname(),
-                entity.getFullname(),
+                entity.getFullName(),
                 entity.getPhoto(),
                 entity.getPhotoSmall());
     }

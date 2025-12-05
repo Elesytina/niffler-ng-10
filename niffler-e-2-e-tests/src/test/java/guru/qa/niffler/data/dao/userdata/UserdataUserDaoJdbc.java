@@ -62,11 +62,11 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
                         RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setString(2, entity.getCurrency().name());
-            ps.setString(3, entity.getFirstname());
+            ps.setString(3, entity.getFirstName());
             ps.setString(4, entity.getSurname());
             ps.setBytes(5, entity.getPhoto());
             ps.setBytes(6, entity.getPhotoSmall());
-            ps.setString(7, entity.getFullname());
+            ps.setString(7, entity.getFullName());
 
             if (ps.executeUpdate() != 0) {
                 ResultSet resultSet = ps.getGeneratedKeys();
@@ -98,9 +98,9 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
     private UserEntity getUserEntity(ResultSet resultSet) throws SQLException {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(resultSet.getObject("id", UUID.class));
-        userEntity.setFullname(resultSet.getString("full_name"));
+        userEntity.setFullName(resultSet.getString("full_name"));
         userEntity.setUsername(resultSet.getString("username"));
-        userEntity.setFirstname(resultSet.getString("firstname"));
+        userEntity.setFirstName(resultSet.getString("firstname"));
         userEntity.setSurname(resultSet.getString("surname"));
         userEntity.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
         userEntity.setPhoto(resultSet.getBytes("photo"));

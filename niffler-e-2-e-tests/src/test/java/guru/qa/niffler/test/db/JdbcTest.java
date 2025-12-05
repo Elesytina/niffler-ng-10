@@ -3,7 +3,9 @@ package guru.qa.niffler.test.db;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.user.UserDbClient;
+import guru.qa.niffler.service.UserDbClient;
+import guru.qa.niffler.service.userdata.UserDataUserClient;
+import guru.qa.niffler.service.userdata.UserDataUserDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,30 @@ import static guru.qa.niffler.utils.RandomDataUtils.*;
 @Slf4j
 public class JdbcTest {
     private final UserDbClient userDbClient = new UserDbClient();
+    private final UserDataUserClient userDataUserClient = new UserDataUserDbClient();
+
+    @Test
+    void shouldRegisterNewUser() {
+        var username = "Nikolai-3";
+        UserJson userJson = new UserJson(null,
+                username,
+                randomCurrency(),
+                randomName(),
+                randomSurname(),
+                randomFullName(),
+                null,
+                null);
+        userDbClient.register(userJson, "123");
+
+        UserJson userJsonByName = userDataUserClient.getUserByUsername(username);
+        Assertions.assertNotNull(userJsonByName, "User not found");
+
+        AuthUserJson authUserJson = userDbClient.getAuthUserByName(username);
+        Assertions.assertNotNull(authUserJson, "User not found");
+
+        List<AuthorityJson> authorityJsonList = userDbClient.getAuthoritiesByUserId(authUserJson.id());
+        Assertions.assertEquals(2, authorityJsonList.size(), "Authorities list should be 2");
+    }
 
     @Test
     void shouldRegisterNewUserWithSpringJdbc() {
@@ -29,7 +55,7 @@ public class JdbcTest {
                 null);
         userDbClient.createUserSpringJdbc(userJson, "123");
 
-        UserJson userJsonByName = userDbClient.getUserByUsername(username);
+        UserJson userJsonByName = userDataUserClient.getUserByUsername(username);
         Assertions.assertNotNull(userJsonByName, "User not found");
 
         AuthUserJson authUserJson = userDbClient.getAuthUserByName(username);
@@ -38,4 +64,23 @@ public class JdbcTest {
         List<AuthorityJson> authorityJsonList = userDbClient.getAuthoritiesByUserId(authUserJson.id());
         Assertions.assertEquals(2, authorityJsonList.size(), "Authorities list should be 2");
     }
+
+    @Test
+    void shouldNotCreateNewAuthUserWithChainedTransactionManager() {
+        var username = "Nikolai-11";
+        UserJson userJson = new UserJson(null,
+                username,
+                randomCurrency(),
+                randomName(),
+                randomSurname(),
+                randomFullName(),
+                null,
+                null);
+        try {
+            userDbClient.createUserWithChainedTransactionManager(userJson, "123");
+        } catch (Exception ignored) {
+        }
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.getAuthUserByName(username));
+    }
+
 }
