@@ -82,7 +82,7 @@ public class UserDbClient {
         });
     }
 
-    private AuthUserEntity getAuthUserEntity(UserJson userJson, String password) {
+    public static AuthUserEntity getAuthUserEntity(UserJson userJson, String password) {
         AuthUserEntity entity = new AuthUserEntity();
         entity.setUsername(userJson.username());
         entity.setPassword(password);
@@ -94,7 +94,7 @@ public class UserDbClient {
         return entity;
     }
 
-    private AuthorityEntity getAuthorityEntity(AuthUserEntity savedEntity, Authority authority) {
+    public static AuthorityEntity getAuthorityEntity(AuthUserEntity savedEntity, Authority authority) {
         AuthorityEntity authorityEntity = new AuthorityEntity();
         authorityEntity.setAuthority(authority.name());
         authorityEntity.setUserId(savedEntity.getId());
