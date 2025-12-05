@@ -33,7 +33,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                 AuthUserEntity authUserEntity = new AuthUserEntity();
                 authUserEntity.setId(userId);
                 entity.setId(rs.getObject("id", UUID.class));
-                entity.setUser(authUserEntity);
+                entity.setUserId(userId);
                 entity.setAuthority(Authority.valueOf(rs.getString("authority")));
 
                 authorities.add(entity);
@@ -52,7 +52,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                         RETURN_GENERATED_KEYS)) {
 
             for (AuthorityEntity entity : entities) {
-                ps.setObject(1, entity.getUser().getId());
+                ps.setObject(1, entity.getUserId());
                 ps.setString(2, entity.getAuthority().name());
                 ps.addBatch();
                 ps.clearParameters();

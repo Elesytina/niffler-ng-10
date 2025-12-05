@@ -96,7 +96,7 @@ public class UserDbClient {
 
     public static AuthorityEntity getAuthorityEntity(AuthUserEntity savedEntity, Authority authority) {
         AuthorityEntity authorityEntity = new AuthorityEntity();
-        authorityEntity.setAuthority(authority.name());
+        authorityEntity.setAuthority(authority);
         authorityEntity.setUserId(savedEntity.getId());
 
         return authorityEntity;

@@ -8,14 +8,14 @@ import java.util.UUID;
 public record AuthorityJson(
         UUID id,
         Authority authority,
-        AuthUserJson user) {
+        UUID userId) {
 
     public static AuthorityJson fromEntity(AuthorityEntity entity) {
 
         return new AuthorityJson(
                 entity.getId(),
                 entity.getAuthority(),
-                AuthUserJson.fromEntity(entity.getUser()));
+                entity.getUserId());
     }
 
 }
