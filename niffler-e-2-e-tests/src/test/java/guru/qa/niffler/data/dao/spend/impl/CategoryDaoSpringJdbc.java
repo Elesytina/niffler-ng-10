@@ -1,7 +1,6 @@
 package guru.qa.niffler.data.dao.spend.impl;
 
 import guru.qa.niffler.data.dao.spend.CategoryDao;
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.mapper.CategoryRowMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,7 +1,6 @@
 package guru.qa.niffler.data.dao.spend.impl;
 
 import guru.qa.niffler.data.dao.spend.SpendDao;
-import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.mapper.SpendRowMapper;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;

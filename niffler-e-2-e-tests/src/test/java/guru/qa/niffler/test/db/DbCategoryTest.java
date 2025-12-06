@@ -3,7 +3,6 @@ package guru.qa.niffler.test.db;
 import guru.qa.niffler.data.dao.spend.CategoryDao;
 import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
 import guru.qa.niffler.data.dao.spend.impl.CategoryDaoSpringJdbc;
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
 import lombok.extern.slf4j.Slf4j;

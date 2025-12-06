@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.mapper;
 
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;

@@ -1,7 +1,5 @@
 package guru.qa.niffler.data.mapper;
 
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
-import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
