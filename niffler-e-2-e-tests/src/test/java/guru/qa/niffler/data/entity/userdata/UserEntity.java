@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.entity.userdata;
 
+import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ public class UserEntity {
     private String username;
     private String firstName;
     private String surname;
-    private String currency;
+    private CurrencyValues currency;
     private String fullName;
     private byte[] photo;
     private byte[] photoSmall;

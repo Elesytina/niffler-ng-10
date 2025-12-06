@@ -10,7 +10,6 @@ import java.util.UUID;
 
 
 public class CategoryDbClient implements CategoryClient {
-
     private final CategoryDaoSpringJdbc dao = new CategoryDaoSpringJdbc();
 
     @Override
@@ -63,7 +62,7 @@ public class CategoryDbClient implements CategoryClient {
 
     public List<CategoryJson> getAllCategories() {
 
-        return new CategoryDaoSpringJdbc().findAll()
+        return dao.findAll()
                 .stream()
                 .map(CategoryJson::fromEntity)
                 .toList();

@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.dao.spend.impl;
 
-import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.spend.SpendDao;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.mapper.SpendRowMapper;
@@ -10,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -19,17 +17,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.DateFilterValues.getSpendEndDate;
 import static java.time.LocalDate.now;
 
 public class SpendDaoSpringJdbc implements SpendDao {
 
-    private final DataSource dataSource = Databases.getDataSource(CFG.spendJdbcUrl());
+    private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
 
     @Override
     public Optional<SpendEntity> findById(UUID id) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
 
         return Optional.ofNullable(template.queryForObject(
                 """
@@ -44,7 +42,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findByUsername(String userName) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
 
         return template.query(
                 """
@@ -59,7 +56,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
 
         return template.query(conn -> {
             PreparedStatement ps = conn.prepareStatement(
@@ -88,7 +84,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
 
         return template.query("SELECT * FROM spend s LEFT JOIN category c ON s.category_id = c.id",
                 SpendRowMapper.INSTANCE);
@@ -96,8 +91,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public SpendEntity create(SpendEntity entity) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
@@ -120,14 +113,13 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public SpendEntity update(SpendEntity spendEntity) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
-
         var result = template.update("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?",
                 spendEntity.getSpendDate(),
-                spendEntity.getCurrency(),
+                spendEntity.getCurrency().name(),
                 spendEntity.getAmount(),
                 spendEntity.getDescription(),
-                spendEntity.getCategory().getId());
+                spendEntity.getCategory().getId(),
+                spendEntity.getId());
 
         if (result != 1) {
             throw new RuntimeException("Update failed");
@@ -138,7 +130,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public boolean delete(List<UUID> ids) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
         var result = template.update("DELETE FROM spend where id IN (?)",
                 ids.toArray());
 
@@ -147,7 +138,6 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public boolean delete(SpendEntity spendEntity) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
         var result = template.update("DELETE FROM spend where id = ?",
                 spendEntity.getId());
 

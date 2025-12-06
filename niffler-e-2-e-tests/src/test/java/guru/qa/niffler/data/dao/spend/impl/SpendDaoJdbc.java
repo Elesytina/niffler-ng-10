@@ -3,31 +3,29 @@ package guru.qa.niffler.data.dao.spend.impl;
 import guru.qa.niffler.data.dao.spend.SpendDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static guru.qa.niffler.data.tpl.Connections.getHolder;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.DateFilterValues.getSpendEndDate;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 
 public class SpendDaoJdbc implements SpendDao {
-
-    private final Connection connection;
-
-    public SpendDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
+    private final JdbcConnectionHolder connectionHolder = getHolder(CFG.spendJdbcUrl());
 
     @Override
     public SpendEntity create(SpendEntity entity) {
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO spend(username, spend_date,currency, amount, description, category_id) values (?,?,?,?,?,?)",
-                RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
+                        RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setDate(2, entity.getSpendDate());
             ps.setString(3, entity.getCurrency().name());
@@ -52,7 +50,8 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public SpendEntity update(SpendEntity entity) {
-        try (PreparedStatement ps = connection.prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
             ps.setString(2, entity.getCurrency().name());
             ps.setDouble(3, entity.getAmount());
@@ -72,7 +71,8 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public boolean delete(List<UUID> ids) {
-        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ?")) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("DELETE FROM spend where id = ?")) {
             for (UUID id : ids) {
                 ps.setObject(1, id);
                 ps.addBatch();
@@ -88,7 +88,8 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public boolean delete(SpendEntity spendEntity) {
-        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend where id = ?")) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("DELETE FROM spend where id = ?")) {
             ps.setObject(1, spendEntity.getId());
 
             return ps.executeUpdate() == 1;
@@ -99,13 +100,14 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public Optional<SpendEntity> findById(UUID id) {
-        try (PreparedStatement ps = connection.prepareStatement("""
-                SELECT *
-                FROM spend
-                LEFT JOIN category
-                ON spend.category_id = category.id
-                WHERE spend.id = ?
-                """)) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("""
+                        SELECT *
+                        FROM spend
+                        LEFT JOIN category
+                        ON spend.category_id = category.id
+                        WHERE spend.id = ?
+                        """)) {
             ps.setObject(1, id);
             ResultSet resultSet = ps.executeQuery();
 
@@ -128,13 +130,14 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findByUsername(String userName) {
-        try (PreparedStatement ps = connection.prepareStatement(
-                """
-                        SELECT * FROM spend
-                        LEFT JOIN category
-                        ON spend.category_id = category.id
-                        WHERE spend.username = ?
-                        """)) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement(
+                        """
+                                SELECT * FROM spend
+                                LEFT JOIN category
+                                ON spend.category_id = category.id
+                                WHERE spend.username = ?
+                                """)) {
             ps.setString(1, userName);
 
             ResultSet resultSet = ps.executeQuery();
@@ -157,15 +160,17 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        try (PreparedStatement ps = connection.prepareStatement(
-                """
-                        SELECT * FROM spend
-                        LEFT JOIN category
-                        ON spend.category_id = category.id
-                        WHERE spend.username = ?
-                        AND (? is null OR currency = ?)
-                        AND (? is null OR spend_date BETWEEN ? AND ?)
-                        """)) {
+        try (PreparedStatement ps = connectionHolder
+                .getConnection()
+                .prepareStatement(
+                        """
+                                SELECT * FROM spend
+                                LEFT JOIN category
+                                ON spend.category_id = category.id
+                                WHERE spend.username = ?
+                                AND (? is null OR currency = ?)
+                                AND (? is null OR spend_date BETWEEN ? AND ?)
+                                """)) {
             var currency = currencyFilter == null ? null : currencyFilter.name();
             var date = dateFilterValues == null ? null : dateFilterValues.name();
             var dateStart = dateFilterValues == null ? null : java.sql.Date.valueOf(now());
@@ -196,9 +201,9 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM spend")) {
-
+        try (PreparedStatement ps = connectionHolder
+                .getConnection()
+                .prepareStatement("SELECT * FROM spend")) {
             ResultSet resultSet = ps.executeQuery();
             List<SpendEntity> spends = new ArrayList<>();
 

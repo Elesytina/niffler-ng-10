@@ -2,8 +2,8 @@ package guru.qa.niffler.data.dao.auth.impl;
 
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,19 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.Connections.getHolder;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
-
-    private final Connection connection;
-
-    public AuthAuthorityDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
+    private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
     @Override
     public List<AuthorityEntity> findAllByUserId(UUID userId) {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM authority WHERE user_id = ?")) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("SELECT * FROM authority WHERE user_id = ?")) {
             ps.setObject(1, userId);
             ResultSet rs = ps.executeQuery();
             List<AuthorityEntity> authorities = new ArrayList<>();
@@ -45,8 +43,9 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void create(List<AuthorityEntity> entities) {
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
-                RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
+                        RETURN_GENERATED_KEYS)) {
 
             for (AuthorityEntity entity : entities) {
                 ps.setObject(1, entity.getUserId());
