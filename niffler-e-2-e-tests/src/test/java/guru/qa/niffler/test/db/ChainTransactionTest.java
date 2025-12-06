@@ -8,7 +8,6 @@ import guru.qa.niffler.data.dao.auth.impl.AuthUserSpringDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDao;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoJdbc;
 import guru.qa.niffler.data.dao.userdata.UserdataUserDaoSpringJdbc;
-import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.DataSources;
 import guru.qa.niffler.model.userdata.UserJson;
