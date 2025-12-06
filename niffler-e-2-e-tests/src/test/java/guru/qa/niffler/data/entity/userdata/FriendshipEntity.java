@@ -1,7 +1,7 @@
 package guru.qa.niffler.data.entity.userdata;
 
+import guru.qa.niffler.model.enums.FriendshipStatus;
 import jakarta.persistence.*;
-import jaxb.userdata.FriendshipStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;

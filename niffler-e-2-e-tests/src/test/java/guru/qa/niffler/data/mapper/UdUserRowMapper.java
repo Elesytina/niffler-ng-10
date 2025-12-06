@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.mapper;
 
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -20,11 +21,11 @@ public class UdUserRowMapper implements RowMapper<UserEntity> {
         user.setId(rs.getObject("id", UUID.class));
         user.setUsername(rs.getString("username"));
         user.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-        user.setFirstName(rs.getString("firstname"));
+        user.setFirstname(rs.getString("firstname"));
         user.setSurname(rs.getString("surname"));
         user.setPhoto(rs.getBytes("photo"));
         user.setPhotoSmall(rs.getBytes("photo_small"));
-        user.setFullName(rs.getString("full_name"));
+        user.setFullname(rs.getString("full_name"));
 
         return user;
     }

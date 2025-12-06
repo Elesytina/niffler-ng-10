@@ -1,9 +1,9 @@
 package guru.qa.niffler.data.entity.userdata;
 
 import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.enums.FriendshipStatus;
 import guru.qa.niffler.model.userdata.UserJson;
 import jakarta.persistence.*;
-import jaxb.userdata.FriendshipStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
@@ -19,6 +19,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @Entity
 @Table(name = "\"user\"")
 public class UserEntity implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, columnDefinition = "UUID default gen_random_uuid()")
@@ -122,9 +123,9 @@ public class UserEntity implements Serializable {
     public static UserEntity fromJson(UserJson json) {
         UserEntity entity = new UserEntity();
         entity.setId(json.id());
-        entity.setFirstName(json.firstName());
+        entity.setFirstname(json.firstName());
         entity.setSurname(json.surname());
-        entity.setFullName(json.fullName());
+        entity.setFullname(json.fullName());
         entity.setUsername(json.username());
         entity.setCurrency(json.currency());
         entity.setPhoto(json.photo());

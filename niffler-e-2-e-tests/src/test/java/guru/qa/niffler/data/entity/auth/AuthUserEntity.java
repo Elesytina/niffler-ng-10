@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.entity.auth;
 
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package guru.qa.niffler.model.userdata;
 
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
 import java.util.UUID;
@@ -20,9 +21,9 @@ public record UserJson(
                 entity.getId(),
                 entity.getUsername(),
                 entity.getCurrency(),
-                entity.getFirstName(),
+                entity.getFirstname(),
                 entity.getSurname(),
-                entity.getFullName(),
+                entity.getFullname(),
                 entity.getPhoto(),
                 entity.getPhotoSmall());
     }
