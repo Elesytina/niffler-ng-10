@@ -1,5 +1,7 @@
 package guru.qa.niffler.model.auth;
 
+import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+
 import java.util.UUID;
 
 public record AuthUserJson(
