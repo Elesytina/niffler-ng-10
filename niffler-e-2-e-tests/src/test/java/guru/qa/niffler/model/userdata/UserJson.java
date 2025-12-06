@@ -1,6 +1,5 @@
 package guru.qa.niffler.model.userdata;
 
-import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
 import java.util.UUID;

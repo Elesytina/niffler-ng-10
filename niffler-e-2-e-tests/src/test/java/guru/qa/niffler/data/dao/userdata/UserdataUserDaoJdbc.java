@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.dao.userdata;
 
-import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
