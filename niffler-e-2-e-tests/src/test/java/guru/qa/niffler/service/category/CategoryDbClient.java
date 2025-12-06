@@ -1,6 +1,7 @@
 package guru.qa.niffler.service.category;
 
 import guru.qa.niffler.data.dao.spend.impl.CategoryDaoSpringJdbc;
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.model.spend.CategoryJson;
 
 import java.util.List;

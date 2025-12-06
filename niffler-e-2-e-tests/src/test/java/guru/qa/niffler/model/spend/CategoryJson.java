@@ -1,5 +1,7 @@
 package guru.qa.niffler.model.spend;
 
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
+
 import java.util.UUID;
 
 public record CategoryJson(

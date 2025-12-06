@@ -1,6 +1,7 @@
 package guru.qa.niffler.data.dao.spend.impl;
 
 import guru.qa.niffler.data.dao.spend.CategoryDao;
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 
 import java.sql.PreparedStatement;
