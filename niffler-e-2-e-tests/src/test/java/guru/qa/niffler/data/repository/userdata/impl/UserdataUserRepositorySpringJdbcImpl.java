@@ -96,11 +96,6 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
             ps.setString(3, PENDING.name());
             ps.setDate(4, java.sql.Date.valueOf(now()));
 
-            if (ps.executeUpdate() == 0) {
-
-                throw new RuntimeException("Failed to insert new invitation");
-            }
-
             return ps;
         });
     }

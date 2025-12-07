@@ -76,7 +76,7 @@ public class AuthUserEntity implements Serializable {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 
-    public AuthUserEntity fromJson(AuthUserJson json) {
+    public static AuthUserEntity fromJson(AuthUserJson json) {
         AuthUserEntity user = new AuthUserEntity();
         user.setId(json.id());
         user.setUsername(json.username());

@@ -10,7 +10,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class FriendShipId implements Serializable {
-
   private UUID requester;
   private UUID addressee;
 
