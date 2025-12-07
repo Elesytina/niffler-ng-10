@@ -1,12 +1,12 @@
-package guru.qa.niffler.repository.impl;
+package guru.qa.niffler.data.repository.userdata.impl;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.repository.UserdataRepository;
+import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserdataRepositoryImpl implements UserdataRepository {
+public class UserdataUserRepositoryImpl implements UserdataUserRepository {
 
     @Override
     public Optional<UserEntity> findById(UUID id) {

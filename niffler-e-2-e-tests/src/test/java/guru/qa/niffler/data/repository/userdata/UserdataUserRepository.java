@@ -1,11 +1,11 @@
-package guru.qa.niffler.repository;
+package guru.qa.niffler.data.repository.userdata;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserdataRepository {
+public interface UserdataUserRepository {
 
     Optional<UserEntity> findById(UUID id);
 
