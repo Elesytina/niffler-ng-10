@@ -10,32 +10,45 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthUserResultSetExtractor implements ResultSetExtractor<AuthUserEntity> {
     public static final AuthUserResultSetExtractor INSTANCE = new AuthUserResultSetExtractor();
 
     @Override
     public AuthUserEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
-        AuthUserEntity user = new AuthUserEntity();
+        Map<UUID, AuthUserEntity> userMap = new ConcurrentHashMap<>();
         List<AuthorityEntity> authorities = new ArrayList<>();
+        UUID id =null;
 
         while (rs.next()) {
-            if (user.getId() == null) {
-                user.setId(rs.getObject("u.id", UUID.class));
-                user.setUsername(rs.getString("u.username"));
-                user.setPassword(rs.getString("u.password"));
-                user.setEnabled(rs.getBoolean("u.enabled"));
-                user.setAccountNonExpired(rs.getBoolean("u.account_non_expired"));
-                user.setCredentialsNonExpired(rs.getBoolean("u.credentials_non_expired"));
-                user.setAccountNonLocked(rs.getBoolean("u.account_non_locked"));
-            }
+            id = rs.getObject("id", UUID.class);
+            userMap.computeIfAbsent(id,
+                    userId -> {
+                        try {
+                            var user = new AuthUserEntity();
+                            user.setId(userId);
+                            user.setUsername(rs.getString("u.username"));
+                            user.setPassword(rs.getString("u.password"));
+                            user.setEnabled(rs.getBoolean("u.enabled"));
+                            user.setAccountNonExpired(rs.getBoolean("u.account_non_expired"));
+                            user.setCredentialsNonExpired(rs.getBoolean("u.credentials_non_expired"));
+                            user.setAccountNonLocked(rs.getBoolean("u.account_non_locked"));
+                            return user;
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+
             AuthorityEntity authority = new AuthorityEntity();
             authority.setId(rs.getObject("a.id", UUID.class));
-            authority.setUser(user);
-            authority.setAuthority(Authority.valueOf(rs.getString("authority")));
+            authority.setUser(userMap.get(id));
+            authority.setAuthority(Authority.valueOf(rs.getString("a.authority")));
             authorities.add(authority);
         }
+        AuthUserEntity user = userMap.get(id);
         user.setAuthorities(authorities);
 
         return user;
