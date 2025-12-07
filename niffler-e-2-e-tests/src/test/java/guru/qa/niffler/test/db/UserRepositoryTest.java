@@ -5,7 +5,7 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
 import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositorySpringJdbcImpl;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
-import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositorySpringJdbcImpl;
+import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositoryImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
@@ -20,7 +20,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
 public class UserRepositoryTest {
-    UserdataUserRepository userRepository = new UserdataUserRepositorySpringJdbcImpl();
+    UserdataUserRepository userRepository = new UserdataUserRepositoryImpl();
     AuthUserRepository authUserRepository = new AuthUserRepositorySpringJdbcImpl();
 
     @Test
