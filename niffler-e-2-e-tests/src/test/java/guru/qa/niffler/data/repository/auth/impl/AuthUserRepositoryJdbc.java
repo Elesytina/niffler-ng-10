@@ -2,14 +2,13 @@ package guru.qa.niffler.data.repository.auth.impl;
 
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.mapper.extractor.AuthUserResultSetExtractor;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
-import guru.qa.niffler.model.enums.Authority;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +19,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthUserRepositoryJdbc implements AuthUserRepository {
+
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
     @Override
@@ -34,7 +34,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
             ps.setObject(1, id);
             ResultSet rs = ps.executeQuery();
 
-            return getAuthUserEntity(rs);
+            return Optional.ofNullable(AuthUserResultSetExtractor.INSTANCE.extractData(rs));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -83,31 +83,5 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Optional<AuthUserEntity> getAuthUserEntity(ResultSet rs) throws SQLException {
-        AuthUserEntity user = null;
-        List<AuthorityEntity> authorities = new ArrayList<>();
-
-        while (rs.next()) {
-            if (user == null) {
-                user = new AuthUserEntity();
-                user.setId(rs.getObject("u.id", UUID.class));
-                user.setUsername(rs.getString("u.username"));
-                user.setPassword(rs.getString("u.password"));
-                user.setEnabled(rs.getBoolean("u.enabled"));
-                user.setAccountNonExpired(rs.getBoolean("u.account_non_expired"));
-                user.setCredentialsNonExpired(rs.getBoolean("u.credentials_non_expired"));
-                user.setAccountNonLocked(rs.getBoolean("u.account_non_locked"));
-            }
-            AuthorityEntity authority = new AuthorityEntity();
-            authority.setId(rs.getObject("a.id", UUID.class));
-            authority.setUser(user);
-            authority.setAuthority(Authority.valueOf(rs.getString("a.authority")));
-            authorities.add(authority);
-            user.setAuthorities(authorities);
-        }
-
-        return Optional.ofNullable(user);
     }
 }

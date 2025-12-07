@@ -11,6 +11,7 @@ import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 public class FriendshipDaoJdbc implements FriendshipDao {
+
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.userdataJdbcUrl());
 
     @Override
@@ -54,9 +55,9 @@ public class FriendshipDaoJdbc implements FriendshipDao {
 
                 return entity;
             }
-            throw new RuntimeException("Failed to update new friendship");
+            throw new RuntimeException("Failed to update the friendship");
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update new friendship", e);
+            throw new RuntimeException("Failed to update the friendship", e);
         }
     }
 }

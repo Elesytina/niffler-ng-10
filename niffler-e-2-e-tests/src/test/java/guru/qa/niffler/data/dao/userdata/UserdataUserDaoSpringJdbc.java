@@ -14,12 +14,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.DataSources.*;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @RequiredArgsConstructor
 public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
-    private final JdbcTemplate template = new JdbcTemplate(DataSources.getDataSource(CFG.userdataJdbcUrl()));
+    private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.userdataJdbcUrl()));
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
