@@ -2,7 +2,6 @@ package guru.qa.niffler.data.dao.userdata;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.mapper.UdUserRowMapper;
-import guru.qa.niffler.data.tpl.DataSources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -14,7 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.tpl.DataSources.*;
+import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @RequiredArgsConstructor
