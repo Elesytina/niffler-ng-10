@@ -15,7 +15,6 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
@@ -48,8 +47,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     @Override
     public void create(List<AuthorityEntity> entities) {
         try (PreparedStatement ps = connectionHolder.getConnection()
-                .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
-                        RETURN_GENERATED_KEYS)) {
+                .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)")) {
 
             for (AuthorityEntity entity : entities) {
                 ps.setObject(1, entity.getUser().getId());

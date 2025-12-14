@@ -6,6 +6,7 @@ import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -39,7 +40,7 @@ public class FriendshipDaoJdbc implements FriendshipDao {
     }
 
     @Override
-    public FriendshipEntity update(FriendshipEntity entity) {
+    public void createAll(List<FriendshipEntity> entities) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement(
                         """
@@ -47,17 +48,18 @@ public class FriendshipDaoJdbc implements FriendshipDao {
                                 SET status = ?
                                 WHERE requester_id in (?,?)
                                 """)) {
-            ps.setString(1, entity.getStatus().name());
-            ps.setObject(2, entity.getRequester().getId());
-            ps.setObject(3, entity.getAddressee().getId());
 
-            if (ps.executeUpdate() != 0) {
-
-                return entity;
+            for (FriendshipEntity entity : entities) {
+                ps.setString(1, entity.getStatus().name());
+                ps.setObject(2, entity.getRequester().getId());
+                ps.setObject(3, entity.getAddressee().getId());
+                ps.addBatch();
+                ps.clearParameters();
             }
-            throw new RuntimeException("Failed to update the friendship");
+
+            ps.executeBatch();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update the friendship", e);
+            throw new RuntimeException("Failed to create the friendship", e);
         }
     }
 }

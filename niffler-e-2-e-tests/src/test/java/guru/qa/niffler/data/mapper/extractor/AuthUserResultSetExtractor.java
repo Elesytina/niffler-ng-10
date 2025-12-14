@@ -21,7 +21,7 @@ public class AuthUserResultSetExtractor implements ResultSetExtractor<AuthUserEn
     public AuthUserEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<UUID, AuthUserEntity> userMap = new ConcurrentHashMap<>();
         List<AuthorityEntity> authorities = new ArrayList<>();
-        UUID id =null;
+        UUID id = null;
 
         while (rs.next()) {
             id = rs.getObject("id", UUID.class);
@@ -30,12 +30,23 @@ public class AuthUserResultSetExtractor implements ResultSetExtractor<AuthUserEn
                         try {
                             var user = new AuthUserEntity();
                             user.setId(userId);
-                            user.setUsername(rs.getString("u.username"));
-                            user.setPassword(rs.getString("u.password"));
-                            user.setEnabled(rs.getBoolean("u.enabled"));
-                            user.setAccountNonExpired(rs.getBoolean("u.account_non_expired"));
-                            user.setCredentialsNonExpired(rs.getBoolean("u.credentials_non_expired"));
-                            user.setAccountNonLocked(rs.getBoolean("u.account_non_locked"));
+                            user.setUsername(rs.getString("username"));
+                            user.setPassword(rs.getString("password"));
+                            user.setEnabled(rs.getBoolean("enabled"));
+                            user.setAccountNonExpired(rs.getBoolean("account_non_expired"));
+                            user.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+                            user.setAccountNonLocked(rs.getBoolean("account_non_locked"));
+                            user.setAuthorities(authorities.stream()
+                                    .map(authorityEntity -> {
+                                        try {
+                                            authorityEntity.setUser(user);
+                                            authorityEntity.setId(rs.getObject("authority_id", UUID.class));
+                                            authorityEntity.setAuthority(Authority.valueOf(rs.getString("authority")));
+                                            return authorityEntity;
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }).toList());
                             return user;
                         } catch (SQLException e) {
                             throw new RuntimeException(e);

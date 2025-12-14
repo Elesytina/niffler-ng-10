@@ -20,10 +20,11 @@ public class AuthorityRowMapper implements RowMapper<AuthorityEntity> {
     public AuthorityEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         AuthorityEntity authorityEntity = new AuthorityEntity();
         authorityEntity.setId(rs.getObject("id", UUID.class));
+        authorityEntity.setAuthority(Authority.valueOf(rs.getString("authority")));
+
         AuthUserEntity authUser = new AuthUserEntity();
         authUser.setId(rs.getObject("id", UUID.class));
         authorityEntity.setUser(authUser);
-        authorityEntity.setAuthority(Authority.valueOf(rs.getString("authority")));
 
         return authorityEntity;
     }

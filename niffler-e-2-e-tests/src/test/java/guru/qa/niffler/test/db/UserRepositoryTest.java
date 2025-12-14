@@ -1,38 +1,21 @@
 package guru.qa.niffler.test.db;
 
-import guru.qa.niffler.data.entity.auth.AuthUserEntity;
-import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.data.repository.auth.AuthUserRepository;
-import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositorySpringJdbcImpl;
-import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
-import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositoryImpl;
-import guru.qa.niffler.data.tpl.XaTransactionTemplate;
-import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.user.UserDbClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.utils.RandomDataUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
 public class UserRepositoryTest {
-    UserdataUserRepository userRepository = new UserdataUserRepositoryImpl();
-    AuthUserRepository authUserRepository = new AuthUserRepositorySpringJdbcImpl();
+    UserDbClient userDbClient = new UserDbClient();
 
     @Test
     void shouldRegisterNewUserWithSpringJdbc() {
-        var xaTxTpl = new XaTransactionTemplate(CFG.userdataJdbcUrl(), CFG.authJdbcUrl());
-        var username = "Ivan_Vasilievitch-%s".formatted(randomNumeric(2));
-
-        AuthUserJson authUserJson = new AuthUserJson(
-                null,
-                username,
-                "123",
-                true, true, true, true);
+        var username = "Ivan_Vasilievitch6-%s".formatted(randomNumeric(2));
 
         UserJson userJson = new UserJson(null,
                 username,
@@ -43,28 +26,20 @@ public class UserRepositoryTest {
                 null,
                 null);
 
-        UserEntity userEntity = xaTxTpl.execute(() -> {
-            authUserRepository.create(AuthUserEntity.fromJson(authUserJson));
+        UserJson created = userDbClient.createUserSpringJdbc(userJson, "123");
 
-            return userRepository.create(UserEntity.fromJson(userJson));
-        });
+        UserJson foundUser = userDbClient.getUserById(created.id());
 
-        Assertions.assertNotNull(userEntity.getId(), "User should have been created");
+        Assertions.assertNotNull(foundUser.id(), "User should have been found");
     }
 
 
     @Test
     void shouldAddFriend() {
-        Optional<UserEntity> requesterEntity = userRepository.findById(UUID.fromString("bd755702-c246-11f0-9783-ceceb74d3cd5"));
-        Optional<UserEntity> addresseeEntity = userRepository.findById(UUID.fromString("b80e92b2-c000-11f0-b43d-d62d6fb87ff1"));
+        UserJson requester = userDbClient.getUserById(UUID.fromString("f3fd3380-d150-11f0-b64b-fe82b4c2a29a"));
+        UserJson addressee = userDbClient.getUserById(UUID.fromString("b7f7bbde-d223-11f0-8a62-5ac75f2af29f"));
 
-        Assertions.assertTrue(requesterEntity.isPresent(), "User should been found");
-        Assertions.assertTrue(addresseeEntity.isPresent(), "User should been found");
-
-        userRepository.addOutcomeInvitation(requesterEntity.get(), addresseeEntity.get());
-        userRepository.addIncomeInvitation(requesterEntity.get(), addresseeEntity.get());
-
-        userRepository.addFriend(requesterEntity.get(), addresseeEntity.get());
+        userDbClient.addFriend(requester, addressee);
     }
 
 }

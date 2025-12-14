@@ -18,7 +18,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-public class AuthUserRepositoryJdbc implements AuthUserRepository {
+public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
 
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
@@ -26,7 +26,19 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     public Optional<AuthUserEntity> findById(UUID id) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("""
-                        SELECT * FROM "user" u
+                        SELECT
+                        u.id AS id,
+                        u.username AS username,
+                        u.password AS password,
+                        u.enabled AS enabled,
+                        u.credentials_non_expired AS credentials_non_expired,
+                        u.account_non_locked AS account_non_locked,
+                        u.account_non_expired AS account_non_expired,
+                        a.id AS authority_id,
+                        a.user_id AS user_id,
+                        a.authority AS authority
+                      
+                        FROM "user" u
                         JOIN authority  a
                         ON u.id = a.user_id
                         where user_id = ?
@@ -70,7 +82,6 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
             List<AuthorityEntity> authorities = userEntity.getAuthorities();
 
             for (AuthorityEntity entity : authorities) {
-                entity.setUser(userEntity);
                 authorityPs.setObject(1, userEntity.getId());
                 authorityPs.setString(2, entity.getAuthority().name());
                 authorityPs.addBatch();
