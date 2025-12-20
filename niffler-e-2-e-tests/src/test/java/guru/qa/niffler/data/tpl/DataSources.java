@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
@@ -31,6 +33,12 @@ public class DataSources {
                     datasourceBean.setXaProperties(properties);
                     datasourceBean.setPoolSize(4);
                     datasourceBean.setMaxPoolSize(10);
+                    try {
+                        InitialContext ctx = new InitialContext();
+                        ctx.bind("java:comp/env/jdbc/" + dbName, datasourceBean);
+                    } catch (NamingException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     return datasourceBean;
                 });

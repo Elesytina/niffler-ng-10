@@ -91,6 +91,7 @@ dependencies {
     testImplementation("com.atomikos:transactions-jta:${atomikosTransactionsVersion}:jakarta")
     testImplementation("com.atomikos:transactions-hibernate4:${atomikosTransactionsVersion}:jakarta")
     testImplementation("com.atomikos:transactions-jdbc:${atomikosTransactionsVersion}")
+    implementation("simple-jndi:simple-jndi:0.11.4.1")
     // Allure
     testImplementation "io.qameta.allure:allure-attachments:${allureVersion}"
     testImplementation("io.qameta.allure:allure-junit5:${allureVersion}") {
