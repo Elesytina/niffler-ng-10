@@ -1,8 +1,10 @@
 package guru.qa.niffler.data.dao.auth.impl;
 
 import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
+import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
+import guru.qa.niffler.model.enums.Authority;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +15,6 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
@@ -29,8 +30,10 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
             while (rs.next()) {
                 AuthorityEntity entity = new AuthorityEntity();
                 entity.setId(rs.getObject("id", UUID.class));
-                entity.setUserId(userId);
-                entity.setAuthority(rs.getString("authority"));
+                AuthUserEntity user = new AuthUserEntity();
+                user.setId(userId);
+                entity.setUser(user);
+                entity.setAuthority(Authority.valueOf(rs.getString("authority")));
 
                 authorities.add(entity);
             }
@@ -44,12 +47,11 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     @Override
     public void create(List<AuthorityEntity> entities) {
         try (PreparedStatement ps = connectionHolder.getConnection()
-                .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)",
-                        RETURN_GENERATED_KEYS)) {
+                .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)")) {
 
             for (AuthorityEntity entity : entities) {
-                ps.setObject(1, entity.getUserId());
-                ps.setString(2, entity.getAuthority());
+                ps.setObject(1, entity.getUser().getId());
+                ps.setString(2, entity.getAuthority().name());
                 ps.addBatch();
                 ps.clearParameters();
             }

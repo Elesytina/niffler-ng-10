@@ -1,34 +1,29 @@
 package guru.qa.niffler.service.user;
 
-import guru.qa.niffler.data.dao.auth.AuthAuthorityDao;
-import guru.qa.niffler.data.dao.auth.impl.AuthAuthoritySpringDaoJdbc;
 import guru.qa.niffler.data.dao.auth.impl.AuthUserSpringDaoJdbc;
-import guru.qa.niffler.data.dao.userdata.UserdataUserDao;
-import guru.qa.niffler.data.dao.userdata.UserdataUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.data.repository.auth.AuthUserRepository;
+import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositorySpringJdbcImpl;
+import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
+import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositorySpringJdbcImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.auth.AuthUserJson;
-import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.enums.Authority;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static guru.qa.niffler.model.enums.Authority.read;
-import static guru.qa.niffler.model.enums.Authority.write;
 
 @Slf4j
 public class UserDbClient {
+    private final AuthUserRepository authUserRepository = new AuthUserRepositorySpringJdbcImpl();
+    private final UserdataUserRepository userdataUserRepository = new UserdataUserRepositorySpringJdbcImpl();
     private final AuthUserSpringDaoJdbc authUserDaoSpring = new AuthUserSpringDaoJdbc();
-    private final AuthAuthorityDao authorityDaoSpring = new AuthAuthoritySpringDaoJdbc();
-    private final UserdataUserDao udUserDaoSpring = new UserdataUserDaoSpringJdbc();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
@@ -36,23 +31,26 @@ public class UserDbClient {
 
     public UserJson createUserSpringJdbc(UserJson userJson, String password) {
         return xaTransactionTemplate.execute(() -> {
-            var savedAuthUser = authUserDaoSpring.create(getAuthUserEntity(userJson, password));
-            authorityDaoSpring.create(
-                    Stream.of(read, write)
-                            .map(authority -> getAuthorityEntity(savedAuthUser, authority))
-                            .toList());
-            var user = udUserDaoSpring.create(UserEntity.fromJson(userJson));
+            authUserRepository.create(getAuthUserEntity(userJson, password));
+
+            var user = userdataUserRepository.create(UserEntity.fromJson(userJson));
 
             return UserJson.fromEntity(user);
         });
     }
 
-    public List<AuthorityJson> getAuthoritiesByUserId(UUID id) {
-        List<AuthorityEntity> authorityEntities = authorityDaoSpring.findAllByUserId(id);
+    public UserJson getUserById(UUID id) {
+        Optional<UserEntity> userEntity = userdataUserRepository.findById(id);
 
-        return authorityEntities.stream()
-                .map(AuthorityJson::fromEntity)
-                .toList();
+        if (userEntity.isPresent()) {
+
+            return UserJson.fromEntity(userEntity.get());
+        }
+        throw new RuntimeException("Failed to find user by id: %s".formatted(id));
+    }
+
+    public void addFriend(UserJson user, UserJson friend) {
+        userdataUserRepository.addFriend(UserEntity.fromJson(user), UserEntity.fromJson(friend));
     }
 
     public AuthUserJson getAuthUserByName(String name) {
@@ -79,8 +77,8 @@ public class UserDbClient {
 
     public static AuthorityEntity getAuthorityEntity(AuthUserEntity savedEntity, Authority authority) {
         AuthorityEntity authorityEntity = new AuthorityEntity();
-        authorityEntity.setAuthority(authority.name());
-        authorityEntity.setUserId(savedEntity.getId());
+        authorityEntity.setAuthority(authority);
+        authorityEntity.setUser(savedEntity);
 
         return authorityEntity;
     }

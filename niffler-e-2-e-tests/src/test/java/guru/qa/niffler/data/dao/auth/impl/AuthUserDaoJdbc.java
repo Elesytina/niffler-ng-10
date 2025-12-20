@@ -76,6 +76,5 @@ public class AuthUserDaoJdbc implements AuthUserDao {
         }
 
         return Optional.empty();
-
     }
 }

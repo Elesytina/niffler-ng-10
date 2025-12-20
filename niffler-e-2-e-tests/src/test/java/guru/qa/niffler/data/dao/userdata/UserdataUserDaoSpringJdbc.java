@@ -2,7 +2,6 @@ package guru.qa.niffler.data.dao.userdata;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.mapper.UdUserRowMapper;
-import guru.qa.niffler.data.tpl.DataSources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -14,12 +13,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @RequiredArgsConstructor
 public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
-    private final JdbcTemplate template = new JdbcTemplate(DataSources.getDataSource(CFG.userdataJdbcUrl()));
+    private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.userdataJdbcUrl()));
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
@@ -47,11 +47,11 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, entity.getUsername());
             ps.setString(2, entity.getCurrency().name());
-            ps.setString(3, entity.getFirstName());
+            ps.setString(3, entity.getFirstname());
             ps.setString(4, entity.getSurname());
             ps.setBytes(5, entity.getPhoto());
             ps.setBytes(6, entity.getPhotoSmall());
-            ps.setString(7, entity.getFullName());
+            ps.setString(7, entity.getFullname());
 
             return ps;
         }, keyHolder);
