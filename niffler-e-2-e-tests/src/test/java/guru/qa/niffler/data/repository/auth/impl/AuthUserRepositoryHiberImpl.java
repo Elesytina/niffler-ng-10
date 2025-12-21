@@ -15,15 +15,25 @@ public class AuthUserRepositoryHiberImpl implements AuthUserRepository {
     private final EntityManager em = EntityManagers.em(CFG.authJdbcUrl());
 
     @Override
-    public Optional<AuthUserEntity> findById(UUID id) {
-        return Optional.ofNullable(em.find(AuthUserEntity.class, id));
-    }
-
-    @Override
     public AuthUserEntity create(AuthUserEntity authUser) {
         em.joinTransaction();
         em.persist(authUser);
+
         return authUser;
+    }
+
+    @Override
+    public AuthUserEntity update(AuthUserEntity authUser) {
+        em.joinTransaction();
+        em.merge(authUser);
+
+        return authUser;
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+
+        return Optional.ofNullable(em.find(AuthUserEntity.class, id));
     }
 
     @Override
@@ -36,5 +46,15 @@ public class AuthUserRepositoryHiberImpl implements AuthUserRepository {
                 .getSingleResult();
 
         return Optional.ofNullable(authUser);
+    }
+
+    @Override
+    public void remove(UUID id) {
+        AuthUserEntity user = em.find(AuthUserEntity.class, id);
+        if (user == null) {
+            throw new RuntimeException("User with id %s not found".formatted(id));
+        }
+        em.joinTransaction();
+        em.remove(user);
     }
 }
