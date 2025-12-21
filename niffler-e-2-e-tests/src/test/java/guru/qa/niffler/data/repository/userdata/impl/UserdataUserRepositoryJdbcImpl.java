@@ -40,7 +40,8 @@ public class UserdataUserRepositoryJdbcImpl implements UserdataUserRepository {
 
     @Override
     public UserEntity update(UserEntity user) {
-        return null;
+
+        return userdataUserDao.update(user);
     }
 
     @Override

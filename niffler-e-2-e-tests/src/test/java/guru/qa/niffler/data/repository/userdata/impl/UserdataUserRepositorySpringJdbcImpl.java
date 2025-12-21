@@ -41,7 +41,7 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
     @Override
     public UserEntity update(UserEntity user) {
 
-        return userdataUserDao.create(user);
+        return userdataUserDao.update(user);
     }
 
     @Override

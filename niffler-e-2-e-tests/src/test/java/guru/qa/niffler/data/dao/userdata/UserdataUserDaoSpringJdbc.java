@@ -64,10 +64,17 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
 
 
     public UserEntity update(UserEntity entity) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO \"user\"( username, currency, firstname, surname, photo, photo_small, full_name) values (?,?,?, ?,?,?,?)",
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = conn.prepareStatement("""
+                        UPDATE "user" SET username=?,
+                        currency=?,
+                        firstname=?,
+                        surname=?,
+                        photo=?,
+                        photo_small=?,
+                        full_name=?
+                        WHERE id=?
+                        """);
             ps.setString(1, entity.getUsername());
             ps.setString(2, entity.getCurrency().name());
             ps.setString(3, entity.getFirstname());
@@ -77,10 +84,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
             ps.setString(7, entity.getFullname());
 
             return ps;
-        }, keyHolder);
-
-        final UUID id = (UUID) Objects.requireNonNull(keyHolder.getKeys()).get("id");
-        entity.setId(id);
+        });
 
         return entity;
     }
