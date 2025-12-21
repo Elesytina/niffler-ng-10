@@ -95,4 +95,9 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String name) {
+        return Optional.empty();
+    }
 }

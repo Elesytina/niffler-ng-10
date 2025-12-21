@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.entity.spend;
 
+import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class SpendEntity implements Serializable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private guru.qa.niffler.model.enums.CurrencyValues currency;
+    private CurrencyValues currency;
 
     @Column(name = "spend_date", columnDefinition = "DATE", nullable = false)
     private Date spendDate;

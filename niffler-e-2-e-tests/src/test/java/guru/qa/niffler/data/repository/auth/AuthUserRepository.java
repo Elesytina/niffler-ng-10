@@ -9,4 +9,6 @@ public interface AuthUserRepository {
     Optional<AuthUserEntity> findById(UUID id);
 
     AuthUserEntity create(AuthUserEntity authUser);
+
+    Optional<AuthUserEntity> findByUsername(String name);
 }

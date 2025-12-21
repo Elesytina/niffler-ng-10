@@ -1,18 +1,18 @@
 package guru.qa.niffler.data.repository.auth.impl;
 
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
 import jakarta.persistence.EntityManager;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.jpa.EntityMangers.em;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
-public class AuthUserRepositoryHibernate implements AuthUserRepository {
+public class AuthUserRepositoryHiberImpl implements AuthUserRepository {
 
-    private final EntityManager em = em(CFG.authJdbcUrl());
+    private final EntityManager em = EntityManagers.em(CFG.authJdbcUrl());
 
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
@@ -26,6 +26,7 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
         return authUser;
     }
 
+    @Override
     public Optional<AuthUserEntity> findByUsername(String name) {
         var sql = "FROM AuthUserEntity au WHERE au.username =:username";
 

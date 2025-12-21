@@ -1,32 +1,21 @@
 package guru.qa.niffler.test.db;
 
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.user.UserDbClient;
+import guru.qa.niffler.service.user.UserDbClientHibernate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
-import static guru.qa.niffler.utils.RandomDataUtils.*;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-
 public class UserRepositoryTest {
-    UserDbClient userDbClient = new UserDbClient();
+    UserDbClientHibernate userDbClient = new UserDbClientHibernate();
 
-    @Test
-    void shouldRegisterNewUserWithSpringJdbc() {
-        var username = "Ivan_Vasilievitch6-%s".formatted(randomNumeric(2));
-
-        UserJson userJson = new UserJson(null,
-                username,
-                randomCurrency(),
-                randomName(),
-                randomSurname(),
-                randomFullName(),
-                null,
-                null);
-
-        UserJson created = userDbClient.createUserSpringJdbc(userJson, "123");
+    @ParameterizedTest
+    @ValueSource(strings = {"petr1", "petr2", "petr3"})
+    void shouldRegisterNewUserWithSpringJdbc(String username) {
+        UserJson created = userDbClient.createUser(username, "123");
 
         UserJson foundUser = userDbClient.getUserById(created.id());
 

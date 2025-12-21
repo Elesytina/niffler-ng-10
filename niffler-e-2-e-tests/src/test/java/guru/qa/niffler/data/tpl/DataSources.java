@@ -35,7 +35,7 @@ public class DataSources {
                     datasourceBean.setMaxPoolSize(10);
                     try {
                         InitialContext ctx = new InitialContext();
-                        ctx.bind("java:comp/env/jdbc/" + dbName, datasourceBean);
+                        ctx.bind("java:comp/env/jdbc/%s".formatted(dbName), datasourceBean);
                     } catch (NamingException e) {
                         throw new RuntimeException(e);
                     }

@@ -27,19 +27,26 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
     }
 
     @Override
+    public Optional<UserEntity> findByUsername(String username) {
+
+        return userdataUserDao.findByUsername(username);
+    }
+
+    @Override
     public UserEntity create(UserEntity entity) {
 
         return userdataUserDao.create(entity);
     }
 
     @Override
-    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
-        addInvitation(addressee, requester);
+    public UserEntity update(UserEntity user) {
+
+        return userdataUserDao.create(user);
     }
 
     @Override
-    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
-        addInvitation(requester, addressee);
+    public void sendInvitation(UserEntity requester, UserEntity addressee) {
+        addInvitation(addressee, requester);
     }
 
     @Override
@@ -57,6 +64,11 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
         entity2.setCreatedDate(java.sql.Date.valueOf(now()));
 
         friendshipDao.createAll(List.of(entity1, entity2));
+    }
+
+    @Override
+    public void remove(UserEntity user) {
+        userdataUserDao.delete(user);
     }
 
     private void addInvitation(UserEntity requester, UserEntity addressee) {

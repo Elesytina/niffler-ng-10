@@ -80,4 +80,9 @@ public class AuthUserRepositorySpringJdbcImpl implements AuthUserRepository {
 
         return authUser;
     }
+
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String name) {
+        return Optional.empty();
+    }
 }
