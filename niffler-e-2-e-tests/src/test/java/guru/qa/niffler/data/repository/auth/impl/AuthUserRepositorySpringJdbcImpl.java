@@ -23,21 +23,8 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 
 public class AuthUserRepositorySpringJdbcImpl implements AuthUserRepository {
+
     private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
-
-    @Override
-    public Optional<AuthUserEntity> findById(UUID userId) {
-        AuthUserEntity userEntity = template.query("""
-                        SELECT * FROM "user" u
-                        JOIN authority  a
-                        ON u.id = a.user_id
-                        where user_id = ?
-                        """,
-                AuthUserResultSetExtractor.INSTANCE,
-                userId);
-
-        return Optional.ofNullable(userEntity);
-    }
 
     @Override
     public AuthUserEntity create(AuthUserEntity authUser) {
@@ -82,7 +69,72 @@ public class AuthUserRepositorySpringJdbcImpl implements AuthUserRepository {
     }
 
     @Override
-    public Optional<AuthUserEntity> findByUsername(String name) {
-        return Optional.empty();
+    public AuthUserEntity update(AuthUserEntity authUser) {
+        template.update(conn -> {
+            PreparedStatement ps = conn.prepareStatement(
+                    """
+                            UPDATE "user"
+                            SET username=?,
+                            password=?,
+                            enabled=?,
+                            account_non_expired=?,
+                            account_non_locked=?,
+                            credentials_non_expired=?
+                            WHERE id=?
+                            """);
+            ps.setString(1, authUser.getUsername());
+            ps.setString(2, PASSWORD_ENCODER.encode(authUser.getPassword()));
+            ps.setBoolean(3, authUser.getEnabled());
+            ps.setBoolean(4, authUser.getAccountNonExpired());
+            ps.setBoolean(5, authUser.getAccountNonLocked());
+            ps.setBoolean(6, authUser.getCredentialsNonExpired());
+            ps.setObject(7, authUser.getId());
+
+            return ps;
+        });
+
+        return authUser;
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findById(UUID userId) {
+        AuthUserEntity userEntity = template.query("""
+                        SELECT * FROM "user" u
+                        JOIN authority  a
+                        ON u.id = a.user_id
+                        where user_id = ?
+                        """,
+                AuthUserResultSetExtractor.INSTANCE,
+                userId);
+
+        return Optional.ofNullable(userEntity);
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        AuthUserEntity userEntity = template.query("""
+                        SELECT * FROM "user" u
+                        JOIN authority  a
+                        ON u.id = a.user_id
+                        where u.username = ?
+                        """,
+                AuthUserResultSetExtractor.INSTANCE,
+                username);
+
+        return Optional.ofNullable(userEntity);
+    }
+
+    @Override
+    public void remove(UUID id) {
+        template.update(conn -> {
+            PreparedStatement ps = conn.prepareStatement(
+                    """
+                            DELETE FROM "user"
+                            WHERE id = ?
+                            """);
+            ps.setObject(1, id);
+
+            return ps;
+        });
     }
 }

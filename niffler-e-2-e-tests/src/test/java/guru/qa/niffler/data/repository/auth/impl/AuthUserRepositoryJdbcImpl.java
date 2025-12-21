@@ -23,36 +23,6 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
     @Override
-    public Optional<AuthUserEntity> findById(UUID id) {
-        try (PreparedStatement ps = connectionHolder.getConnection()
-                .prepareStatement("""
-                        SELECT
-                        u.id AS id,
-                        u.username AS username,
-                        u.password AS password,
-                        u.enabled AS enabled,
-                        u.credentials_non_expired AS credentials_non_expired,
-                        u.account_non_locked AS account_non_locked,
-                        u.account_non_expired AS account_non_expired,
-                        a.id AS authority_id,
-                        a.user_id AS user_id,
-                        a.authority AS authority
-                        
-                        FROM "user" u
-                        JOIN authority  a
-                        ON u.id = a.user_id
-                        where user_id = ?
-                        """)) {
-            ps.setObject(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            return Optional.ofNullable(AuthUserResultSetExtractor.INSTANCE.extractData(rs));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public AuthUserEntity create(AuthUserEntity userEntity) {
         try (PreparedStatement userPs = connectionHolder.getConnection()
                 .prepareStatement("""
@@ -108,12 +78,7 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
                          account_non_locked=?,
                          credentials_non_expired=?
                          WHERE id=?
-                        """);
-             PreparedStatement authorityPs = connectionHolder.getConnection()
-                     .prepareStatement("""
-                             UPDATE authority SET authority=?
-                             WHERE user_id=?
-                             """)) {
+                        """)) {
             userPs.setString(1, userEntity.getUsername());
             userPs.setString(2, PASSWORD_ENCODER.encode(userEntity.getPassword()));
             userPs.setBoolean(3, userEntity.getEnabled());
@@ -125,18 +90,37 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
             if (userPs.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert user");
             }
-
-            List<AuthorityEntity> authorities = userEntity.getAuthorities();
-
-            for (AuthorityEntity entity : authorities) {
-                authorityPs.setString(1, entity.getAuthority().name());
-                authorityPs.setObject(2, userEntity.getId());
-                authorityPs.addBatch();
-                authorityPs.clearParameters();
-            }
-            authorityPs.executeBatch();
-
             return userEntity;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("""
+                        SELECT
+                        u.id AS id,
+                        u.username AS username,
+                        u.password AS password,
+                        u.enabled AS enabled,
+                        u.credentials_non_expired AS credentials_non_expired,
+                        u.account_non_locked AS account_non_locked,
+                        u.account_non_expired AS account_non_expired,
+                        a.id AS authority_id,
+                        a.user_id AS user_id,
+                        a.authority AS authority
+                        
+                        FROM "user" u
+                        JOIN authority  a
+                        ON u.id = a.user_id
+                        where user_id = ?
+                        """)) {
+            ps.setObject(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            return Optional.ofNullable(AuthUserResultSetExtractor.INSTANCE.extractData(rs));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
