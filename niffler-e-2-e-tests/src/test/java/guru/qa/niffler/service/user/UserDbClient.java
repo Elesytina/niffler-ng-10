@@ -22,7 +22,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.utils.RandomDataUtils.*;
 
 @Slf4j
-public class UserDbClient {
+public class UserDbClient implements UsersClient{
 
     private final AuthUserRepository authUserRepository = new AuthUserRepositorySpringJdbcImpl();
     private final UserdataUserRepository userdataUserRepository = new UserdataUserRepositorySpringImpl();
@@ -31,6 +31,7 @@ public class UserDbClient {
             CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl());
 
+    @Override
     public UserJson create(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
             UserJson userJson = new UserJson(null,
@@ -50,16 +51,19 @@ public class UserDbClient {
         });
     }
 
+    @Override
     public UserJson update(UserJson userJson) {
         var user = userdataUserRepository.update(UserEntity.fromJson(userJson));
 
         return UserJson.fromEntity(user);
     }
 
+    @Override
     public void delete(UserJson userJson) {
         userdataUserRepository.remove(UserEntity.fromJson(userJson));
     }
 
+    @Override
     public UserJson findById(UUID id) {
         Optional<UserEntity> userEntity = userdataUserRepository.findById(id);
 
@@ -70,6 +74,7 @@ public class UserDbClient {
         throw new RuntimeException("Failed to find user by id: %s".formatted(id));
     }
 
+    @Override
     public UserJson findByUsername(String username) {
         Optional<UserEntity> userEntity = userdataUserRepository.findByUsername(username);
 
@@ -80,6 +85,7 @@ public class UserDbClient {
         throw new RuntimeException("Failed to find user by username: %s".formatted(username));
     }
 
+    @Override
     public void addFriends(UserJson user, int count) {
         xaTransactionTemplate.execute(() -> {
             for (int i = 0; i < count; i++) {
@@ -95,6 +101,7 @@ public class UserDbClient {
         });
     }
 
+    @Override
     public void addIncomeInvitations(UserJson user, int count) {
         xaTransactionTemplate.execute(() -> {
             for (int i = 0; i < count; i++) {
@@ -110,6 +117,7 @@ public class UserDbClient {
         });
     }
 
+    @Override
     public void addOutcomeInvitations(UserJson user, int count) {
         xaTransactionTemplate.execute(() -> {
             for (int i = 0; i < count; i++) {

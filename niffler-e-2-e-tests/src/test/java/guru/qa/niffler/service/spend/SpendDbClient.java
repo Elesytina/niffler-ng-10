@@ -4,8 +4,6 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
 import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryHiberImpl;
-import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryJdbcImpl;
-import guru.qa.niffler.data.repository.spend.impl.SpendRepositorySpringImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
@@ -19,10 +17,9 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 @Slf4j
 public class SpendDbClient implements SpendClient {
 
-    private final SpendRepository repository = new SpendRepositoryJdbcImpl();
+    private final SpendRepository repository = new SpendRepositoryHiberImpl();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
-            CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl());
 
     @Override
@@ -57,26 +54,29 @@ public class SpendDbClient implements SpendClient {
         }
     }
 
+    @Override
     public SpendJson create(SpendJson spend) {
+
         return xaTransactionTemplate.execute(() -> {
-                    SpendEntity newSpend = SpendEntity.fromJson(spend);
-                    if (spend.category() != null) {
-                        var categoryId = spend.category().id();
-                        Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
-                        if (categoryEntity.isPresent()) {
-                            newSpend.setCategory(categoryEntity.get());
-                        } else {
-                            throw new RuntimeException("Category not found");
-                        }
-                    }
+            SpendEntity newSpend = SpendEntity.fromJson(spend);
+            if (spend.category() != null) {
+                var categoryId = spend.category().id();
+                Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
 
-                    SpendEntity entity = repository.create(newSpend);
-
-                    return SpendJson.fromEntity(entity);
+                if (categoryEntity.isPresent()) {
+                    newSpend.setCategory(categoryEntity.get());
+                } else {
+                    throw new RuntimeException("Category not found");
                 }
-        );
+            }
+
+            SpendEntity entity = repository.create(newSpend);
+
+            return SpendJson.fromEntity(entity);
+        });
     }
 
+    @Override
     public SpendJson update(SpendJson spendJson) {
         return xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
@@ -90,6 +90,7 @@ public class SpendDbClient implements SpendClient {
         });
     }
 
+    @Override
     public void remove(SpendJson spend) {
         xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spend.id());
@@ -103,6 +104,7 @@ public class SpendDbClient implements SpendClient {
         });
     }
 
+    @Override
     public CategoryJson createCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
             CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
