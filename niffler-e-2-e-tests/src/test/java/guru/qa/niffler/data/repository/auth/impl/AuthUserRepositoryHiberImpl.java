@@ -50,11 +50,13 @@ public class AuthUserRepositoryHiberImpl implements AuthUserRepository {
 
     @Override
     public void remove(UUID id) {
+        em.joinTransaction();
         AuthUserEntity user = em.find(AuthUserEntity.class, id);
         if (user == null) {
             throw new RuntimeException("User with id %s not found".formatted(id));
         }
-        em.joinTransaction();
+        user.getAuthorities().forEach(user::removeAuthority);
+
         em.remove(user);
     }
 }

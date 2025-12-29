@@ -68,7 +68,7 @@ public class ChainTransactionTest {
             });
         } catch (Exception ignored) {
         }
-        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.getAuthUserByName(username));
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findAuthUserByUsername(username));
     }
 
     //c jdbc не работает
@@ -100,7 +100,7 @@ public class ChainTransactionTest {
             });
         } catch (Exception ignored) {
         }
-        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.getAuthUserByName(username));
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findAuthUserByUsername(username));
     }
 
 }

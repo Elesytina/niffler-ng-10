@@ -159,6 +159,38 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
+    public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String spendDescription) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement(
+                        """
+                                SELECT * FROM spend
+                                LEFT JOIN category
+                                ON spend.category_id = category.id
+                                WHERE spend.username = ?
+                                AND spend.description = ?
+                                """)) {
+            ps.setString(1, username);
+            ps.setString(2, spendDescription);
+
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                SpendEntity spend = getSpendEntity(resultSet);
+
+                if (resultSet.getObject("category_id") != null) {
+                    CategoryEntity category = getCategoryEntity(resultSet);
+                    spend.setCategory(category);
+                }
+
+                return Optional.of(spend);
+            }
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
         try (PreparedStatement ps = connectionHolder
                 .getConnection()

@@ -16,7 +16,8 @@ import static guru.qa.niffler.model.enums.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 import static java.time.LocalDate.now;
 
-public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserRepository {
+public class UserdataUserRepositorySpringImpl implements UserdataUserRepository {
+
     private final FriendshipDao friendshipDao = new FriendshipDaoSpringJdbc();
     private final UserdataUserDao userdataUserDao = new UserdataUserDaoSpringJdbc();
 
@@ -68,6 +69,7 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
 
     @Override
     public void remove(UserEntity user) {
+        friendshipDao.deleteAll(user.getId());
         userdataUserDao.delete(user);
     }
 

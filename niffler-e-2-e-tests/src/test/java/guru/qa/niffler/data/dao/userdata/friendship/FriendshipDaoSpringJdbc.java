@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
@@ -42,7 +43,7 @@ public class FriendshipDaoSpringJdbc implements FriendshipDao {
     @Override
     public void createAll(List<FriendshipEntity> entities) {
         template.batchUpdate(
-                  """
+                """
                         INSERT INTO friendship
                         (requester_id, addressee_id, status, created_date)
                         values (?,?,?,?)
@@ -64,4 +65,25 @@ public class FriendshipDaoSpringJdbc implements FriendshipDao {
                 });
     }
 
+    @Override
+    public void deleteAll(UUID userId) {
+        template.update(conn -> {
+            PreparedStatement ps = conn
+                    .prepareStatement(
+                            """
+                                    DELETE FROM friendship
+                                    WHERE requester_id= ?
+                                    OR addressee_id= ?
+                                    """);
+            ps.setObject(1, userId);
+            ps.setObject(2, userId);
+
+            if (ps.executeUpdate() == 0) {
+                throw new RuntimeException("Failed to delete friendship");
+            }
+
+            return ps;
+        });
+
+    }
 }

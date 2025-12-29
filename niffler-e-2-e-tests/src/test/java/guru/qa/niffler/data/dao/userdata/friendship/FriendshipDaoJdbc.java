@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -58,6 +59,26 @@ public class FriendshipDaoJdbc implements FriendshipDao {
             }
 
             ps.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create the friendship", e);
+        }
+    }
+
+    @Override
+    public void deleteAll(UUID userId) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement(
+                        """
+                                DELETE FROM friendship
+                                WHERE requester_id= ?
+                                OR addressee_id= ?
+                                """)) {
+            ps.setObject(1, userId);
+            ps.setObject(2, userId);
+
+            if (ps.executeUpdate() == 0) {
+                throw new RuntimeException("Failed to delete friendship");
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create the friendship", e);
         }

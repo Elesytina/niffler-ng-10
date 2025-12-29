@@ -5,6 +5,7 @@ import guru.qa.niffler.model.auth.AuthUserJson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 import static jakarta.persistence.FetchType.EAGER;
 
-
+@ToString
 @Getter
 @Setter
 @Entity

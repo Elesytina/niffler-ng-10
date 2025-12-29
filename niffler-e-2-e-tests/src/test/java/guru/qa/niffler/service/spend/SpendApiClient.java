@@ -4,6 +4,7 @@ import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
@@ -26,7 +27,7 @@ public class SpendApiClient implements SpendClient {
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
     @Override
-    public SpendJson getSpendById(UUID id) {
+    public SpendJson findById(UUID id) {
         try {
             Response<SpendJson> response = spendApi.getSpend(id.toString())
                     .execute();
@@ -39,7 +40,6 @@ public class SpendApiClient implements SpendClient {
         }
     }
 
-    @Override
     public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
         try {
             Response<List<SpendJson>> response = spendApi.getAllSpends(dateFilterValues, currencyFilter, userName)
@@ -53,12 +53,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public List<SpendJson> getAllSpendsByUsername(String userName) {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
-    public SpendJson createSpend(SpendJson spend) {
+    public SpendJson create(SpendJson spend) {
         try {
             var response = spendApi.createSpend(spend)
                     .execute();
@@ -71,7 +66,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson updateSpend(SpendJson spendJson) {
+    public SpendJson update(SpendJson spendJson) {
         try {
             var response = spendApi.editSpend(spendJson)
                     .execute();
@@ -94,11 +89,6 @@ public class SpendApiClient implements SpendClient {
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
-    }
-
-    @Override
-    public void deleteSpend(SpendJson spend) {
-        throw new RuntimeException("Not implemented yet");
     }
 
 }

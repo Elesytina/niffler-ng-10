@@ -27,7 +27,7 @@ public class CreateSpendingExtension implements BeforeEachCallback {
                         var annoSpending = anno.spendings()[0];
                         var username = anno.username();
 
-                        final SpendJson created = spendClient.createSpend(
+                        final SpendJson created = spendClient.create(
                                 new SpendJson(
                                         null,
                                         new Date(),

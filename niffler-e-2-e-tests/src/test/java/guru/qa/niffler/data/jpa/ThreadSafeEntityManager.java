@@ -4,16 +4,17 @@ import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
 import jakarta.persistence.metamodel.Metamodel;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
-
+@SuppressWarnings("resource")
 public class ThreadSafeEntityManager implements EntityManager {
     private final ThreadLocal<EntityManager> threadEm = new ThreadLocal<>();
-    private final EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory emf;
 
-    public ThreadSafeEntityManager(EntityManager delegate) {
+    public ThreadSafeEntityManager(@Nonnull EntityManager delegate) {
         threadEm.set(delegate);
-        this.entityManagerFactory = delegate.getEntityManagerFactory();
+        emf = delegate.getEntityManagerFactory();
     }
 
     @Override
@@ -341,7 +342,7 @@ public class ThreadSafeEntityManager implements EntityManager {
 
     private EntityManager threadEm() {
         if (threadEm.get() == null || !threadEm.get().isOpen()) {
-            return entityManagerFactory.createEntityManager();
+            threadEm.set(emf.createEntityManager());
         }
         return threadEm.get();
     }

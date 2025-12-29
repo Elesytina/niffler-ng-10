@@ -17,6 +17,7 @@ import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 import static java.time.LocalDate.now;
 
 public class UserdataUserRepositoryJdbcImpl implements UserdataUserRepository {
+
     private final FriendshipDao friendshipDao = new FriendshipDaoJdbc();
     private final UserdataUserDao userdataUserDao = new UserdataUserDaoJdbc();
 
@@ -68,6 +69,7 @@ public class UserdataUserRepositoryJdbcImpl implements UserdataUserRepository {
 
     @Override
     public void remove(UserEntity user) {
+        friendshipDao.deleteAll(user.getId());
         userdataUserDao.delete(user);
     }
 
