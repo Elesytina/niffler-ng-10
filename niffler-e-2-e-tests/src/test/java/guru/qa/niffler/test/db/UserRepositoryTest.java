@@ -1,7 +1,6 @@
 package guru.qa.niffler.test.db;
 
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.user.UserDbClient;
 import guru.qa.niffler.service.user.UserDbClientHibernate;
 import guru.qa.niffler.utils.RandomDataUtils;
 import lombok.extern.slf4j.Slf4j;
