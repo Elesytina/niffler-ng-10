@@ -6,6 +6,7 @@ import guru.qa.niffler.data.mapper.SpendRowMapper;
 import guru.qa.niffler.data.mapper.extractor.SpendResultSetExtractor;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,25 +45,30 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findByUsername(String userName) {
-
-        return template.query(
-                """
-                        SELECT sp.id as id,
-                        sp.username as username,
-                        sp.description as description,
-                        sp.category_id as category_id,
-                        sp.currency as currency,
-                        sp.amount as amount,
-                        sp.spend_date as spend_date,
-                        c.name as category_name,
-                        c.archived as archived
-                        FROM spend sp
-                        LEFT JOIN category c
-                        ON sp.category_id = c.id
-                        WHERE sp.username = ?
-                        """,
-                SpendResultSetExtractor.INSTANCE,
-                userName);
+        try {
+            return template.query(
+                    """
+                            
+                            SELECT sp.id as id,
+                                sp.username as username,
+                                sp.description as description,
+                                sp.category_id as category_id,
+                                sp.currency as currency,
+                                sp.amount as amount,
+                                sp.spend_date as spend_date,
+                                c.name as category_name,
+                                c.archived as archived
+                                FROM spend sp
+                                LEFT JOIN category c
+                                ON sp.category_id = c.id
+                                WHERE sp.username = ?
+                            """,
+                    SpendResultSetExtractor.
+                            INSTANCE,
+                    userName);
+        } catch (EmptyResultDataAccessException e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override

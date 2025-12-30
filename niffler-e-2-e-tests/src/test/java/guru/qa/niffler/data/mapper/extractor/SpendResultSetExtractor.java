@@ -25,7 +25,7 @@ public class SpendResultSetExtractor implements ResultSetExtractor<List<SpendEnt
 
         while (rs.next()) {
             UUID id = rs.getObject("id", UUID.class);
-            spendMap.computeIfAbsent(id,
+            var spend = spendMap.computeIfAbsent(id,
                     spendId -> {
                         try {
                             var spendEntity = new SpendEntity();
@@ -41,13 +41,13 @@ public class SpendResultSetExtractor implements ResultSetExtractor<List<SpendEnt
                             category.setArchived(rs.getBoolean("archived"));
                             category.setUsername(rs.getString("username"));
                             spendEntity.setCategory(category);
-                            spendEntities.add(spendEntity);
 
                             return spendEntity;
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
                     });
+            spendEntities.add(spend);
         }
 
         return spendEntities;

@@ -1,13 +1,13 @@
 package guru.qa.niffler.data.tpl;
 
-import guru.qa.niffler.model.enums.TrnIsolationLevel;
+import guru.qa.niffler.model.enums.TxIsolationLevel;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-import static guru.qa.niffler.model.enums.TrnIsolationLevel.READ_COMMITED;
+import static guru.qa.niffler.model.enums.TxIsolationLevel.READ_COMMITED;
 
 /**
  * Для обычного jdbc без Spring
@@ -20,7 +20,7 @@ public class JdbcTransactionTemplate {
         this.holder = Connections.getHolder(jdbcUrl);
     }
 
-    public <T> T execute(Supplier<T> supplier, TrnIsolationLevel isolationLvl) {
+    public <T> T execute(Supplier<T> supplier, TxIsolationLevel isolationLvl) {
         Connection connection = null;
         try {
             connection = holder.getConnection();
