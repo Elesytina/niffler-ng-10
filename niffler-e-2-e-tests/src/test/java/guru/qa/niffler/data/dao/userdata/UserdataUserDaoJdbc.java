@@ -104,6 +104,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
             ps.setBytes(5, entity.getPhoto());
             ps.setBytes(6, entity.getPhotoSmall());
             ps.setString(7, entity.getFullname());
+            ps.setObject(8, entity.getId());
 
             if (ps.executeUpdate() != 0) {
 

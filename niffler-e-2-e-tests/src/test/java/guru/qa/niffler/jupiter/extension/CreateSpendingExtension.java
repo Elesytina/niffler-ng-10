@@ -1,6 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.spend.SpendClient;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class CreateSpendingExtension implements BeforeEachCallback {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CreateSpendingExtension.class);
-    private final SpendClient spendClient = new SpendDbClient();
+    private final SpendClient spendClient = new SpendDbClient(RepositoryImplType.SPRING_JDBC);
 
     @Override
     public void beforeEach(ExtensionContext context) {

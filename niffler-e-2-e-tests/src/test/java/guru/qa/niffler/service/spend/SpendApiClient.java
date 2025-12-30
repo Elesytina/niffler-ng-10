@@ -3,8 +3,6 @@ package guru.qa.niffler.service.spend;
 import guru.qa.niffler.api.CategoryApi;
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.enums.CurrencyValues;
-import guru.qa.niffler.model.enums.DateFilterValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import okhttp3.OkHttpClient;
@@ -47,18 +45,6 @@ public class SpendApiClient implements SpendClient {
 
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
-        } catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
-    }
-
-    public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        try {
-            Response<List<SpendJson>> response = spendApi.getAllSpends(dateFilterValues, currencyFilter, userName)
-                    .execute();
-
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
             return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
