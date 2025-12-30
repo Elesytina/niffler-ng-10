@@ -53,18 +53,6 @@ public class SpendApiClient implements SpendClient {
         }
     }
 
-    public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        try {
-            Response<List<SpendJson>> response = spendApi.getAllSpends(dateFilterValues, currencyFilter, userName)
-                    .execute();
-
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
-        } catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
-    }
-
     @Override
     public SpendJson create(SpendJson spend) {
         try {

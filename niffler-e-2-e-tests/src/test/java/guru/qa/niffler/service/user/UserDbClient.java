@@ -4,12 +4,17 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
+import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositoryHiberImpl;
+import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositoryJdbcImpl;
 import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositorySpringJdbcImpl;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
+import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositoryHiberImpl;
+import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositoryJdbcImpl;
 import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositorySpringImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
-import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.enums.Authority;
+import guru.qa.niffler.model.enums.RelationType;
+import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,33 +24,50 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static guru.qa.niffler.utils.RandomDataUtils.*;
+import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
+import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
+import static guru.qa.niffler.utils.RandomDataUtils.randomName;
+import static guru.qa.niffler.utils.RandomDataUtils.randomSurname;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @Slf4j
-public class UserDbClient implements UsersClient{
+public class UserDbClient implements UsersClient {
 
-    private final AuthUserRepository authUserRepository = new AuthUserRepositorySpringJdbcImpl();
-    private final UserdataUserRepository userdataUserRepository = new UserdataUserRepositorySpringImpl();
+    private AuthUserRepository authUserRepository;
+
+    private UserdataUserRepository userdataUserRepository;
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl());
 
+    public UserDbClient(RepositoryImplType type) {
+        switch (type) {
+            case JDBC -> {
+                authUserRepository = new AuthUserRepositoryJdbcImpl();
+                userdataUserRepository = new UserdataUserRepositoryJdbcImpl();
+            }
+            case SPRING_JDBC -> {
+                authUserRepository = new AuthUserRepositorySpringJdbcImpl();
+                userdataUserRepository = new UserdataUserRepositorySpringImpl();
+            }
+            case HIBERNATE -> {
+                authUserRepository = new AuthUserRepositoryHiberImpl();
+                userdataUserRepository = new UserdataUserRepositoryHiberImpl();
+            }
+        }
+    }
+
     @Override
     public UserJson create(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
-            UserJson userJson = new UserJson(null,
-                    username,
-                    randomCurrency(),
-                    randomName(),
-                    randomSurname(),
-                    randomFullName(),
-                    null,
-                    null);
+            AuthUserEntity authUserEntity = getDefaultAuthUserEntity(username, "123");
 
-            authUserRepository.create(getAuthUserEntity(userJson, password));
+            authUserRepository.create(authUserEntity);
 
-            var user = userdataUserRepository.create(UserEntity.fromJson(userJson));
+            UserEntity userEntity = getDefaultUserEntity(username);
+
+            var user = userdataUserRepository.create(userEntity);
 
             return UserJson.fromEntity(user);
         });
@@ -53,14 +75,35 @@ public class UserDbClient implements UsersClient{
 
     @Override
     public UserJson update(UserJson userJson) {
-        var user = userdataUserRepository.update(UserEntity.fromJson(userJson));
+        return xaTransactionTemplate.execute(() -> {
+            Optional<UserEntity> userEntity = userdataUserRepository.findById(userJson.id());
 
-        return UserJson.fromEntity(user);
+            if (userEntity.isPresent()) {
+                var user = userdataUserRepository.update(UserEntity.fromJson(userJson));
+
+                return UserJson.fromEntity(user);
+            } else {
+                throw new RuntimeException("User with id %s not found".formatted(userJson.id()));
+            }
+        });
     }
 
     @Override
     public void delete(UserJson userJson) {
-        userdataUserRepository.remove(UserEntity.fromJson(userJson));
+        xaTransactionTemplate.execute(() -> {
+            Optional<UserEntity> userEntity = userdataUserRepository.findById(userJson.id());
+            Optional<AuthUserEntity> authUser = authUserRepository.findByUsername(userJson.username());
+
+            if (userEntity.isPresent()) {
+                userdataUserRepository.remove(userEntity.get());
+
+                authUser.ifPresent(authUserEntity -> authUserRepository.remove(authUserEntity.getId()));
+
+                return null;
+            } else {
+                throw new RuntimeException("User with id %s not found".formatted(userJson.id()));
+            }
+        });
     }
 
     @Override
@@ -87,80 +130,17 @@ public class UserDbClient implements UsersClient{
 
     @Override
     public void addFriends(UserJson user, int count) {
-        xaTransactionTemplate.execute(() -> {
-            for (int i = 0; i < count; i++) {
-                var username = randomUsername();
-                UserEntity friendUserEntity = getDefaultUserEntity(username);
-                userdataUserRepository.create(friendUserEntity);
-                authUserRepository.create(getDefaultAuthUserEntity(username));
-
-                userdataUserRepository.addFriend(UserEntity.fromJson(user), friendUserEntity);
-            }
-
-            return null;
-        });
+        addRelations(user, RelationType.FRIENDSHIP, count);
     }
 
     @Override
     public void addIncomeInvitations(UserJson user, int count) {
-        xaTransactionTemplate.execute(() -> {
-            for (int i = 0; i < count; i++) {
-                var username = randomUsername();
-                UserEntity friendUserEntity = getDefaultUserEntity(username);
-                userdataUserRepository.create(friendUserEntity);
-                authUserRepository.create(getDefaultAuthUserEntity(username));
-
-                userdataUserRepository.sendInvitation(UserEntity.fromJson(user), friendUserEntity);
-            }
-
-            return null;
-        });
+        addRelations(user, RelationType.INCOME_INVITATION, count);
     }
 
     @Override
     public void addOutcomeInvitations(UserJson user, int count) {
-        xaTransactionTemplate.execute(() -> {
-            for (int i = 0; i < count; i++) {
-                var username = randomUsername();
-                UserEntity friendUserEntity = getDefaultUserEntity(username);
-                userdataUserRepository.create(friendUserEntity);
-                authUserRepository.create(getDefaultAuthUserEntity(username));
-
-                userdataUserRepository.sendInvitation(friendUserEntity, UserEntity.fromJson(user));
-            }
-
-            return null;
-        });
-    }
-
-    public AuthUserJson findAuthUserByUsername(String name) {
-        Optional<AuthUserEntity> authEntity = authUserRepository.findByUsername(name);
-
-        if (authEntity.isPresent()) {
-
-            return AuthUserJson.fromEntity(authEntity.get());
-        }
-        throw new RuntimeException("Failed to find user");
-    }
-
-    public static AuthUserEntity getAuthUserEntity(UserJson userJson, String password) {
-        AuthUserEntity entity = new AuthUserEntity();
-        entity.setUsername(userJson.username());
-        entity.setPassword(password);
-        entity.setEnabled(true);
-        entity.setAccountNonExpired(true);
-        entity.setAccountNonLocked(true);
-        entity.setCredentialsNonExpired(true);
-
-        return entity;
-    }
-
-    public static AuthorityEntity getAuthorityEntity(AuthUserEntity savedEntity, Authority authority) {
-        AuthorityEntity authorityEntity = new AuthorityEntity();
-        authorityEntity.setAuthority(authority);
-        authorityEntity.setUser(savedEntity);
-
-        return authorityEntity;
+        addRelations(user, RelationType.OUTCOME_INVITATION, count);
     }
 
     public static UserEntity getDefaultUserEntity(String username) {
@@ -174,10 +154,10 @@ public class UserDbClient implements UsersClient{
         return userEntity;
     }
 
-    public static AuthUserEntity getDefaultAuthUserEntity(String username) {
+    public static AuthUserEntity getDefaultAuthUserEntity(String username, String password) {
         AuthUserEntity userEntity = new AuthUserEntity();
         userEntity.setUsername(username);
-        userEntity.setPassword("123");
+        userEntity.setPassword(password);
         userEntity.setEnabled(true);
         userEntity.setCredentialsNonExpired(true);
         userEntity.setAccountNonExpired(true);
@@ -194,6 +174,34 @@ public class UserDbClient implements UsersClient{
         userEntity.setAuthorities(authorityEntities);
 
         return userEntity;
+    }
+
+    private void addRelations(UserJson user, RelationType relationType, int count) {
+        xaTransactionTemplate.execute(() -> {
+            Optional<UserEntity> userEntity = userdataUserRepository.findById(user.id());
+
+            if (userEntity.isPresent()) {
+                for (int i = 0; i < count; i++) {
+                    var username = randomUsername();
+                    UserEntity friendUserEntity = getDefaultUserEntity(username);
+                    userdataUserRepository.create(friendUserEntity);
+                    authUserRepository.create(getDefaultAuthUserEntity(username, "123"));
+
+                    switch (relationType) {
+                        case FRIENDSHIP ->
+                                userdataUserRepository.addFriend(friendUserEntity, UserEntity.fromJson(user));
+                        case INCOME_INVITATION ->
+                                userdataUserRepository.sendInvitation(UserEntity.fromJson(user), friendUserEntity);
+                        case OUTCOME_INVITATION ->
+                                userdataUserRepository.sendInvitation(friendUserEntity, UserEntity.fromJson(user));
+                    }
+                }
+
+                return null;
+            } else {
+                throw new RuntimeException("User with id %s not found".formatted(user.id()));
+            }
+        });
     }
 
 }

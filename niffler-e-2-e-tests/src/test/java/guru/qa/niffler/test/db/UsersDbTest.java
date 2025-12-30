@@ -1,7 +1,7 @@
 package guru.qa.niffler.test.db;
 
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.user.UserDbClientHibernate;
+import guru.qa.niffler.service.user.UserDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
+import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
-@Slf4j
-public class UserRepositoryTest {
 
-    UserDbClientHibernate userDbClient = new UserDbClientHibernate();
+@Slf4j
+public class UsersDbTest {
+
+    UserDbClient userDbClient = new UserDbClient(HIBERNATE);
 
     @Test
     void shouldRegisterNewUser() {
@@ -88,11 +90,12 @@ public class UserRepositoryTest {
 
     @Test
     void shouldDeleteUser() {
-        UUID userId = UUID.fromString("d1150710-e4cb-11f0-9e8d-b67362032555");
+        UUID userId = UUID.fromString("a90b5c61-0d47-4e28-a0af-41fd4a919bef");
         UserJson userJson = userDbClient.findById(userId);
         log.info(userJson.toString());
         userDbClient.delete(userJson);
         Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findById(userId));
+        Assertions.assertThrows(RuntimeException.class, ()-> userDbClient.findByUsername(userJson.username()));
     }
 
 }
