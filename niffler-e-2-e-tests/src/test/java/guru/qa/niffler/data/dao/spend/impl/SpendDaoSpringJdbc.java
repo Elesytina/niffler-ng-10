@@ -3,6 +3,7 @@ package guru.qa.niffler.data.dao.spend.impl;
 import guru.qa.niffler.data.dao.spend.SpendDao;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.mapper.SpendRowMapper;
+import guru.qa.niffler.data.mapper.extractor.SpendResultSetExtractor;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -45,12 +46,21 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
         return template.query(
                 """
-                        SELECT * FROM spend sp
+                        SELECT sp.id as id,
+                        sp.username as username,
+                        sp.description as description,
+                        sp.category_id as category_id,
+                        sp.currency as currency,
+                        sp.amount as amount,
+                        sp.spend_date as spend_date,
+                        c.name as category_name,
+                        c.archived as archived
+                        FROM spend sp
                         LEFT JOIN category c
                         ON sp.category_id = c.id
                         WHERE sp.username = ?
                         """,
-                SpendRowMapper.INSTANCE,
+                SpendResultSetExtractor.INSTANCE,
                 userName);
     }
 

@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthUserResultSetExtractor implements ResultSetExtractor<AuthUserEntity> {
+
     public static final AuthUserResultSetExtractor INSTANCE = new AuthUserResultSetExtractor();
 
     @Override
