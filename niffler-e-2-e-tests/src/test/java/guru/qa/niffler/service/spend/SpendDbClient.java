@@ -4,7 +4,10 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
 import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryHiberImpl;
+import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryJdbcImpl;
+import guru.qa.niffler.data.repository.spend.impl.SpendRepositorySpringImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
+import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +20,24 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 @Slf4j
 public class SpendDbClient implements SpendClient {
 
-    private final SpendRepository repository = new SpendRepositoryHiberImpl();
+    private SpendRepository repository;
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.userdataJdbcUrl());
+
+    public SpendDbClient(RepositoryImplType type) {
+        switch (type) {
+            case JDBC -> {
+                repository = new SpendRepositoryJdbcImpl();
+            }
+            case SPRING_JDBC -> {
+                repository = new SpendRepositorySpringImpl();
+            }
+            case HIBERNATE -> {
+                repository = new SpendRepositoryHiberImpl();
+            }
+        }
+    }
 
     @Override
     public SpendJson findById(UUID id) {
@@ -59,6 +76,7 @@ public class SpendDbClient implements SpendClient {
 
         return xaTransactionTemplate.execute(() -> {
             SpendEntity newSpend = SpendEntity.fromJson(spend);
+
             if (spend.category() != null) {
                 var categoryId = spend.category().id();
                 Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
@@ -66,7 +84,7 @@ public class SpendDbClient implements SpendClient {
                 if (categoryEntity.isPresent()) {
                     newSpend.setCategory(categoryEntity.get());
                 } else {
-                    throw new RuntimeException("Category not found");
+                    throw new RuntimeException("Category with id %s not found".formatted(spend.category().id()));
                 }
             }
 
@@ -80,12 +98,13 @@ public class SpendDbClient implements SpendClient {
     public SpendJson update(SpendJson spendJson) {
         return xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
+
             if (spendEntity.isPresent()) {
                 SpendEntity entity = repository.update(SpendEntity.fromJson(spendJson));
 
                 return SpendJson.fromEntity(entity);
             } else {
-                throw new RuntimeException("Spend not found");
+                throw new RuntimeException("Spend with id %s not found".formatted(spendJson.id()));
             }
         });
     }
@@ -94,12 +113,13 @@ public class SpendDbClient implements SpendClient {
     public void remove(SpendJson spend) {
         xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spend.id());
+
             if (spendEntity.isPresent()) {
                 repository.removeSpend(spendEntity.get());
 
                 return null;
             } else {
-                throw new RuntimeException("Spend not found");
+                throw new RuntimeException("Spend with id %s not found".formatted(spend.id()));
             }
         });
     }
@@ -116,12 +136,13 @@ public class SpendDbClient implements SpendClient {
     public void removeCategory(CategoryJson category) {
         xaTransactionTemplate.execute(() -> {
             Optional<CategoryEntity> categoryEntity = repository.findCategoryById(category.id());
+
             if (categoryEntity.isPresent()) {
                 repository.removeCategory(categoryEntity.get());
 
                 return null;
             } else {
-                throw new RuntimeException("Category not found");
+                throw new RuntimeException("Category with id %s not found".formatted(category.id()));
             }
         });
     }

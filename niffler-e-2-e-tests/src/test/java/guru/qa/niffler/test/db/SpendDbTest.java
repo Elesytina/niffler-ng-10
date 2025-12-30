@@ -12,12 +12,18 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
-import static guru.qa.niffler.utils.RandomDataUtils.*;
+import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
+import static guru.qa.niffler.model.enums.RepositoryImplType.JDBC;
+import static guru.qa.niffler.model.enums.RepositoryImplType.SPRING_JDBC;
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
+import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
+import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;
+import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
 @Slf4j
 public class SpendDbTest {
 
-    private final SpendDbClient spendDbClient = new SpendDbClient();
+    private final SpendDbClient spendDbClient = new SpendDbClient(HIBERNATE);
 
     @Test
     void shouldGetSpend() {
@@ -32,7 +38,7 @@ public class SpendDbTest {
         var username = "ivan";
         CategoryJson categoryJson = new CategoryJson(
                 null,
-                randomSentence(3),
+                randomCategoryName(),
                 username,
                 false
         );

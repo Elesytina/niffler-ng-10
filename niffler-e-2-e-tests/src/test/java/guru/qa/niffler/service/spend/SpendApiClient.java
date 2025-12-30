@@ -3,8 +3,6 @@ package guru.qa.niffler.service.spend;
 import guru.qa.niffler.api.CategoryApi;
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.enums.CurrencyValues;
-import guru.qa.niffler.model.enums.DateFilterValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import okhttp3.OkHttpClient;
