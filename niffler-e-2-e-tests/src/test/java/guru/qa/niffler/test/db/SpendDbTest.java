@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
-import static guru.qa.niffler.model.enums.RepositoryImplType.JDBC;
-import static guru.qa.niffler.model.enums.RepositoryImplType.SPRING_JDBC;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;

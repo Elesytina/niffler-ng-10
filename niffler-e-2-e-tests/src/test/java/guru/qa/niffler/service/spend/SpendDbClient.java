@@ -20,23 +20,17 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 @Slf4j
 public class SpendDbClient implements SpendClient {
 
-    private SpendRepository repository;
+    private final SpendRepository repository;
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.userdataJdbcUrl());
 
     public SpendDbClient(RepositoryImplType type) {
-        switch (type) {
-            case JDBC -> {
-                repository = new SpendRepositoryJdbcImpl();
-            }
-            case SPRING_JDBC -> {
-                repository = new SpendRepositorySpringImpl();
-            }
-            case HIBERNATE -> {
-                repository = new SpendRepositoryHiberImpl();
-            }
-        }
+        repository = switch (type) {
+            case JDBC -> new SpendRepositoryJdbcImpl();
+            case SPRING_JDBC -> new SpendRepositorySpringImpl();
+            case HIBERNATE -> new SpendRepositoryHiberImpl();
+        };
     }
 
     @Override
