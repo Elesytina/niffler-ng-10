@@ -25,7 +25,7 @@ public class SpendDbTest {
 
     @Test
     void shouldGetSpend() {
-        SpendJson spend1 = spendDbClient.findById(UUID.fromString("a4d41184-9776-46d1-93bd-b3ee3bbc4d75"));
+        SpendJson spend1 = spendDbClient.getSpend(UUID.fromString("a4d41184-9776-46d1-93bd-b3ee3bbc4d75"));
         SpendJson spend2 = spendDbClient.findByUsernameAndSpendDescription("fishka", "Harum iure voluptas aspernatur qui.");
 
         Assertions.assertNotEquals(spend1.id(), spend2.id(), "Spends should not be same");
@@ -43,7 +43,7 @@ public class SpendDbTest {
         CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
         log.info("Created new category: {}", createdCategory);
 
-        SpendJson spend1 = spendDbClient.create(
+        SpendJson spend1 = spendDbClient.addSpend(
                 new SpendJson(null,
                         Date.from(Instant.now()),
                         createdCategory,
@@ -58,14 +58,14 @@ public class SpendDbTest {
 
         spendDbClient.remove(spend1);
 
-        Assertions.assertThrows(RuntimeException.class, () -> spendDbClient.findById(spend1.id()));
+        Assertions.assertThrows(RuntimeException.class, () -> spendDbClient.getSpend(spend1.id()));
     }
 
 
     @Test
     void shouldGetSpendByIdAndUpdate() {
         UUID spendId = UUID.fromString("67ecb6c0-bcd0-11f0-af9c-d62d6fb87ff1");
-        SpendJson spend1 = spendDbClient.findById(spendId);
+        SpendJson spend1 = spendDbClient.getSpend(spendId);
         var newCurrency = CurrencyValues.USD;
         var newAmount = randomDouble(100, 5000);
 
@@ -76,9 +76,9 @@ public class SpendDbTest {
                 newAmount,
                 spend1.description(),
                 spend1.username());
-        spendDbClient.update(forUpdate);
+        spendDbClient.editSpend(forUpdate);
 
-        SpendJson spend2 = spendDbClient.findById(spendId);
+        SpendJson spend2 = spendDbClient.getSpend(spendId);
 
         Assertions.assertEquals(spend1.id(), spend2.id(), "Spends should be same");
         Assertions.assertEquals(newCurrency, spend2.currency(), "Spend should have a new currency");
@@ -96,7 +96,7 @@ public class SpendDbTest {
         );
         CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
 
-        SpendJson created = spendDbClient.create(
+        SpendJson created = spendDbClient.addSpend(
                 new SpendJson(null,
                         Date.from(Instant.now()),
                         createdCategory,

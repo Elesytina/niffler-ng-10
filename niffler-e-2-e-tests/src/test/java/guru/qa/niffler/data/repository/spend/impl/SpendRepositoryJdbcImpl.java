@@ -8,6 +8,7 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,9 +36,21 @@ public class SpendRepositoryJdbcImpl implements SpendRepository {
     }
 
     @Override
+    public CategoryEntity updateCategory(CategoryEntity category) {
+
+        return categoryDao.update(category);
+    }
+
+    @Override
     public Optional<CategoryEntity> findCategoryById(UUID id) {
 
         return categoryDao.findById(id);
+    }
+
+    @Override
+    public List<CategoryEntity> findCategoriesByUsername(String username) {
+
+        return categoryDao.findAllByUsername(username);
     }
 
     @Override

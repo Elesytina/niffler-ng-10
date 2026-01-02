@@ -10,5 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class TestConstantHolder {
     public static final Config CFG = Config.getInstance();
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    public static final String DEFAULT_PASSWORD = "123";
 
 }

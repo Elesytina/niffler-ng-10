@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static guru.qa.niffler.model.enums.TxIsolationLevel.READ_COMMITED;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataSources {
 

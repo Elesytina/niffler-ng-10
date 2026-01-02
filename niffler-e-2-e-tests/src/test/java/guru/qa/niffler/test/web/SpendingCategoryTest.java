@@ -4,8 +4,10 @@ import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import io.qameta.allure.Description;
+import jdk.jfr.Category;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -15,13 +17,13 @@ public class SpendingCategoryTest {
 
     private final String username = "fishka";
 
-    @User(username = username,
-            categories = @SpendingCategory)
+    @User(categories = @SpendingCategory(
+            archived = true))
     @Test
     @Description("active Category Should Be Present In Profile")
-    void archivedCategoryShouldBePresentInProfilePositiveTest() {
+    void archivedCategoryShouldBePresentInProfilePositiveTest(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(username, "Querty67")
+                .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseProfile()
                 .checkThatPageIsDisplayed()

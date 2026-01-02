@@ -12,6 +12,7 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson findById(UUID id) {
+    public SpendJson getSpend(UUID id) {
         Optional<SpendEntity> entity = repository.findById(id);
 
         return entity.map(SpendJson::fromEntity)
@@ -66,30 +67,37 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson create(SpendJson spend) {
+    public SpendJson addSpend(SpendJson spend) {
 
         return xaTransactionTemplate.execute(() -> {
-            SpendEntity newSpend = SpendEntity.fromJson(spend);
+            SpendEntity spendEntity = SpendEntity.fromJson(spend);
 
             if (spend.category() != null) {
                 var categoryId = spend.category().id();
-                Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
 
-                if (categoryEntity.isPresent()) {
-                    newSpend.setCategory(categoryEntity.get());
+                if (categoryId == null) {
+                    CategoryEntity categoryEntity = repository.createCategory(spendEntity.getCategory());
+                    spendEntity.setCategory(categoryEntity);
                 } else {
-                    throw new RuntimeException("Category with id %s not found".formatted(spend.category().id()));
-                }
-            }
+                    Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
 
-            SpendEntity entity = repository.create(newSpend);
+                    if (categoryEntity.isPresent()) {
+                        spendEntity.setCategory(categoryEntity.get());
+                    } else {
+                        throw new RuntimeException("Category with id %s not found".formatted(spend.category().id()));
+                    }
+                }
+            } else {
+                throw new RuntimeException("Category must be not null");
+            }
+            SpendEntity entity = repository.create(spendEntity);
 
             return SpendJson.fromEntity(entity);
         });
     }
 
     @Override
-    public SpendJson update(SpendJson spendJson) {
+    public SpendJson editSpend(SpendJson spendJson) {
         return xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
 
@@ -103,7 +111,6 @@ public class SpendDbClient implements SpendClient {
         });
     }
 
-    @Override
     public void remove(SpendJson spend) {
         xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spend.id());
@@ -119,12 +126,46 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    public void deleteSpends(List<UUID> uuids, String username) {
+        xaTransactionTemplate.execute(() -> {
+            for (UUID uuid : uuids) {
+                Optional<SpendEntity> spendEntity = repository.findById(uuid);
+
+                if (spendEntity.isPresent()) {
+                    repository.removeSpend(spendEntity.get());
+
+                    return null;
+                } else {
+                    throw new RuntimeException("Spend with id %s not found".formatted(uuid));
+                }
+            }
+            return null;
+        });
+    }
+
+    @Override
     public CategoryJson createCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
             CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
 
             return CategoryJson.fromEntity(entity);
         });
+    }
+
+    @Override
+    public CategoryJson updateCategory(CategoryJson category) {
+        return xaTransactionTemplate.execute(() -> {
+            CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
+
+            return CategoryJson.fromEntity(entity);
+        });
+    }
+
+    @Override
+    public List<CategoryJson> getCategories(String username) {
+        List<CategoryEntity> categories = repository.findCategoriesByUsername(username);
+
+        return categories.stream().map(CategoryJson::fromEntity).toList();
     }
 
     public void removeCategory(CategoryJson category) {
