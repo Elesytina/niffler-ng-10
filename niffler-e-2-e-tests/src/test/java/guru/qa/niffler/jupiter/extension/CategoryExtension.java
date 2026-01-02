@@ -64,9 +64,11 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
                                         username,
                                         true);
 
-                                categoryClient.updateCategory(archivedCategoryJson);
+                                CategoryJson updated = categoryClient.updateCategory(archivedCategoryJson);
+                                categories.add(updated);
+                            } else {
+                                categories.add(created);
                             }
-                            categories.add(categoryJson);
 
                             if (testUser.isPresent()) {
                                 List<CategoryJson> categoryList = testUser.get().testData().categories();

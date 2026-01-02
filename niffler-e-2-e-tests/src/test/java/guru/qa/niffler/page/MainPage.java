@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
@@ -10,8 +11,13 @@ import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.page;
 
 public class MainPage {
+
+    private final SelenideElement searchInput = $x("//input[@aria-label='search']");
+    private final SelenideElement searchButton = $("#input-submit");
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement profileItem = $(byLinkText("Profile"));
@@ -28,9 +34,20 @@ public class MainPage {
         return this;
     }
 
-    public EditSpendingPage editSpending(String description) {
-        spendingTable.$$("tbody tr").find(text(description)).$$("td").get(5).click();
-        return new EditSpendingPage();
+    public MainPage searchSpending(String text) {
+        searchInput.sendKeys(text);
+        searchInput.sendKeys(Keys.ENTER);
+
+        return this;
+    }
+
+    public EditSpendingPage editSpending() {
+        $$(byAttribute("aria-label", "Edit spending"))
+                .shouldHave(sizeGreaterThanOrEqual(1))
+                .get(0)
+                .click();
+
+        return page(EditSpendingPage.class);
     }
 
     public void checkThatTableContains(String description) {

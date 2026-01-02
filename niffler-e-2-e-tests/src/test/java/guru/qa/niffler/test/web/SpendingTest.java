@@ -19,7 +19,7 @@ public class SpendingTest {
 
     @User(spendings = @Spending(
             category = "Учеба",
-            amount = 89900,
+            amount = 899,
             currency = RUB,
             description = "new description"
     ))
@@ -28,8 +28,9 @@ public class SpendingTest {
         final String newDescription = "Обучение Niffler Next Generation";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(userJson.username(),userJson.testData().password())
-                .editSpending(userJson.testData().spends().getFirst().description())
+                .login(userJson.username(), userJson.testData().password())
+                .searchSpending(userJson.testData().spends().getFirst().description())
+                .editSpending()
                 .setNewSpendingDescription(newDescription)
                 .save()
                 .checkThatTableContains(newDescription);
