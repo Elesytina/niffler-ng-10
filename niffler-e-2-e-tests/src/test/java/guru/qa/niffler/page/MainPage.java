@@ -17,7 +17,6 @@ import static com.codeborne.selenide.Selenide.page;
 public class MainPage {
 
     private final SelenideElement searchInput = $x("//input[@aria-label='search']");
-    private final SelenideElement searchButton = $("#input-submit");
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement profileItem = $(byLinkText("Profile"));
