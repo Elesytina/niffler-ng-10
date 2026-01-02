@@ -3,7 +3,6 @@ package guru.qa.niffler.service.user;
 import guru.qa.niffler.model.userdata.UserJson;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface UsersClient {
 
