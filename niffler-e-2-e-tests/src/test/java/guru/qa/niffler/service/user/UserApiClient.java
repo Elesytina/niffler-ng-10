@@ -15,8 +15,10 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
@@ -36,14 +38,12 @@ public class UserApiClient implements UsersClient {
     private final Retrofit udRetrofit = new Retrofit.Builder()
             .client(client)
             .baseUrl(CFG.userdataUrl())
-            .client(client)
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
     private final Retrofit authRetrofit = new Retrofit.Builder()
             .client(client)
             .baseUrl(CFG.authUrl())
-            .client(client)
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
@@ -54,9 +54,21 @@ public class UserApiClient implements UsersClient {
     @Override
     public UserJson create(String username, String password) {
         try {
-            Response<Void> response = authApi.register(username, password, password, null)
-                    .execute();
+            Response<Void> response = authApi.requestRegisterForm().execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
+            Optional<HttpCookie> httpCookie = cm.getCookieStore().getCookies()
+                    .stream()
+                    .filter(c -> c.getName().equals("XSRF-TOKEN"))
+                    .findFirst();
+            var token = httpCookie.map(HttpCookie::getValue).orElseThrow();
+
+            Response<Void> registerResponse = authApi.register(
+                    username,
+                    password,
+                    password,
+                    token).execute();
+            Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
 
             Response<UserJson> responseInfo = usersApi.currentUser(username)
                     .execute();
