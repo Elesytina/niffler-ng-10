@@ -1,8 +1,8 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.SearchField;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
@@ -11,18 +11,17 @@ import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.page;
 
 public class MainPage {
 
-    private final SelenideElement searchInput = $x("//input[@aria-label='search']");
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement profileItem = $(byLinkText("Profile"));
     private final SelenideElement friendsItem = $(byLinkText("Friends"));
     private final SelenideElement allPeopleItem = $(byLinkText("All People"));
     private final SelenideElement createNewSpendingButton = $(byAttribute("href", "http://localhost:3000/spending"));
+    private final SearchField searchField = new SearchField();
 
     public void checkThatPageLoaded() {
         spendingTable.should(visible);
@@ -34,8 +33,7 @@ public class MainPage {
     }
 
     public MainPage searchSpending(String text) {
-        searchInput.sendKeys(text);
-        searchInput.sendKeys(Keys.ENTER);
+        searchField.search(text, MainPage.class);
 
         return this;
     }

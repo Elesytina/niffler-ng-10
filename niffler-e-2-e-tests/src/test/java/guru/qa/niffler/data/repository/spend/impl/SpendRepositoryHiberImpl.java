@@ -103,12 +103,16 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
     @Override
     public void removeSpend(SpendEntity spend) {
         em.joinTransaction();
-        em.remove(spend);
+        em.remove(em.contains(spend)
+                ? spend
+                : em.merge(spend));
     }
 
     @Override
     public void removeCategory(CategoryEntity category) {
         em.joinTransaction();
-        em.remove(category);
+        em.remove(em.contains(category)
+                ? category
+                : em.merge(category));
     }
 }

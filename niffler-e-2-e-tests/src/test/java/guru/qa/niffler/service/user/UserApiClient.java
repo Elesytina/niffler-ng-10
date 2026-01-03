@@ -12,6 +12,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -23,6 +26,7 @@ import java.util.Optional;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 
+@ParametersAreNonnullByDefault
 public class UserApiClient implements UsersClient {
 
     private static final CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
@@ -52,7 +56,7 @@ public class UserApiClient implements UsersClient {
     private final UsersApi usersApi = udRetrofit.create(UsersApi.class);
 
     @Override
-    public UserJson create(String username, String password) {
+    public @Nullable UserJson create(String username, String password) {
         try {
             Response<Void> response = authApi.requestRegisterForm().execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
@@ -81,7 +85,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public UserJson update(UserJson userJson) {
+    public @Nullable UserJson update(UserJson userJson) {
         try {
             Response<UserJson> response = usersApi.updateUserInfo(userJson)
                     .execute();
@@ -94,7 +98,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public UserJson findByUsername(String username) {
+    public @Nullable UserJson findByUsername(String username) {
         try {
             Response<UserJson> response = usersApi.currentUser(username)
                     .execute();
@@ -107,7 +111,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> addFriends(UserJson user, int count) {
+    public @Nonnull List<UserJson> addFriends(UserJson user, int count) {
         try {
             var username = user.username();
             List<UserJson> friends = new ArrayList<>();
@@ -132,7 +136,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> addIncomeInvitations(UserJson user, int count) {
+    public @Nonnull List<UserJson> addIncomeInvitations(UserJson user, int count) {
         try {
             var username = user.username();
             List<UserJson> incomeInvitations = new ArrayList<>();
@@ -154,7 +158,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> addOutcomeInvitations(UserJson user, int count) {
+    public @Nonnull List<UserJson> addOutcomeInvitations(UserJson user, int count) {
         try {
             var username = user.username();
             List<UserJson> outcomeInvitations = new ArrayList<>();

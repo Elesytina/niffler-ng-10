@@ -35,7 +35,7 @@ public class FriendsTest {
                 .checkNameIsPresentInRequestTable(user.testData().incomeInvitations().getFirst().username());
     }
 
-    @User(outcomeInvitationsCount = 1)
+    @User(outcomeInvitationsCount = 2)
     @Test
     void outcomeRequestShouldBePresentInAllPeopleTable(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)

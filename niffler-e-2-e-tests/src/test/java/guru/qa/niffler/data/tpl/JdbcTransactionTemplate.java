@@ -2,6 +2,9 @@ package guru.qa.niffler.data.tpl;
 
 import guru.qa.niffler.model.enums.TxIsolationLevel;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,6 +15,7 @@ import static guru.qa.niffler.model.enums.TxIsolationLevel.READ_COMMITED;
 /**
  * Для обычного jdbc без Spring
  **/
+@ParametersAreNonnullByDefault
 public class JdbcTransactionTemplate {
     private final JdbcConnectionHolder holder;
     private final AtomicBoolean closeAfterAction = new AtomicBoolean(true);
@@ -20,7 +24,7 @@ public class JdbcTransactionTemplate {
         this.holder = Connections.getHolder(jdbcUrl);
     }
 
-    public <T> T execute(Supplier<T> supplier, TxIsolationLevel isolationLvl) {
+    public <T> @Nullable T execute(Supplier<T> supplier, TxIsolationLevel isolationLvl) {
         Connection connection = null;
         try {
             connection = holder.getConnection();
@@ -47,12 +51,14 @@ public class JdbcTransactionTemplate {
         }
     }
 
-    public <T> T execute(Supplier<T> supplier) {
+    public <T> @Nullable T execute(Supplier<T> supplier) {
+
         return execute(supplier, READ_COMMITED);
     }
 
-    public JdbcTransactionTemplate holdConnectionAfterAction(JdbcConnectionHolder holder) {
+    public @Nonnull JdbcTransactionTemplate holdConnectionAfterAction(JdbcConnectionHolder holder) {
         this.closeAfterAction.set(false);
+
         return this;
     }
 }
