@@ -9,6 +9,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byLinkText;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
@@ -20,16 +21,17 @@ public class MainPage {
     private final SelenideElement profileItem = $(byLinkText("Profile"));
     private final SelenideElement friendsItem = $(byLinkText("Friends"));
     private final SelenideElement allPeopleItem = $(byLinkText("All People"));
-    private final SelenideElement createNewSpendingButton = $(byAttribute("href", "http://localhost:3000/spending"));
+    private final SelenideElement createNewSpendingButton = $(byText("New spending"));
     private final SearchField searchField = new SearchField();
 
     public void checkThatPageLoaded() {
         spendingTable.should(visible);
     }
 
-    public MainPage clickCreateNewSpendingButton() {
+    public AddNewPendingPage clickCreateNewSpendingButton() {
         createNewSpendingButton.click();
-        return this;
+
+        return page(AddNewPendingPage.class);
     }
 
     public MainPage searchSpending(String text) {

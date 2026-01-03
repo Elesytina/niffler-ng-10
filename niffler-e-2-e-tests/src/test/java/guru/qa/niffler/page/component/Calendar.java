@@ -18,7 +18,7 @@ public class Calendar {
         calendarInput.click();
         calendarInput.sendKeys(Keys.CONTROL + "a");
         calendarInput.sendKeys(Keys.DELETE);
-        calendarInput.sendKeys(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        calendarInput.sendKeys(date.format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
 
         return page(nextPage);
     }

@@ -3,6 +3,7 @@ package guru.qa.niffler.utils;
 import com.github.javafaker.Faker;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -45,5 +46,9 @@ public class RandomDataUtils {
 
     public static double randomDouble(double min, double max) {
         return rand.nextDouble(min, max);
+    }
+
+    public static int randomInteger(int min, int max) {
+        return rand.nextInt(min, max);
     }
 }

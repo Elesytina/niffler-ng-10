@@ -70,6 +70,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     public static Optional<UserJson> createdUser() {
         final ExtensionContext methodContext = context();
+
         return Optional.ofNullable(methodContext.getStore(NAMESPACE)
                 .get(methodContext.getUniqueId(), UserJson.class));
     }

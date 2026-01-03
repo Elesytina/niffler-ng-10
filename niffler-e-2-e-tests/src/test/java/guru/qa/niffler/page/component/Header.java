@@ -47,7 +47,7 @@ public class Header {
     }
 
     public EditSpendingPage toEditSpendingPage(UUID spendingId) {
-        open(FRONT_URL + "spending/{spenId}");
+        open(FRONT_URL + "spending/" + spendingId);
 
         return new EditSpendingPage();
     }
