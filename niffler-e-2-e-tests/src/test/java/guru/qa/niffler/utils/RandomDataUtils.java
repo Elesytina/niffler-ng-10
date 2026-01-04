@@ -3,7 +3,6 @@ package guru.qa.niffler.utils;
 import com.github.javafaker.Faker;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Random;
 
