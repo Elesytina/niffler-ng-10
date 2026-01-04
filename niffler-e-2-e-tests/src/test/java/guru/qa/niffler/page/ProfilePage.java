@@ -1,5 +1,6 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.Duration;
@@ -15,6 +16,9 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class ProfilePage {
     private final SelenideElement showArchived = $(byText("Show archived"));
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
+    private final SelenideElement nameInput = $("#name");
+    private final SelenideElement categoryInput = $("#category");
+    private final SelenideElement saveBtn = $(Selectors.byText("Save changes"));
 
     public ProfilePage showArchived() {
         showArchived.click();
@@ -29,5 +33,29 @@ public class ProfilePage {
     public void checkThatArchivedCategoriesExist() {
         $$(byAttribute("data-testid", "UnarchiveOutlinedIcon"))
                 .shouldHave(sizeGreaterThanOrEqual(1));
+    }
+
+    public ProfilePage editName(String name) {
+        nameInput.setValue(name);
+
+        return this;
+    }
+
+    public ProfilePage addCategory(String categoryName) {
+        categoryInput.setValue(categoryName);
+        categoryInput.submit();
+
+        return this;
+    }
+
+    public ProfilePage save() {
+        saveBtn.click();
+
+        return this;
+    }
+
+    public void checkThatProfileUpdated() {
+        $(byText("Profile successfully updated"))
+                .shouldBe(visible);
     }
 }

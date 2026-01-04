@@ -14,9 +14,10 @@ import java.time.LocalDate;
 
 import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
-import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;
 import static guru.qa.niffler.utils.RandomDataUtils.randomInteger;
+import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
 @ExtendWith(BrowserExtension.class)
@@ -59,5 +60,19 @@ public class SpendingTest {
                 .setDescription(spendingDescription)
                 .clickSave()
                 .checkThatTableContains(spendingDescription);
+    }
+
+    @User
+    @Test
+    void shouldEditProfile(UserJson userJson) {
+        open(CFG.frontUrl(), LoginPage.class)
+                .login(userJson.username(), userJson.testData().password())
+                .openProfilePopupMenu()
+                .chooseProfile()
+                .checkThatPageIsDisplayed()
+                .editName(randomName())
+                .addCategory(randomCategoryName())
+                .save()
+                .checkThatProfileUpdated();
     }
 }
