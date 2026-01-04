@@ -120,10 +120,10 @@ public class SpendApiClient implements SpendClient {
         }
     }
 
-    public void deleteSpends(List<UUID> uuids, String userName) {
+    public void deleteSpends(List<UUID> uuids, String username) {
         var ids = uuids.stream().map(UUID::toString).toList();
         try {
-            Response<Void> response = spendApi.deleteSpends(ids, userName)
+            Response<Void> response = spendApi.deleteSpends(ids, username)
                     .execute();
 
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
