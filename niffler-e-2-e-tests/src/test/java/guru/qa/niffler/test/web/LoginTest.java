@@ -32,7 +32,7 @@ public class LoginTest {
                 .clickCreateAccount()
                 .registerUser(userName, password)
                 .followToSignIn()
-                .inputUserName(userName)
+                .inputUsername(userName)
                 .inputPassword(randomAlphanumeric(5))
                 .submit()
                 .checkIncorrectCredsDataError("Неверные учетные данные пользователя");
