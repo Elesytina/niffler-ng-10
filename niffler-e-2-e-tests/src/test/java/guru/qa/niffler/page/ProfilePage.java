@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import java.time.Duration;
 
@@ -20,27 +21,32 @@ public class ProfilePage {
     private final SelenideElement categoryInput = $("#category");
     private final SelenideElement saveBtn = $(Selectors.byText("Save changes"));
 
+    @Step("click show archived categories")
     public ProfilePage showArchived() {
         showArchived.click();
         return this;
     }
 
+    @Step("check that profile page is displayed")
     public ProfilePage checkThatPageIsDisplayed() {
         personIcon.shouldBe(visible, Duration.of(10, SECONDS));
         return this;
     }
 
+    @Step("verify that archived categories exist")
     public void checkThatArchivedCategoriesExist() {
         $$(byAttribute("data-testid", "UnarchiveOutlinedIcon"))
                 .shouldHave(sizeGreaterThanOrEqual(1));
     }
 
+    @Step("set customer name {name}")
     public ProfilePage editName(String name) {
         nameInput.setValue(name);
 
         return this;
     }
 
+    @Step("add category with name {categoryName}")
     public ProfilePage addCategory(String categoryName) {
         categoryInput.setValue(categoryName);
         categoryInput.submit();
@@ -48,12 +54,14 @@ public class ProfilePage {
         return this;
     }
 
+    @Step("click save")
     public ProfilePage save() {
         saveBtn.click();
 
         return this;
     }
 
+    @Step("verify that profile uploaded")
     public void checkThatProfileUpdated() {
         $(byText("Profile successfully updated"))
                 .shouldBe(visible);

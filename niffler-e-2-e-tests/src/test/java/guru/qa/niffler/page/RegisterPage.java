@@ -61,7 +61,7 @@ public class RegisterPage {
         $(byText("Congratulations! You've registered!")).shouldBe(visible);
     }
 
-    @Step("verify error with message {message}")
+    @Step("verify error with message {errorMessage}")
     public void checkRegisterError(String errorMessage) {
         formError.shouldBe(visible)
                 .shouldHave(text(errorMessage));

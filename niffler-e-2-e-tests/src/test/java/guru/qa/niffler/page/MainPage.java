@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.SearchField;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
@@ -24,22 +25,26 @@ public class MainPage {
     private final SelenideElement createNewSpendingButton = $(byText("New spending"));
     private final SearchField searchField = new SearchField();
 
+    @Step("verify spending table is present")
     public void checkThatPageLoaded() {
         spendingTable.should(visible);
     }
 
+    @Step("click create new spending")
     public AddNewPendingPage clickCreateNewSpendingButton() {
         createNewSpendingButton.click();
 
         return page(AddNewPendingPage.class);
     }
 
+    @Step("search spending by text {text}")
     public MainPage searchSpending(String text) {
         searchField.search(text, MainPage.class);
 
         return this;
     }
 
+    @Step("click edit spending button")
     public EditSpendingPage editSpending() {
         $$(byAttribute("aria-label", "Edit spending"))
                 .shouldHave(sizeGreaterThanOrEqual(1))
@@ -49,30 +54,36 @@ public class MainPage {
         return page(EditSpendingPage.class);
     }
 
+    @Step("verify that spending table contains description {description}")
     public void checkThatTableContains(String description) {
         spendingTable.$$("tbody tr").find(text(description)).should(visible);
     }
 
+    @Step("open profile popup menu")
     public MainPage openProfilePopupMenu() {
         personIcon.click();
         return this;
     }
 
+    @Step("choose profile item")
     public ProfilePage chooseProfile() {
         profileItem.click();
         return new ProfilePage();
     }
 
+    @Step("choose friends item")
     public FriendsPage chooseFriends() {
         friendsItem.click();
         return new FriendsPage();
     }
 
+    @Step("choose all people item")
     public AllPeoplePage chooseAllPeople() {
         allPeopleItem.click();
         return new AllPeoplePage();
     }
 
+    @Step("verify that at least active category presented")
     public void checkThatActiveCategoryPresent() {
         $$(By.xpath("//table/tbody/tr")).shouldHave(sizeGreaterThanOrEqual(1));
     }

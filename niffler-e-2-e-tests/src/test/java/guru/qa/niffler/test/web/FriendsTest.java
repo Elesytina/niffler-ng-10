@@ -21,8 +21,8 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseFriends()
                 .searchFriend(friendUsername)
-                .checkFriendsArePresent()
-                .checkNameIsPresentInFriendsTable(friendUsername);
+                .checkFriendsArePresented()
+                .checkNameIsPresentedInFriendsTable(friendUsername);
     }
 
     @User(incomeInvitationsCount = 1)
@@ -35,8 +35,8 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseFriends()
                 .searchFriend(targetUsername)
-                .checkRequestsArePresent()
-                .checkNameIsPresentInRequestTable(targetUsername);
+                .checkRequestsArePresented()
+                .checkNameIsPresentedInRequestTable(targetUsername);
     }
 
     @User(outcomeInvitationsCount = 2)
@@ -49,8 +49,8 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseAllPeople()
                 .searchRequest(targetUsername)
-                .checkThatOutcomeRequestsArePresent()
-                .checkNameIsPresentInOutcomeRequests(targetUsername);
+                .checkThatOutcomeRequestsArePresented()
+                .checkNameIsPresentedInOutcomeRequests(targetUsername);
     }
 
     @User
@@ -73,8 +73,8 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseFriends()
                 .searchFriend(targetUsername)
-                .checkRequestsArePresent()
-                .checkNameIsPresentInRequestTable(targetUsername)
+                .checkRequestsArePresented()
+                .checkNameIsPresentedInRequestTable(targetUsername)
                 .acceptRequest()
                 .checkNameIsPresentInFriendsTable(targetUsername);
     }
@@ -89,8 +89,8 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseFriends()
                 .searchFriend(targetUsername)
-                .checkRequestsArePresent()
-                .checkNameIsPresentInRequestTable(targetUsername)
+                .checkRequestsArePresented()
+                .checkNameIsPresentedInRequestTable(targetUsername)
                 .declineRequest()
                 .checkNameIsAbsentInRequestTable(targetUsername);
     }
