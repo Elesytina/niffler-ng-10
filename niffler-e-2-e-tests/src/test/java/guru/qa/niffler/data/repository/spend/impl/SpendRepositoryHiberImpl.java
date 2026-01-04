@@ -6,12 +6,14 @@ import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
 import jakarta.persistence.EntityManager;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
+@ParametersAreNonnullByDefault
 public class SpendRepositoryHiberImpl implements SpendRepository {
 
     private final EntityManager em = EntityManagers.em(CFG.spendJdbcUrl());

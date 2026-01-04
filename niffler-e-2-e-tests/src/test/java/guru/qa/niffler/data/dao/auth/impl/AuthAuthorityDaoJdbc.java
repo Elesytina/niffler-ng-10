@@ -5,6 +5,7 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.Authority;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +16,6 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
@@ -45,7 +45,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public void create(List<AuthorityEntity> entities) {
+    public void create(@NotNull List<AuthorityEntity> entities) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)")) {
 

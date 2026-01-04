@@ -12,6 +12,8 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,6 +21,7 @@ import java.util.UUID;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @Slf4j
+@ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
 
     private final SpendRepository repository;
@@ -56,7 +59,7 @@ public class SpendDbClient implements SpendClient {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
-    public CategoryJson findCategoryByUsernameAndCategoryName(String userName, String categoryName) {
+    public @Nonnull CategoryJson findCategoryByUsernameAndCategoryName(String userName, String categoryName) {
         Optional<CategoryEntity> category = repository.findCategoryByUsernameAndCategoryName(userName, categoryName);
 
         if (category.isPresent()) {

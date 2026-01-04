@@ -7,10 +7,15 @@ import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -18,6 +23,7 @@ import static guru.qa.niffler.model.enums.DateFilterValues.getSpendEndDate;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.time.LocalDate.now;
 
+@ParametersAreNonnullByDefault
 public class SpendDaoJdbc implements SpendDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.spendJdbcUrl());
 

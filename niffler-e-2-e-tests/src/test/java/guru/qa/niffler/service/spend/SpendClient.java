@@ -4,9 +4,11 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import io.qameta.allure.Step;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public interface SpendClient {
 
     @Step("get spend by id {id}")

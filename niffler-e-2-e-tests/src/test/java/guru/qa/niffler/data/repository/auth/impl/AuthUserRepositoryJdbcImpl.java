@@ -6,6 +6,7 @@ import guru.qa.niffler.data.mapper.extractor.AuthUserResultSetExtractor;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +18,7 @@ import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-
+@ParametersAreNonnullByDefault
 public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
 
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());

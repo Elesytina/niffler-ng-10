@@ -6,6 +6,7 @@ import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 
+@ParametersAreNonnullByDefault
 public class UserdataUserRepositoryHiberImpl implements UserdataUserRepository {
 
     private final EntityManager em = EntityManagers.em(CFG.userdataJdbcUrl());

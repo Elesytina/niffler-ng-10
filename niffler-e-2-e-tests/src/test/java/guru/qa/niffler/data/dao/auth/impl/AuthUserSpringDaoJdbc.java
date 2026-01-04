@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
+@ParametersAreNonnullByDefault
 @RequiredArgsConstructor
 public class AuthUserSpringDaoJdbc implements AuthUserDao {
     private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));

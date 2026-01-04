@@ -18,6 +18,7 @@ import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomSurname;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @Slf4j
+@ParametersAreNonnullByDefault
 public class UserDbClient implements UsersClient {
 
     private AuthUserRepository authUserRepository;

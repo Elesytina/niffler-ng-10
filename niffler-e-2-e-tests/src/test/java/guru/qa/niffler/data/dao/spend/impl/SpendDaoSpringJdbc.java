@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -25,6 +27,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.DateFilterValues.getSpendEndDate;
 import static java.time.LocalDate.now;
 
+@ParametersAreNonnullByDefault
 public class SpendDaoSpringJdbc implements SpendDao {
 
     private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.spendJdbcUrl()));
@@ -87,7 +90,9 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
+    public List<SpendEntity> findAllByFiltersAndUsername(@Nullable CurrencyValues currencyFilter,
+                                                         @Nullable DateFilterValues dateFilterValues,
+                                                         String userName) {
 
         return template.query(conn -> {
             PreparedStatement ps = conn.prepareStatement(

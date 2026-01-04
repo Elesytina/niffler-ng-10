@@ -3,8 +3,10 @@ package guru.qa.niffler.service.user;
 import guru.qa.niffler.model.userdata.UserJson;
 import io.qameta.allure.Step;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public interface UsersClient {
 
     @Step("create new user {username} {password}")
