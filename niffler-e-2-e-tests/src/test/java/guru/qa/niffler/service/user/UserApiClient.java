@@ -1,7 +1,6 @@
 package guru.qa.niffler.service.user;
 
 import guru.qa.niffler.api.AuthApi;
-import guru.qa.niffler.api.GhApi;
 import guru.qa.niffler.api.UsersApi;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.utils.RandomDataUtils;

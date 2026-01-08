@@ -172,14 +172,14 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
                 userPs.setObject(1, id);
                 authorityPs.setObject(1, id);
 
-                if (userPs.executeUpdate() == 0) {
-
-                    throw new SQLException("Failed to delete auth user with id %s".formatted(id));
-                }
-
                 if (authorityPs.executeUpdate() == 0) {
 
                     throw new SQLException("Failed to delete authorities with user id %s".formatted(id));
+                }
+
+                if (userPs.executeUpdate() == 0) {
+
+                    throw new SQLException("Failed to delete auth user with id %s".formatted(id));
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);

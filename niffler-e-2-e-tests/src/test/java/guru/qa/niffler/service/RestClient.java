@@ -1,5 +1,8 @@
 package guru.qa.niffler.service;
 
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
+import io.qameta.allure.okhttp3.AllureOkHttp3;
+import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -12,20 +15,25 @@ import java.net.CookiePolicy;
 
 public abstract class RestClient {
 
-    private final OkHttpClient client;
     private final Retrofit retrofit;
-    private static final CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
 
-    public RestClient(String baseUrl, Converter.Factory converterFactory, boolean followRedirects) {
-        final HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
-                .setLevel(HttpLoggingInterceptor.Level.BODY);
-        client = new OkHttpClient.Builder()
-                .addInterceptor(logging)
+    public RestClient(String baseUrl, Converter.Factory converterFactory, boolean followRedirects, Interceptor... interceptors) {
+        final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .followRedirects(followRedirects)
                 .cookieJar(
-                        new JavaNetCookieJar(cm)
-                )
-                .build();
+                        new JavaNetCookieJar(
+                                new CookieManager(ThreadSafeCookieStore.INSTANCE,
+                                        CookiePolicy.ACCEPT_ALL)
+                        )
+                );
+
+        for (Interceptor interceptor : interceptors) {
+            clientBuilder.addInterceptor(interceptor);
+        }
+        clientBuilder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        clientBuilder.addNetworkInterceptor(new AllureOkHttp3());
+        OkHttpClient client = clientBuilder.build();
+
         retrofit = new Retrofit.Builder()
                 .client(client)
                 .baseUrl(baseUrl)

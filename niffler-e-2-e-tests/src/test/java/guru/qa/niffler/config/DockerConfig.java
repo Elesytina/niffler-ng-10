@@ -1,6 +1,7 @@
 package guru.qa.niffler.config;
 
 enum DockerConfig implements Config {
+
     INSTANCE;
 
     @Override

@@ -6,6 +6,7 @@ import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 public enum ThreadSafeCookieStore implements java.net.CookieStore {
 
@@ -46,6 +47,15 @@ public enum ThreadSafeCookieStore implements java.net.CookieStore {
     public boolean removeAll() {
 
         return cs.get().removeAll();
+    }
+
+    public String xsrfCookie() {
+        Optional<HttpCookie> cookie = cs.get().getCookies()
+                .stream()
+                .filter(c -> c.getName().equals("XSRF-TOKEN"))
+                .findFirst();
+
+        return cookie.map(HttpCookie::getValue).orElse("");
     }
 
     private static CookieStore getInMemoryCookieStore() {
