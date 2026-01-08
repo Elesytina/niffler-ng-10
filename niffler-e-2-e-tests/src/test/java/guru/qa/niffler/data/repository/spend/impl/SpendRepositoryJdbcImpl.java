@@ -18,6 +18,13 @@ public class SpendRepositoryJdbcImpl implements SpendRepository {
 
     @Override
     public SpendEntity create(SpendEntity spend) {
+        final UUID categoryId = spend.getCategory().getId();
+
+        if (categoryId == null) {
+            spend.getCategory().setId(
+                    createCategory(spend.getCategory()).getId()
+            );
+        }
 
         return spendDao.create(spend);
     }

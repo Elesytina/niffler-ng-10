@@ -56,8 +56,6 @@ public class AuthUserRepositoryHiberImpl implements AuthUserRepository {
         if (user == null) {
             throw new RuntimeException("User with id %s not found".formatted(id));
         }
-        user.getAuthorities().forEach(user::removeAuthority);
-
         em.remove(user);
     }
 }

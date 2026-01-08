@@ -17,6 +17,12 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
 
     @Override
     public SpendEntity create(SpendEntity spend) {
+        CategoryEntity category = spend.getCategory();
+        if (category.getId() != null && !em.contains(category)) {
+            CategoryEntity categoryRef = em.getReference(CategoryEntity.class, spend.getCategory().getId());
+            spend.setCategory(categoryRef);
+        }
+
         em.joinTransaction();
         em.persist(spend);
 
@@ -82,12 +88,14 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
     @Override
     public void removeSpend(SpendEntity spend) {
         em.joinTransaction();
-        em.remove(spend);
+        SpendEntity attached = em.contains(spend) ? spend : em.merge(spend);
+        em.remove(attached);
     }
 
     @Override
     public void removeCategory(CategoryEntity category) {
         em.joinTransaction();
-        em.remove(category);
+        CategoryEntity attached = em.contains(category) ? category : em.merge(category);
+        em.remove(attached);
     }
 }

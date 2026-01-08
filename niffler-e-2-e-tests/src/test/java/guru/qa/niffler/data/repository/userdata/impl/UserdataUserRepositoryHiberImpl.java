@@ -1,12 +1,10 @@
 package guru.qa.niffler.data.repository.userdata.impl;
 
-import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,10 +67,7 @@ public class UserdataUserRepositoryHiberImpl implements UserdataUserRepository {
     @Override
     public void remove(UserEntity user) {
         em.joinTransaction();
-        List<FriendshipEntity> friendshipEntities = user.getFriendshipAddressees();
-        user.removeFriends(friendshipEntities.stream().map(FriendshipEntity::getAddressee).toArray(UserEntity[]::new));
-        List<FriendshipEntity> requestEntities = user.getFriendshipRequests();
-        user.removeInvites(requestEntities.stream().map(FriendshipEntity::getAddressee).toArray(UserEntity[]::new));
-        em.remove(user);
+        UserEntity attached = em.contains(user) ? user : em.merge(user);
+        em.remove(attached);
     }
 }

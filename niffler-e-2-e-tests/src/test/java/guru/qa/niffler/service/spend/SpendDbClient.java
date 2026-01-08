@@ -71,17 +71,6 @@ public class SpendDbClient implements SpendClient {
         return xaTransactionTemplate.execute(() -> {
             SpendEntity newSpend = SpendEntity.fromJson(spend);
 
-            if (spend.category() != null) {
-                var categoryId = spend.category().id();
-                Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
-
-                if (categoryEntity.isPresent()) {
-                    newSpend.setCategory(categoryEntity.get());
-                } else {
-                    throw new RuntimeException("Category with id %s not found".formatted(spend.category().id()));
-                }
-            }
-
             SpendEntity entity = repository.create(newSpend);
 
             return SpendJson.fromEntity(entity);
