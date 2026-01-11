@@ -8,12 +8,14 @@ import retrofit2.Response;
 
 import java.io.IOException;
 
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 public class AuthApiClient extends RestClient {
 
     private final AuthApi authApi;
 
     public AuthApiClient() {
-        super("https://auth.niffler-stage.qa.guru/", true);
+        super(CFG.authUrl(), true);
         this.authApi = create(AuthApi.class);
     }
 
