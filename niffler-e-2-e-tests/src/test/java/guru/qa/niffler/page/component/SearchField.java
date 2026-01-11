@@ -1,11 +1,12 @@
 package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.BasePage;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class SearchField {
+public class SearchField extends BasePage<SearchField> {
 
     private final SelenideElement searchBox = $("input");
 

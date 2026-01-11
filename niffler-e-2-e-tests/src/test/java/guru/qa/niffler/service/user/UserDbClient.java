@@ -19,6 +19,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
+import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
@@ -40,7 +42,7 @@ public class UserDbClient implements UsersClient {
     @Override
     public UserJson create(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
-            AuthUserEntity authUserEntity = getDefaultAuthUserEntity(username, "123");
+            AuthUserEntity authUserEntity = getDefaultAuthUserEntity(username, DEFAULT_PASSWORD);
 
             authUserRepository.create(authUserEntity);
 
@@ -134,7 +136,7 @@ public class UserDbClient implements UsersClient {
     public static AuthUserEntity getDefaultAuthUserEntity(String username, String password) {
         AuthUserEntity userEntity = new AuthUserEntity();
         userEntity.setUsername(username);
-        userEntity.setPassword(password);
+        userEntity.setPassword(PASSWORD_ENCODER.encode(password));
         userEntity.setEnabled(true);
         userEntity.setCredentialsNonExpired(true);
         userEntity.setAccountNonExpired(true);

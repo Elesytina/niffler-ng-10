@@ -1,15 +1,14 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
-public class FriendsTest {
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
-    private static final Config CFG = Config.getInstance();
+public class FriendsTest {
 
     @User(friendsCount = 1)
     @Test

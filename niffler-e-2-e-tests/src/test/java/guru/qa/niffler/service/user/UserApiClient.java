@@ -3,6 +3,7 @@ package guru.qa.niffler.service.user;
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UsersApi;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
@@ -27,7 +28,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 
 @ParametersAreNonnullByDefault
-public class UserApiClient implements UsersClient {
+public class UserApiClient extends RestClient implements UsersClient {
 
     private static final CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
 
@@ -39,12 +40,6 @@ public class UserApiClient implements UsersClient {
             .cookieJar(new JavaNetCookieJar(cm))
             .build();
 
-    private final Retrofit udRetrofit = new Retrofit.Builder()
-            .client(client)
-            .baseUrl(CFG.userdataUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
     private final Retrofit authRetrofit = new Retrofit.Builder()
             .client(client)
             .baseUrl(CFG.authUrl())
@@ -53,7 +48,11 @@ public class UserApiClient implements UsersClient {
 
     private final AuthApi authApi = authRetrofit.create(AuthApi.class);
 
-    private final UsersApi usersApi = udRetrofit.create(UsersApi.class);
+    private final UsersApi usersApi = create(UsersApi.class);
+
+    public UserApiClient() {
+        super(CFG.userdataUrl());
+    }
 
     @Override
     public @Nullable UserJson create(String username, String password) {

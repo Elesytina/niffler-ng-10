@@ -2,6 +2,7 @@ package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.BasePage;
 import guru.qa.niffler.page.FriendsPage;
 
 import static com.codeborne.selenide.CollectionCondition.size;
@@ -15,7 +16,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class PeopleTable {
+public class PeopleTable extends BasePage<PeopleTable> {
 
     private final SelenideElement allPeopleTable = $("#all");
     private final ElementsCollection outcomeRequests = allPeopleTable.$$(byText("Waiting..."));
