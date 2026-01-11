@@ -41,6 +41,7 @@ public class SpendingTest {
                 .editSpending()
                 .setNewSpendingDescription(newDescription)
                 .save()
+                .checkSnackBarText("Spending is edited successfully")
                 .checkThatTableContains(newDescription);
     }
 
@@ -59,6 +60,7 @@ public class SpendingTest {
                 .selectDate(LocalDate.now())
                 .setDescription(spendingDescription)
                 .clickSave()
+                .checkSnackBarText("New spending is successfully created")
                 .checkThatTableContains(spendingDescription);
     }
 
@@ -73,6 +75,7 @@ public class SpendingTest {
                 .editName(randomName())
                 .addCategory(randomCategoryName())
                 .save()
+                .checkSnackBarText("Profile successfully updated")
                 .checkThatProfileUpdated();
     }
 }
