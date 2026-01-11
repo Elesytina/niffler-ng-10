@@ -18,14 +18,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
-import static guru.qa.niffler.model.enums.RepositoryImplType.SPRING_JDBC;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
     public static final String DEFAULT_PASSWORD = "123";
 
-    private final UsersClient usersClient = new UserDbClient(SPRING_JDBC);
+    private final UsersClient usersClient = new UserDbClient();
 
     @Override
     public void beforeEach(ExtensionContext context) {

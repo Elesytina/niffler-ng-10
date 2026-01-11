@@ -14,7 +14,8 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-public class ProfilePage {
+public class ProfilePage extends BasePage<ProfilePage> {
+
     private final SelenideElement showArchived = $(byText("Show archived"));
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement nameInput = $("#name");

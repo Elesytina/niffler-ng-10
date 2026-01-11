@@ -10,13 +10,12 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 
-import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @Slf4j
 public class UsersDbTest {
 
-    UserDbClient userDbClient = new UserDbClient(HIBERNATE);
+    UserDbClient userDbClient = new UserDbClient();
 
     @Test
     void shouldRegisterNewUser() {

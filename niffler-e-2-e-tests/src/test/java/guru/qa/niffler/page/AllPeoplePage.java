@@ -6,7 +6,8 @@ import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.page;
 
-public class AllPeoplePage {
+public class AllPeoplePage extends BasePage<AllPeoplePage> {
+
     private final SearchField searchField = new SearchField();
     private final PeopleTable peopleTable = new PeopleTable();
 
