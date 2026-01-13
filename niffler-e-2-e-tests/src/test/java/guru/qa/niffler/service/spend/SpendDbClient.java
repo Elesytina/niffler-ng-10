@@ -34,7 +34,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson findById(UUID id) {
+    public SpendJson getSpend(UUID id) {
         Optional<SpendEntity> entity = repository.findById(id);
 
         return entity.map(SpendJson::fromEntity)
@@ -66,7 +66,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson create(SpendJson spend) {
+    public SpendJson addSpend(SpendJson spend) {
 
         return xaTransactionTemplate.execute(() -> {
             SpendEntity newSpend = SpendEntity.fromJson(spend);
@@ -78,7 +78,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson update(SpendJson spendJson) {
+    public SpendJson editSpend(SpendJson spendJson) {
         return xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
 
