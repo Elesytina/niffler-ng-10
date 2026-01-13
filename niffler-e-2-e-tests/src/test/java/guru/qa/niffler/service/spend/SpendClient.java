@@ -14,8 +14,6 @@ public interface SpendClient {
 
     SpendJson editSpend(SpendJson spendJson);
 
-    void deleteSpends(List<UUID> uuids, String userName);
-
     CategoryJson createCategory(CategoryJson category);
 
     CategoryJson updateCategory(CategoryJson category);

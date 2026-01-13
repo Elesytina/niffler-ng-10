@@ -12,6 +12,7 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,6 +56,13 @@ public class SpendDbClient implements SpendClient {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
+    @Override
+    public List<CategoryJson> getCategories(String username) {
+        List<CategoryEntity> categoryEntities = repository.findCategoriesByUsername(username);
+
+        return categoryEntities.stream().map(CategoryJson::fromEntity).toList();
+    }
+
     public CategoryJson findCategoryByUsernameAndCategoryName(String userName, String categoryName) {
         Optional<CategoryEntity> category = repository.findCategoryByUsernameAndCategoryName(userName, categoryName);
 
@@ -67,7 +75,6 @@ public class SpendDbClient implements SpendClient {
 
     @Override
     public SpendJson addSpend(SpendJson spend) {
-
         return xaTransactionTemplate.execute(() -> {
             SpendEntity newSpend = SpendEntity.fromJson(spend);
 
@@ -93,24 +100,18 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public void remove(SpendJson spend) {
-        xaTransactionTemplate.execute(() -> {
-            Optional<SpendEntity> spendEntity = repository.findById(spend.id());
+    public CategoryJson createCategory(CategoryJson category) {
+        return xaTransactionTemplate.execute(() -> {
+            CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
 
-            if (spendEntity.isPresent()) {
-                repository.removeSpend(spendEntity.get());
-
-                return null;
-            } else {
-                throw new RuntimeException("Spend with id %s not found".formatted(spend.id()));
-            }
+            return CategoryJson.fromEntity(entity);
         });
     }
 
     @Override
-    public CategoryJson createCategory(CategoryJson category) {
+    public CategoryJson updateCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
-            CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
+            CategoryEntity entity = repository.updateCategory(CategoryEntity.fromJson(category));
 
             return CategoryJson.fromEntity(entity);
         });
