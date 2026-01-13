@@ -13,6 +13,8 @@ public interface UserdataUserDao {
 
     UserEntity create(UserEntity entity);
 
+    UserEntity update(UserEntity entity);
+
     boolean delete(UserEntity spendEntity);
 
 }

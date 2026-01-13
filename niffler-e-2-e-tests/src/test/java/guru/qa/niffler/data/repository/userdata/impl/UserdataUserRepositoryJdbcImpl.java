@@ -17,6 +17,7 @@ import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 import static java.time.LocalDate.now;
 
 public class UserdataUserRepositoryJdbcImpl implements UserdataUserRepository {
+
     private final FriendshipDao friendshipDao = new FriendshipDaoJdbc();
     private final UserdataUserDao userdataUserDao = new UserdataUserDaoJdbc();
 
@@ -27,19 +28,26 @@ public class UserdataUserRepositoryJdbcImpl implements UserdataUserRepository {
     }
 
     @Override
+    public Optional<UserEntity> findByUsername(String username) {
+
+        return userdataUserDao.findByUsername(username);
+    }
+
+    @Override
     public UserEntity create(UserEntity entity) {
 
         return userdataUserDao.create(entity);
     }
 
     @Override
-    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
-        addInvitation(addressee, requester);
+    public UserEntity update(UserEntity user) {
+
+        return userdataUserDao.update(user);
     }
 
     @Override
-    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
-        addInvitation(requester, addressee);
+    public void sendInvitation(UserEntity requester, UserEntity addressee) {
+        addInvitation(addressee, requester);
     }
 
     @Override
@@ -57,6 +65,12 @@ public class UserdataUserRepositoryJdbcImpl implements UserdataUserRepository {
         friendship2.setCreatedDate(java.sql.Date.valueOf(now()));
 
         friendshipDao.createAll(List.of(friendship1, friendship2));
+    }
+
+    @Override
+    public void remove(UserEntity user) {
+        friendshipDao.deleteAll(user.getId());
+        userdataUserDao.delete(user);
     }
 
     private void addInvitation(UserEntity requester, UserEntity addressee) {

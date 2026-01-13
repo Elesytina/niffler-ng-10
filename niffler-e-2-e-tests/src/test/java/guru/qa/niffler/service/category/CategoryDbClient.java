@@ -51,21 +51,12 @@ public class CategoryDbClient implements CategoryClient {
         return CategoryJson.fromEntity(categoryEntity);
     }
 
-    @Override
     public void deleteCategory(CategoryJson categoryJson) {
         boolean isDeleted = dao.delete(CategoryEntity.fromJson(categoryJson));
 
         if (!isDeleted) {
             throw new RuntimeException("Category could not be deleted!");
         }
-    }
-
-    public List<CategoryJson> getAllCategories() {
-
-        return dao.findAll()
-                .stream()
-                .map(CategoryJson::fromEntity)
-                .toList();
     }
 
 }

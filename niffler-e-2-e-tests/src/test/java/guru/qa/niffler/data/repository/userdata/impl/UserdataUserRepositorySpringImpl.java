@@ -16,7 +16,8 @@ import static guru.qa.niffler.model.enums.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 import static java.time.LocalDate.now;
 
-public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserRepository {
+public class UserdataUserRepositorySpringImpl implements UserdataUserRepository {
+
     private final FriendshipDao friendshipDao = new FriendshipDaoSpringJdbc();
     private final UserdataUserDao userdataUserDao = new UserdataUserDaoSpringJdbc();
 
@@ -27,19 +28,26 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
     }
 
     @Override
+    public Optional<UserEntity> findByUsername(String username) {
+
+        return userdataUserDao.findByUsername(username);
+    }
+
+    @Override
     public UserEntity create(UserEntity entity) {
 
         return userdataUserDao.create(entity);
     }
 
     @Override
-    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
-        addInvitation(addressee, requester);
+    public UserEntity update(UserEntity user) {
+
+        return userdataUserDao.update(user);
     }
 
     @Override
-    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
-        addInvitation(requester, addressee);
+    public void sendInvitation(UserEntity requester, UserEntity addressee) {
+        addInvitation(addressee, requester);
     }
 
     @Override
@@ -57,6 +65,12 @@ public class UserdataUserRepositorySpringJdbcImpl implements UserdataUserReposit
         entity2.setCreatedDate(java.sql.Date.valueOf(now()));
 
         friendshipDao.createAll(List.of(entity1, entity2));
+    }
+
+    @Override
+    public void remove(UserEntity user) {
+        friendshipDao.deleteAll(user.getId());
+        userdataUserDao.delete(user);
     }
 
     private void addInvitation(UserEntity requester, UserEntity addressee) {

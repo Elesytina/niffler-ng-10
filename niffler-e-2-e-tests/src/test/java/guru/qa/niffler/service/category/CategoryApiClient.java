@@ -82,9 +82,4 @@ public class CategoryApiClient implements CategoryClient {
         }
     }
 
-    @Override
-    public void deleteCategory(CategoryJson categoryJson) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
 }

@@ -49,4 +49,5 @@ public class FriendshipEntity implements Serializable {
     public final int hashCode() {
         return Objects.hash(requester, addressee);
     }
+
 }

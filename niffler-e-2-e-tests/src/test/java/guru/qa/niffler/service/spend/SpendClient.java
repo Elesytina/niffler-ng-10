@@ -1,24 +1,20 @@
 package guru.qa.niffler.service.spend;
 
-import guru.qa.niffler.model.enums.CurrencyValues;
-import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface SpendClient {
 
-    SpendJson getSpendById(UUID id);
+    SpendJson findById(UUID id);
 
-    List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
+    SpendJson create(SpendJson spend);
 
-    List<SpendJson> getAllSpendsByUsername(String userName);
+    SpendJson update(SpendJson spendJson);
 
-    SpendJson createSpend(SpendJson spend);
+    void remove(SpendJson spend);
 
-    SpendJson updateSpend(SpendJson spendJson);
-
-    void deleteSpend(SpendJson spend);
+    CategoryJson createCategory(CategoryJson category);
 
 }

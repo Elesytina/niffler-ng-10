@@ -55,6 +55,21 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
+    public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String spendDescription) {
+
+        return Optional.ofNullable(template.queryForObject(
+                """
+                        SELECT * FROM spend sp
+                        LEFT JOIN category c
+                        ON sp.category_id = c.id
+                        WHERE sp.username = ?
+                        AND sp.description = ?
+                        """,
+                SpendRowMapper.INSTANCE,
+                username, spendDescription));
+    }
+
+    @Override
     public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
 
         return template.query(conn -> {

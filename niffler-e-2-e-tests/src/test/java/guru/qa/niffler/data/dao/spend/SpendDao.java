@@ -14,6 +14,8 @@ public interface SpendDao {
 
     List<SpendEntity> findByUsername(String userName);
 
+    Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String spendDescription);
+
     List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
 
     List<SpendEntity> findAll();

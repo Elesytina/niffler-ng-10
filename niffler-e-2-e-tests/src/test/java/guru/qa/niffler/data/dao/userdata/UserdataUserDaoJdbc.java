@@ -15,6 +15,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class UserdataUserDaoJdbc implements UserdataUserDao {
+
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.userdataJdbcUrl());
 
     @Override
@@ -78,6 +79,38 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
                 return entity;
             }
             throw new RuntimeException("Failed to insert new user");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UserEntity update(UserEntity entity) {
+        try (PreparedStatement ps = connectionHolder.getConnection()
+                .prepareStatement("""
+                        UPDATE "user" SET username=?,
+                        currency=?,
+                        firstname=?,
+                        surname=?,
+                        photo=?,
+                        photo_small=?,
+                        full_name=?
+                        WHERE id=?
+                        """)) {
+            ps.setString(1, entity.getUsername());
+            ps.setString(2, entity.getCurrency().name());
+            ps.setString(3, entity.getFirstname());
+            ps.setString(4, entity.getSurname());
+            ps.setBytes(5, entity.getPhoto());
+            ps.setBytes(6, entity.getPhotoSmall());
+            ps.setString(7, entity.getFullname());
+            ps.setObject(8, entity.getId());
+
+            if (ps.executeUpdate() != 0) {
+
+                return entity;
+            }
+            throw new RuntimeException("Failed to update user %s".formatted(entity.getId()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
