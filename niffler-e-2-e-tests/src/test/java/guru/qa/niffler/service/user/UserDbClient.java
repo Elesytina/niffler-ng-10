@@ -21,6 +21,9 @@ import java.util.UUID;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
+import static guru.qa.niffler.model.enums.RelationType.FRIENDSHIP;
+import static guru.qa.niffler.model.enums.RelationType.INCOME_INVITATION;
+import static guru.qa.niffler.model.enums.RelationType.OUTCOME_INVITATION;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
@@ -109,17 +112,17 @@ public class UserDbClient implements UsersClient {
 
     @Override
     public List<UserJson> addFriends(UserJson user, int count) {
-        return addRelations(user, RelationType.FRIENDSHIP, count);
+        return addRelations(user, FRIENDSHIP, count);
     }
 
     @Override
     public List<UserJson> addIncomeInvitations(UserJson user, int count) {
-        return addRelations(user, RelationType.INCOME_INVITATION, count);
+        return addRelations(user, INCOME_INVITATION, count);
     }
 
     @Override
     public List<UserJson> addOutcomeInvitations(UserJson user, int count) {
-        return addRelations(user, RelationType.OUTCOME_INVITATION, count);
+        return addRelations(user, OUTCOME_INVITATION, count);
     }
 
     public static UserEntity getDefaultUserEntity(String username) {
@@ -162,21 +165,19 @@ public class UserDbClient implements UsersClient {
             Optional<UserEntity> userEntity = userdataUserRepository.findById(user.id());
 
             if (userEntity.isPresent()) {
+                UserEntity foundUser = userEntity.get();
                 for (int i = 0; i < count; i++) {
                     var username = randomUsername();
                     UserEntity friendUserEntity = getDefaultUserEntity(username);
-                    userdataUserRepository.create(friendUserEntity);
+                    UserEntity createdFriend = userdataUserRepository.create(friendUserEntity);
                     authUserRepository.create(getDefaultAuthUserEntity(username, "123"));
 
                     switch (relationType) {
-                        case FRIENDSHIP ->
-                                userdataUserRepository.addFriend(friendUserEntity, UserEntity.fromJson(user));
-                        case INCOME_INVITATION ->
-                                userdataUserRepository.sendInvitation(UserEntity.fromJson(user), friendUserEntity);
-                        case OUTCOME_INVITATION ->
-                                userdataUserRepository.sendInvitation(friendUserEntity, UserEntity.fromJson(user));
+                        case FRIENDSHIP -> userdataUserRepository.addFriend(foundUser, createdFriend);
+                        case INCOME_INVITATION -> userdataUserRepository.sendInvitation(friendUserEntity, foundUser);
+                        case OUTCOME_INVITATION -> userdataUserRepository.sendInvitation(foundUser, friendUserEntity);
                     }
-                    friends.add(UserJson.fromEntity(friendUserEntity));
+                    friends.add(UserJson.fromEntity(createdFriend));
                 }
 
                 return friends;

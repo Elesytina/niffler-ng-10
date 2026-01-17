@@ -71,7 +71,6 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
 
                             if (testUser.isPresent()) {
                                 testUser.get().testData().categories().addAll(categories);
-                                //  context.getStore(NAMESPACE).put(context.getUniqueId(), testUser.get());
                             } else {
                                 context.getStore(NAMESPACE).put(
                                         context.getUniqueId(),

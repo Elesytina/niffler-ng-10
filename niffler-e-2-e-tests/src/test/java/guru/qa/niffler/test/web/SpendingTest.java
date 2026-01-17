@@ -3,6 +3,7 @@ package guru.qa.niffler.test.web;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
@@ -19,8 +20,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomInteger;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
-
-@ExtendWith(BrowserExtension.class)
+@WebTest
 public class SpendingTest {
 
     @User(spendings = @Spending(

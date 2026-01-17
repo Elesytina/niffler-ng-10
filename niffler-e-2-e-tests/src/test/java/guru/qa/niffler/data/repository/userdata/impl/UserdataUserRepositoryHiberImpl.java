@@ -58,7 +58,7 @@ public class UserdataUserRepositoryHiberImpl implements UserdataUserRepository {
     @Override
     public void sendInvitation(UserEntity requester, UserEntity addressee) {
         em.joinTransaction();
-        addressee.addFriends(PENDING, requester);
+        requester.addFriends(PENDING, addressee);
     }
 
     @Override

@@ -40,6 +40,11 @@ public class ProfilePage extends BasePage<ProfilePage> {
                 .shouldHave(sizeGreaterThanOrEqual(1));
     }
 
+    @Step("verify that active category is presented")
+    public void checkThatActiveCategoryPresent(String categoryName) {
+        $(Selectors.byText(categoryName)).shouldBe(visible);
+    }
+
     @Step("set customer name {name}")
     public ProfilePage editName(String name) {
         nameInput.setValue(name);

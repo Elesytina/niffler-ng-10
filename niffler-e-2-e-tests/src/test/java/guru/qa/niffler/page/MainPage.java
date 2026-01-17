@@ -82,9 +82,4 @@ public class MainPage extends BasePage<MainPage> {
         allPeopleItem.click();
         return new AllPeoplePage();
     }
-
-    @Step("verify that at least active category presented")
-    public void checkThatActiveCategoryPresent() {
-        $$(By.xpath("//table/tbody/tr")).shouldHave(sizeGreaterThanOrEqual(1));
-    }
 }
