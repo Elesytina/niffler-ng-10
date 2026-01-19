@@ -20,6 +20,12 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
 
     @Override
     public SpendEntity create(SpendEntity spend) {
+        CategoryEntity category = spend.getCategory();
+        if (category.getId() != null && !em.contains(category)) {
+            CategoryEntity categoryRef = em.getReference(CategoryEntity.class, spend.getCategory().getId());
+            spend.setCategory(categoryRef);
+        }
+
         em.joinTransaction();
         em.persist(spend);
 

@@ -70,30 +70,18 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    public List<CategoryJson> getCategories(String username) {
+        List<CategoryEntity> categoryEntities = repository.findCategoriesByUsername(username);
+
+        return categoryEntities.stream().map(CategoryJson::fromEntity).toList();
+    }
+
+    @Override
     public SpendJson addSpend(SpendJson spend) {
-
         return xaTransactionTemplate.execute(() -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spend);
+            SpendEntity newSpend = SpendEntity.fromJson(spend);
 
-            if (spend.category() != null) {
-                var categoryId = spend.category().id();
-
-                if (categoryId == null) {
-                    CategoryEntity categoryEntity = repository.createCategory(spendEntity.getCategory());
-                    spendEntity.setCategory(categoryEntity);
-                } else {
-                    Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
-
-                    if (categoryEntity.isPresent()) {
-                        spendEntity.setCategory(categoryEntity.get());
-                    } else {
-                        throw new RuntimeException("Category with id %s not found".formatted(spend.category().id()));
-                    }
-                }
-            } else {
-                throw new RuntimeException("Category must be not null");
-            }
-            SpendEntity entity = repository.create(spendEntity);
+            SpendEntity entity = repository.create(newSpend);
 
             return SpendJson.fromEntity(entity);
         });
@@ -158,7 +146,7 @@ public class SpendDbClient implements SpendClient {
     @Override
     public CategoryJson updateCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
-            CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
+            CategoryEntity entity = repository.updateCategory(CategoryEntity.fromJson(category));
 
             return CategoryJson.fromEntity(entity);
         });
