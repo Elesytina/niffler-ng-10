@@ -18,6 +18,7 @@ import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +90,6 @@ public class UserDbClient implements UsersClient {
         });
     }
 
-    @Override
     public void delete(UserJson userJson) {
         xaTransactionTemplate.execute(() -> {
             Optional<UserEntity> userEntity = userdataUserRepository.findById(userJson.id());
@@ -107,7 +107,6 @@ public class UserDbClient implements UsersClient {
         });
     }
 
-    @Override
     public UserJson findById(UUID id) {
         Optional<UserEntity> userEntity = userdataUserRepository.findById(id);
 
@@ -130,18 +129,18 @@ public class UserDbClient implements UsersClient {
     }
 
     @Override
-    public void addFriends(UserJson user, int count) {
-        addRelations(user, RelationType.FRIENDSHIP, count);
+    public List<UserJson> addFriends(UserJson user, int count) {
+        return addRelations(user, RelationType.FRIENDSHIP, count);
     }
 
     @Override
-    public void addIncomeInvitations(UserJson user, int count) {
-        addRelations(user, RelationType.INCOME_INVITATION, count);
+    public List<UserJson> addIncomeInvitations(UserJson user, int count) {
+        return addRelations(user, RelationType.INCOME_INVITATION, count);
     }
 
     @Override
-    public void addOutcomeInvitations(UserJson user, int count) {
-        addRelations(user, RelationType.OUTCOME_INVITATION, count);
+    public List<UserJson> addOutcomeInvitations(UserJson user, int count) {
+        return addRelations(user, RelationType.OUTCOME_INVITATION, count);
     }
 
     public static UserEntity getDefaultUserEntity(String username) {
@@ -177,8 +176,10 @@ public class UserDbClient implements UsersClient {
         return userEntity;
     }
 
-    private void addRelations(UserJson user, RelationType relationType, int count) {
-        xaTransactionTemplate.execute(() -> {
+    private List<UserJson> addRelations(UserJson user, RelationType relationType, int count) {
+        List<UserJson> friends = new ArrayList<>();
+
+        return xaTransactionTemplate.execute(() -> {
             Optional<UserEntity> userEntity = userdataUserRepository.findById(user.id());
 
             if (userEntity.isPresent()) {
@@ -196,9 +197,10 @@ public class UserDbClient implements UsersClient {
                         case OUTCOME_INVITATION ->
                                 userdataUserRepository.sendInvitation(friendUserEntity, UserEntity.fromJson(user));
                     }
+                    friends.add(UserJson.fromEntity(friendUserEntity));
                 }
 
-                return null;
+                return friends;
             } else {
                 throw new RuntimeException("User with id %s not found".formatted(user.id()));
             }

@@ -6,6 +6,7 @@ import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
 import jakarta.persistence.EntityManager;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,6 +47,14 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
     }
 
     @Override
+    public CategoryEntity updateCategory(CategoryEntity category) {
+        em.joinTransaction();
+        em.merge(category);
+
+        return category;
+    }
+
+    @Override
     public Optional<CategoryEntity> findCategoryById(UUID id) {
 
         return Optional.ofNullable(em.find(CategoryEntity.class, id));
@@ -63,6 +72,18 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
                 .setParameter("username", username)
                 .setParameter("categoryName", categoryName)
                 .getSingleResultOrNull());
+    }
+
+    @Override
+    public List<CategoryEntity> findCategoriesByUsername(String username) {
+        var sql = """
+                FROM CategoryEntity c
+                WHERE c.username=:username
+                """;
+
+        return em.createQuery(sql, CategoryEntity.class)
+                .setParameter("username", username)
+                .getResultList();
     }
 
     @Override

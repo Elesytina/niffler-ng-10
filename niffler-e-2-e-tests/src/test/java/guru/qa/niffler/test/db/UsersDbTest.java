@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
@@ -42,7 +43,8 @@ public class UsersDbTest {
                 created.surname(),
                 newFullName,
                 created.photo(),
-                created.photoSmall());
+                created.photoSmall(),
+                null);
 
         userDbClient.update(forUpdate);
 
@@ -55,17 +57,17 @@ public class UsersDbTest {
         Assertions.assertEquals(foundUser.currency(), newCurrency, "Currency should be the same");
     }
 
-
     @Test
     void shouldAddFriends() {
         UUID userId1 = UUID.fromString("cc846c04-21fb-49be-9c87-fb68efcd62b3");
         UserJson requester = userDbClient.findById(userId1);
 
-        userDbClient.addFriends(requester, 2);
+        List<UserJson> friends = userDbClient.addFriends(requester, 2);
 
         UserJson found1 = userDbClient.findByUsername(requester.username());
 
         Assertions.assertEquals(requester.username(), found1.username());
+        Assertions.assertEquals(2, friends.size(), "Friends should have been added");
     }
 
     @Test
@@ -73,9 +75,11 @@ public class UsersDbTest {
         UUID userId1 = UUID.fromString("d8f486fb-2636-43e3-a160-42c97fe13c34");
         UserJson requester = userDbClient.findById(userId1);
 
-        userDbClient.addIncomeInvitations(requester, 2);
+        List<UserJson> requesters = userDbClient.addIncomeInvitations(requester, 2);
 
         userDbClient.findByUsername(requester.username());
+
+        Assertions.assertEquals(2, requesters.size(), "Friends should have been added");
     }
 
     @Test
@@ -83,9 +87,9 @@ public class UsersDbTest {
         UUID userId1 = UUID.fromString("d8f486fb-2636-43e3-a160-42c97fe13c34");
         UserJson requester = userDbClient.findById(userId1);
 
-        userDbClient.addOutcomeInvitations(requester, 2);
+        List<UserJson> addressees = userDbClient.addOutcomeInvitations(requester, 2);
 
-        userDbClient.findByUsername(requester.username());
+        Assertions.assertEquals(2, addressees.size(), "Friends should have been added");
     }
 
     @Test
@@ -95,7 +99,7 @@ public class UsersDbTest {
         log.info(userJson.toString());
         userDbClient.delete(userJson);
         Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findById(userId));
-        Assertions.assertThrows(RuntimeException.class, ()-> userDbClient.findByUsername(userJson.username()));
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findByUsername(userJson.username()));
     }
 
 }

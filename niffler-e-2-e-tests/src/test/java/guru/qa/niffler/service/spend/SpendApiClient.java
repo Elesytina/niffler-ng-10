@@ -1,8 +1,6 @@
 package guru.qa.niffler.service.spend;
 
-import guru.qa.niffler.api.CategoryApi;
 import guru.qa.niffler.api.SpendApi;
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import okhttp3.OkHttpClient;
@@ -16,9 +14,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-public class SpendApiClient implements SpendClient {
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
-    private static final Config CFG = Config.getInstance();
+public class SpendApiClient implements SpendClient {
 
     private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -35,10 +33,8 @@ public class SpendApiClient implements SpendClient {
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-    private final CategoryApi categoryApi = retrofit.create(CategoryApi.class);
-
     @Override
-    public SpendJson findById(UUID id) {
+    public SpendJson getSpend(UUID id) {
         try {
             Response<SpendJson> response = spendApi.getSpend(id.toString())
                     .execute();
@@ -52,9 +48,9 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson create(SpendJson spend) {
+    public SpendJson addSpend(SpendJson spend) {
         try {
-            var response = spendApi.createSpend(spend)
+            var response = spendApi.addSpend(spend)
                     .execute();
 
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
@@ -65,7 +61,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public SpendJson update(SpendJson spendJson) {
+    public SpendJson editSpend(SpendJson spendJson) {
         try {
             var response = spendApi.editSpend(spendJson)
                     .execute();
@@ -78,24 +74,39 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
-    public void remove(SpendJson spend) {
+    public CategoryJson createCategory(CategoryJson category) {
+        final Response<CategoryJson> response;
         try {
-            List<String> ids = List.of(spend.id().toString());
-            var response = spendApi.deleteSpends(ids, spend.username()).execute();
-
+            response = spendApi.createCategory(category)
+                    .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+            return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public CategoryJson createCategory(CategoryJson category) {
+    public CategoryJson updateCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
-            response = categoryApi.createCategory(category)
+            response = spendApi.updateCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+            return response.body();
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    @Override
+    public List<CategoryJson> getCategories(String username) {
+        try {
+            Response<List<CategoryJson>> response = spendApi.getCategories(username, false)
+                    .execute();
+
+            Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
             return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
@@ -113,5 +124,4 @@ public class SpendApiClient implements SpendClient {
             throw new AssertionError(exception);
         }
     }
-
 }
