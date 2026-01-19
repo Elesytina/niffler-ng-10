@@ -19,12 +19,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+import static okhttp3.logging.HttpLoggingInterceptor.Level;
 
 @ParametersAreNonnullByDefault
 public class SpendApiClient implements SpendClient {
 
     private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY);
+            .setLevel(Level.BODY);
 
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
             .addInterceptor(logging)
@@ -85,6 +86,7 @@ public class SpendApiClient implements SpendClient {
             response = spendApi.createCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
             return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
@@ -98,6 +100,7 @@ public class SpendApiClient implements SpendClient {
             response = spendApi.updateCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
             return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
@@ -120,6 +123,7 @@ public class SpendApiClient implements SpendClient {
         }
     }
 
+    @Override
     public void deleteSpends(List<UUID> uuids, String username) {
         var ids = uuids.stream().map(UUID::toString).toList();
         try {
