@@ -7,6 +7,8 @@ import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.enums.DateFilterValues;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +30,7 @@ public class SpendDaoJdbc implements SpendDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.spendJdbcUrl());
 
     @Override
-    public SpendEntity create(SpendEntity entity) {
+    public @Nullable SpendEntity create(SpendEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
                         RETURN_GENERATED_KEYS)) {
@@ -55,7 +57,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public SpendEntity update(SpendEntity entity) {
+    public @Nullable SpendEntity update(SpendEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());
@@ -135,7 +137,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findByUsername(String userName) {
+    public @Nonnull List<SpendEntity> findByUsername(String userName) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement(
                         """
@@ -197,7 +199,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAllByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
+    public @Nonnull List<SpendEntity> findAllByFiltersAndUsername(@Nullable CurrencyValues currencyFilter, @Nullable DateFilterValues dateFilterValues, String userName) {
         try (PreparedStatement ps = connectionHolder
                 .getConnection()
                 .prepareStatement(
@@ -238,7 +240,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAll() {
+    public @Nonnull List<SpendEntity> findAll() {
         try (PreparedStatement ps = connectionHolder
                 .getConnection()
                 .prepareStatement("SELECT * FROM spend")) {
@@ -256,7 +258,7 @@ public class SpendDaoJdbc implements SpendDao {
         }
     }
 
-    private SpendEntity getSpendEntity(ResultSet resultSet) throws SQLException {
+    private @Nonnull SpendEntity getSpendEntity(ResultSet resultSet) throws SQLException {
         SpendEntity spend = new SpendEntity();
         spend.setId(resultSet.getObject("id", UUID.class));
         spend.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
@@ -268,7 +270,7 @@ public class SpendDaoJdbc implements SpendDao {
         return spend;
     }
 
-    private CategoryEntity getCategoryEntity(ResultSet resultSet) throws SQLException {
+    private @Nonnull CategoryEntity getCategoryEntity(ResultSet resultSet) throws SQLException {
         CategoryEntity category = new CategoryEntity();
         category.setId(resultSet.getObject("category_id", UUID.class));
         category.setName(resultSet.getString("name"));

@@ -29,6 +29,10 @@ import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
+import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
+import static guru.qa.niffler.model.enums.RelationType.FRIENDSHIP;
+import static guru.qa.niffler.model.enums.RelationType.INCOME_INVITATION;
+import static guru.qa.niffler.model.enums.RelationType.OUTCOME_INVITATION;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
@@ -132,17 +136,17 @@ public class UserDbClient implements UsersClient {
 
     @Override
     public @Nonnull List<UserJson> addFriends(UserJson user, int count) {
-        return addRelations(user, RelationType.FRIENDSHIP, count);
+        return addRelations(user, FRIENDSHIP, count);
     }
 
     @Override
     public @Nonnull List<UserJson> addIncomeInvitations(UserJson user, int count) {
-        return addRelations(user, RelationType.INCOME_INVITATION, count);
+        return addRelations(user, INCOME_INVITATION, count);
     }
 
     @Override
     public @Nonnull List<UserJson> addOutcomeInvitations(UserJson user, int count) {
-        return addRelations(user, RelationType.OUTCOME_INVITATION, count);
+        return addRelations(user, OUTCOME_INVITATION, count);
     }
 
     public static UserEntity getDefaultUserEntity(String username) {
@@ -159,7 +163,7 @@ public class UserDbClient implements UsersClient {
     public static @Nonnull AuthUserEntity getDefaultAuthUserEntity(String username, String password) {
         AuthUserEntity userEntity = new AuthUserEntity();
         userEntity.setUsername(username);
-        userEntity.setPassword(password);
+        userEntity.setPassword(PASSWORD_ENCODER.encode(password));
         userEntity.setEnabled(true);
         userEntity.setCredentialsNonExpired(true);
         userEntity.setAccountNonExpired(true);
@@ -189,13 +193,13 @@ public class UserDbClient implements UsersClient {
                     var username = randomUsername();
                     UserEntity friendUserEntity = getDefaultUserEntity(username);
                     UserEntity createdFriend = userdataUserRepository.create(friendUserEntity);
-                    authUserRepository.create(getDefaultAuthUserEntity(username, "123"));
+                    authUserRepository.create(getDefaultAuthUserEntity(username, DEFAULT_PASSWORD));
 
                     UserEntity userEntity = foundUserEntity.get();
                     switch (relationType) {
-                        case FRIENDSHIP -> userdataUserRepository.addFriend(userEntity, createdFriend);
-                        case INCOME_INVITATION -> userdataUserRepository.sendInvitation(friendUserEntity, userEntity);
-                        case OUTCOME_INVITATION -> userdataUserRepository.sendInvitation(userEntity, friendUserEntity);
+                        case FRIENDSHIP -> userdataUserRepository.addFriend(createdFriend, userEntity);
+                        case INCOME_INVITATION -> userdataUserRepository.sendInvitation(userEntity, createdFriend);
+                        case OUTCOME_INVITATION -> userdataUserRepository.sendInvitation(createdFriend, userEntity);
                     }
                     friends.add(UserJson.fromEntity(createdFriend));
                 }

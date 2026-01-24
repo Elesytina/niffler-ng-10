@@ -13,9 +13,10 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Date;
 import java.util.List;
-
+@ParametersAreNonnullByDefault
 public interface SpendApi {
 
     @POST("internal/spends/add")

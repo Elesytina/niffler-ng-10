@@ -9,8 +9,10 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public interface UsersApi {
 
     @GET("internal/friends/all")
