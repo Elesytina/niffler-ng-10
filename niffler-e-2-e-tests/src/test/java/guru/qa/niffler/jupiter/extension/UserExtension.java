@@ -5,7 +5,6 @@ import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.user.UserDbClient;
 import guru.qa.niffler.service.user.UsersClient;
-import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -19,9 +18,7 @@ import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
 import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
-import static guru.qa.niffler.model.enums.RepositoryImplType.JDBC;
-import static guru.qa.niffler.model.enums.RepositoryImplType.SPRING_JDBC;
-import static guru.qa.niffler.utils.RandomDataUtils.*;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
