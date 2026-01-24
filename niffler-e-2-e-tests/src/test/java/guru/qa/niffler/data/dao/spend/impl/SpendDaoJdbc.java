@@ -30,7 +30,7 @@ public class SpendDaoJdbc implements SpendDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.spendJdbcUrl());
 
     @Override
-    public @Nullable SpendEntity create(SpendEntity entity) {
+    public @Nonnull SpendEntity create(SpendEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
                         RETURN_GENERATED_KEYS)) {
@@ -57,7 +57,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
-    public @Nullable SpendEntity update(SpendEntity entity) {
+    public @Nonnull SpendEntity update(SpendEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?")) {
             ps.setDate(1, entity.getSpendDate());

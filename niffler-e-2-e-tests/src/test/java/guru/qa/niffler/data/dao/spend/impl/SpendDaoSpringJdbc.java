@@ -127,7 +127,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public @Nullable SpendEntity create(SpendEntity entity) {
+    public @Nonnull SpendEntity create(SpendEntity entity) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
@@ -149,7 +149,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public @Nullable SpendEntity update(SpendEntity spendEntity) {
+    public @Nonnull SpendEntity update(SpendEntity spendEntity) {
         var result = template.update("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?",
                 spendEntity.getSpendDate(),
                 spendEntity.getCurrency().name(),

@@ -100,7 +100,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public @Nullable CategoryEntity create(CategoryEntity entity) {
+    public @Nonnull CategoryEntity create(CategoryEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO category(name, username, archived) values (?,?,?)",
                         RETURN_GENERATED_KEYS)) {
@@ -124,7 +124,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public @Nullable CategoryEntity update(CategoryEntity entity) {
+    public @Nonnull CategoryEntity update(CategoryEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("UPDATE category SET name = ?,  archived = ? WHERE id = ?")) {
             ps.setString(1, entity.getName());
