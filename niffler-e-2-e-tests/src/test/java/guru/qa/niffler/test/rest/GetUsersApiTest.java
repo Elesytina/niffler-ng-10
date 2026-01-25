@@ -31,6 +31,7 @@ public class GetUsersApiTest {
 
         List<UserJson> found = userApiClient.findAllByUsername(username, friend.username());
 
+        Assertions.assertNotNull(found, "User not found");
         Assertions.assertFalse(found.isEmpty(), "users are not found");
         Assertions.assertTrue(found.stream().anyMatch(u -> u.id().equals(friend.id())), "id should be in results");
     }
@@ -43,6 +44,7 @@ public class GetUsersApiTest {
 
         List<UserJson> found = userApiClient.findAllByUsername(username, randomAlphanumeric(25));
 
+        Assertions.assertNotNull(found, "User not found");
         Assertions.assertTrue(found.isEmpty(), "user should not be found");
     }
 }
