@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.Date;
@@ -47,7 +48,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findByUsername(String userName) {
+    public @Nullable List<SpendEntity> findByUsername(String userName) {
         try {
             return template.query(
                     """
@@ -90,9 +91,9 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAllByFiltersAndUsername(@Nullable CurrencyValues currencyFilter,
-                                                         @Nullable DateFilterValues dateFilterValues,
-                                                         String userName) {
+    public @Nonnull List<SpendEntity> findAllByFiltersAndUsername(@Nullable CurrencyValues currencyFilter,
+                                                                  @Nullable DateFilterValues dateFilterValues,
+                                                                  String userName) {
 
         return template.query(conn -> {
             PreparedStatement ps = conn.prepareStatement(
@@ -120,14 +121,13 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public List<SpendEntity> findAll() {
-
+    public @Nonnull List<SpendEntity> findAll() {
         return template.query("SELECT * FROM spend s LEFT JOIN category c ON s.category_id = c.id",
                 SpendRowMapper.INSTANCE);
     }
 
     @Override
-    public SpendEntity create(SpendEntity entity) {
+    public @Nonnull SpendEntity create(SpendEntity entity) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO spend(username, spend_date, currency, amount, description, category_id) values (?,?,?,?,?,?)",
@@ -149,7 +149,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
-    public SpendEntity update(SpendEntity spendEntity) {
+    public @Nonnull SpendEntity update(SpendEntity spendEntity) {
         var result = template.update("UPDATE spend set spend_date = ?, currency = ?, amount = ?, description = ?, category_id =? where id = ?",
                 spendEntity.getSpendDate(),
                 spendEntity.getCurrency().name(),

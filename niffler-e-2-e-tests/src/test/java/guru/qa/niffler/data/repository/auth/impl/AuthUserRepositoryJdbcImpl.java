@@ -34,7 +34,7 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
              PreparedStatement authorityPs = connectionHolder.getConnection()
                      .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)")) {
             userPs.setString(1, userEntity.getUsername());
-            userPs.setString(2, PASSWORD_ENCODER.encode(userEntity.getPassword()));
+            userPs.setString(2, userEntity.getPassword());
             userPs.setBoolean(3, userEntity.getEnabled());
             userPs.setBoolean(4, userEntity.getAccountNonExpired());
             userPs.setBoolean(5, userEntity.getAccountNonLocked());

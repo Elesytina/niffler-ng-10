@@ -6,7 +6,6 @@ import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,7 +56,10 @@ public class UserdataUserRepositoryHiberImpl implements UserdataUserRepository {
     @Override
     public void sendInvitation(UserEntity requester, UserEntity addressee) {
         em.joinTransaction();
-        requester.addFriends(PENDING, addressee);
+        UserEntity attachedAddr = em.contains(addressee)
+                ? addressee
+                : em.merge(addressee);
+        attachedAddr.addFriends(PENDING, requester);
     }
 
     @Override

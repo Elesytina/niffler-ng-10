@@ -74,6 +74,7 @@ public class SpendApiClient extends RestClient implements SpendClient {
             response = spendApi.createCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
             return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
@@ -87,6 +88,7 @@ public class SpendApiClient extends RestClient implements SpendClient {
             response = spendApi.updateCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
             return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
@@ -109,6 +111,7 @@ public class SpendApiClient extends RestClient implements SpendClient {
         }
     }
 
+    @Override
     public void deleteSpends(List<UUID> uuids, String username) {
         var ids = uuids.stream().map(UUID::toString).toList();
         try {

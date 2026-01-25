@@ -6,14 +6,14 @@ import guru.qa.niffler.model.enums.CurrencyValues;
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class RandomDataUtils {
     private final static Faker faker = new Faker();
     private final static Random rand = new Random();
 
     public static String randomUsername() {
-        return faker.name().username() + randomNumeric(2);
+        return faker.name().username() + randomAlphabetic(3);
     }
 
     public static String randomName() {

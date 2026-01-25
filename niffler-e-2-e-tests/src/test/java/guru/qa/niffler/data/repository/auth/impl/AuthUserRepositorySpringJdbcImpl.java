@@ -37,7 +37,7 @@ public class AuthUserRepositorySpringJdbcImpl implements AuthUserRepository {
                             INSERT INTO "user"( username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)
                             """, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, authUser.getUsername());
-            ps.setString(2, PASSWORD_ENCODER.encode(authUser.getPassword()));
+            ps.setString(2, authUser.getPassword());
             ps.setBoolean(3, authUser.getEnabled());
             ps.setBoolean(4, authUser.getAccountNonExpired());
             ps.setBoolean(5, authUser.getAccountNonLocked());
