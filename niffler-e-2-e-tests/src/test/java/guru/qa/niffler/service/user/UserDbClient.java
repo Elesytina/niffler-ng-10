@@ -24,6 +24,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static guru.qa.niffler.model.enums.RelationType.FRIENDSHIP;
 import static guru.qa.niffler.model.enums.RelationType.INCOME_INVITATION;
 import static guru.qa.niffler.model.enums.RelationType.OUTCOME_INVITATION;
+import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;

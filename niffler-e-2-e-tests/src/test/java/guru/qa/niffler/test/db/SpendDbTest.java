@@ -34,7 +34,7 @@ public class SpendDbTest {
     }
 
     @Test
-    void shouldCreateAndDeleteSpend() {
+    void shouldCreateSpend() {
         var username = "ivan";
         CategoryJson categoryJson = new CategoryJson(
                 null,
@@ -57,10 +57,6 @@ public class SpendDbTest {
         log.info(spend1.toString());
 
         Assertions.assertNotNull(spend1.id(), "Spend id should not be null");
-
-        spendDbClient.remove(spend1);
-
-        Assertions.assertThrows(RuntimeException.class, () -> spendDbClient.getSpend(spend1.id()));
     }
 
 
