@@ -2,7 +2,6 @@ package guru.qa.niffler.test.db;
 
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.jupiter.extension.SpendClientInjector;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
@@ -11,15 +10,12 @@ import guru.qa.niffler.service.spend.SpendDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.UUID;
 
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
-import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 

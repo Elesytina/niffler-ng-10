@@ -70,7 +70,7 @@ public class UserApiClient extends RestClient implements UsersClient {
     }
 
 
-    public @Nonnull List<UserJson> findAllByUsername(String username, String searchQuery) {
+    public @Nullable List<UserJson> findAllByUsername(String username, String searchQuery) {
         try {
             Response<List<UserJson>> response = usersApi.allUsers(username, searchQuery)
                     .execute();
