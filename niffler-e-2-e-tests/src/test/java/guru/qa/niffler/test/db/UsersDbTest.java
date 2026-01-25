@@ -15,7 +15,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 @Slf4j
 public class UsersDbTest {
 
-    UserDbClient userDbClient = new UserDbClient();
+    private final UserDbClient userDbClient = new UserDbClient();
 
     @Test
     void shouldRegisterNewUser() {

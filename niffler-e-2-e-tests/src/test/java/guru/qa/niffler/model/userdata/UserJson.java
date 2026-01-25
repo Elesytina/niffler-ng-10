@@ -1,12 +1,14 @@
 package guru.qa.niffler.model.userdata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.enums.CurrencyValues;
 
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record UserJson(
         UUID id,
         String username,

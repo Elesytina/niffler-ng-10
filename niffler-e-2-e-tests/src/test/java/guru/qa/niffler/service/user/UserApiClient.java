@@ -69,6 +69,19 @@ public class UserApiClient extends RestClient implements UsersClient {
         }
     }
 
+
+    public @Nonnull List<UserJson> findAllByUsername(String username, String searchQuery) {
+        try {
+            Response<List<UserJson>> response = usersApi.allUsers(username, searchQuery)
+                    .execute();
+            Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
+            return response.body();
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
     @Override
     public @Nonnull List<UserJson> addFriends(UserJson user, int count) {
         try {

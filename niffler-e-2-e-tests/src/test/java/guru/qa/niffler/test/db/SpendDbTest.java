@@ -1,9 +1,12 @@
 package guru.qa.niffler.test.db;
 
+import guru.qa.niffler.jupiter.annotation.Spending;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.SpendClientInjector;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.spend.SpendDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -14,23 +17,33 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
+import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
-@ExtendWith(SpendClientInjector.class)
 @Slf4j
 public class SpendDbTest {
 
-    private SpendDbClient spendDbClient;
+    private final SpendDbClient spendDbClient = new SpendDbClient();
 
     @Test
-    void shouldGetSpend() {
-        SpendJson spend1 = spendDbClient.getSpend(UUID.fromString("a4d41184-9776-46d1-93bd-b3ee3bbc4d75"));
-        SpendJson spend2 = spendDbClient.findByUsernameAndSpendDescription("fishka", "Harum iure voluptas aspernatur qui.");
+    @User(spendings = @Spending(
+            category = "just spend",
+            amount = 100,
+            currency = RUB,
+            description = "new description for spend"
+    ))
+    void shouldGetSpend(UserJson userJson) {
+        SpendJson spendJson = userJson.testData().spends().getFirst();
+        String description = spendJson.description();
+        var username = userJson.username();
 
-        Assertions.assertNotEquals(spend1.id(), spend2.id(), "Spends should not be same");
+        SpendJson spend1 = spendDbClient.getSpend(spendJson.id());
+        SpendJson spend2 = spendDbClient.findByUsernameAndSpendDescription(username, description);
+
+        Assertions.assertEquals(spend1.id(), spend2.id(), "Spends should be same");
     }
 
     @Test
@@ -61,8 +74,15 @@ public class SpendDbTest {
 
 
     @Test
-    void shouldGetSpendByIdAndUpdate() {
-        UUID spendId = UUID.fromString("67ecb6c0-bcd0-11f0-af9c-d62d6fb87ff1");
+    @User(spendings = @Spending(
+            category = "just spend",
+            amount = 200,
+            currency = RUB,
+            description = "description for spend"
+    ))
+    void shouldGetSpendByIdAndUpdate(UserJson userJson) {
+        SpendJson spendJson = userJson.testData().spends().getFirst();
+        var spendId = spendJson.id();
         SpendJson spend1 = spendDbClient.getSpend(spendId);
         var newCurrency = CurrencyValues.USD;
         var newAmount = randomDouble(100, 5000);
@@ -84,34 +104,25 @@ public class SpendDbTest {
     }
 
     @Test
-    void shouldGetSpendByUsernameAndDescription() {
-        var username = "bonnie.ziemann";
-        CategoryJson categoryJson = new CategoryJson(
-                null,
-                randomSentence(3),
-                username,
-                false
-        );
-        CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
+    @User(spendings = @Spending(
+            category = "just spend",
+            amount = 200,
+            currency = RUB,
+            description = "description"
+    ))
+    void shouldGetSpendByUsernameAndDescription(UserJson userJson) {
+        SpendJson spendJson = userJson.testData().spends().getFirst();
+        var spendDescription = spendJson.description();
+        var username = userJson.username();
 
-        SpendJson created = spendDbClient.addSpend(
-                new SpendJson(null,
-                        Date.from(Instant.now()),
-                        createdCategory,
-                        randomCurrency(),
-                        randomDouble(10, 10000),
-                        randomSentence(4),
-                        username)
-        );
-        Assertions.assertNotNull(created.id(), "Spend id should not be null");
-
-        SpendJson found = spendDbClient.findByUsernameAndSpendDescription(created.username(), created.description());
+        SpendJson found = spendDbClient.findByUsernameAndSpendDescription(username, spendDescription);
         Assertions.assertNotNull(found.id(), "Spend description should not be null");
     }
 
     @Test
-    void shouldCreateCategoryAndRemoveIt() {
-        var username = "bonnie.ziemann";
+    @User
+    void shouldCreateCategoryAndRemoveIt(UserJson userJson) {
+        var username = userJson.username();
         CategoryJson categoryJson = new CategoryJson(
                 null,
                 randomSentence(3),
