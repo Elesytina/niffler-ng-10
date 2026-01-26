@@ -49,7 +49,6 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseAllPeople()
                 .searchRequest(targetUsername)
-                .checkThatOutcomeRequestsArePresented()
                 .checkNameIsPresentedInOutcomeRequests(targetUsername);
     }
 

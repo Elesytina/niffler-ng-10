@@ -22,9 +22,9 @@ public class FriendsPage {
 
     @Step("search friend by username {username}")
     public FriendsPage searchFriend(String username) {
-        searchField.search(username, FriendsPage.class);
+        searchField.search(username);
 
-        return page(FriendsPage.class);
+        return this;
     }
 
     @Step("verify that name {name} is presented in friends table")

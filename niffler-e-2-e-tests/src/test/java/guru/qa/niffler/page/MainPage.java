@@ -30,15 +30,15 @@ public class MainPage {
     }
 
     @Step("click create new spending")
-    public AddNewPendingPage clickCreateNewSpendingButton() {
+    public AddNewSpendingPage clickCreateNewSpendingButton() {
         createNewSpendingButton.click();
 
-        return page(AddNewPendingPage.class);
+        return page(AddNewSpendingPage.class);
     }
 
     @Step("search spending by text {text}")
     public MainPage searchSpending(String text) {
-        searchField.search(text, MainPage.class);
+        searchField.search(text);
 
         return this;
     }

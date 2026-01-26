@@ -11,11 +11,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -40,68 +40,67 @@ public class SpendApiClient implements SpendClient {
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
     @Override
-    public @Nullable SpendJson getSpend(UUID id) {
+    public @Nonnull SpendJson getSpend(UUID id) {
         try {
             Response<SpendJson> response = spendApi.getSpend(id.toString())
                     .execute();
-
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public @Nullable SpendJson addSpend(SpendJson spend) {
+    public @Nonnull SpendJson addSpend(SpendJson spend) {
         try {
             var response = spendApi.addSpend(spend)
                     .execute();
-
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
+
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public @Nullable SpendJson editSpend(SpendJson spendJson) {
+    public @Nonnull SpendJson editSpend(SpendJson spendJson) {
         try {
             var response = spendApi.editSpend(spendJson)
                     .execute();
-
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
-            return response.body();
+
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public @Nullable CategoryJson createCategory(CategoryJson category) {
+    public @Nonnull CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi.createCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public @Nullable CategoryJson updateCategory(CategoryJson category) {
+    public @Nonnull CategoryJson updateCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi.updateCategory(category)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }

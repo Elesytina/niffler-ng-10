@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,19 +72,19 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public @Nullable SpendJson addSpend(SpendJson spend) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull SpendJson addSpend(SpendJson spend) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             SpendEntity newSpend = SpendEntity.fromJson(spend);
 
             SpendEntity entity = repository.create(newSpend);
 
             return SpendJson.fromEntity(entity);
-        });
+        }));
     }
 
     @Override
-    public @Nullable SpendJson editSpend(SpendJson spendJson) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull SpendJson editSpend(SpendJson spendJson) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
 
             if (spendEntity.isPresent()) {
@@ -93,7 +94,7 @@ public class SpendDbClient implements SpendClient {
             } else {
                 throw new RuntimeException("Spend with id %s not found".formatted(spendJson.id()));
             }
-        });
+        }));
     }
 
     public void remove(SpendJson spend) {

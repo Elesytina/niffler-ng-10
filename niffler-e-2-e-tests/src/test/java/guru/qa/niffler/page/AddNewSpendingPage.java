@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class AddNewPendingPage {
+public class AddNewSpendingPage {
 
     private final SelenideElement amountInput = $("#amount");
     private final SelenideElement currencySelect = $("#currency");
@@ -21,14 +21,14 @@ public class AddNewPendingPage {
     private final Calendar calendar = new Calendar();
 
     @Step("set spending amount")
-    public AddNewPendingPage setAmount(int amount) {
+    public AddNewSpendingPage setAmount(int amount) {
         amountInput.sendKeys(String.valueOf(amount));
 
         return this;
     }
 
     @Step("set spending currency")
-    public AddNewPendingPage selectCurrency(CurrencyValues currency) {
+    public AddNewSpendingPage selectCurrency(CurrencyValues currency) {
         currencySelect.click();
         $(byAttribute("data-value", currency.toString()))
                 .click();
@@ -37,20 +37,21 @@ public class AddNewPendingPage {
     }
 
     @Step("select spending category")
-    public AddNewPendingPage selectCategory(String categoryName) {
+    public AddNewSpendingPage selectCategory(String categoryName) {
         $(byText(categoryName)).click();
 
         return this;
     }
 
     @Step("set spending date")
-    public AddNewPendingPage selectDate(LocalDate date) {
+    public AddNewSpendingPage selectDate(LocalDate date) {
+        calendar.selectDate(date);
 
-        return calendar.selectDate(date, AddNewPendingPage.class);
+        return this;
     }
 
     @Step("set spending description")
-    public AddNewPendingPage setDescription(String description) {
+    public AddNewSpendingPage setDescription(String description) {
         descriptionInput.sendKeys(description);
 
         return this;
