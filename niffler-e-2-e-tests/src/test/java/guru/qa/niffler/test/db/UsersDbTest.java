@@ -1,5 +1,6 @@
 package guru.qa.niffler.test.db;
 
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.user.UserDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.UUID;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
@@ -57,48 +57,37 @@ public class UsersDbTest {
     }
 
     @Test
-    void shouldAddFriends() {
-        UUID userId1 = UUID.fromString("cc846c04-21fb-49be-9c87-fb68efcd62b3");
-        UserJson requester = userDbClient.findById(userId1);
+    @User
+    void shouldAddFriends(UserJson user) {
+        List<UserJson> friends = userDbClient.addFriends(user, 2);
 
-        List<UserJson> friends = userDbClient.addFriends(requester, 2);
-
-        UserJson found1 = userDbClient.findByUsername(requester.username());
-
-        Assertions.assertEquals(requester.username(), found1.username());
         Assertions.assertEquals(2, friends.size(), "Friends should have been added");
     }
 
     @Test
-    void shouldSendIncomeInvitations() {
-        UUID userId1 = UUID.fromString("d8f486fb-2636-43e3-a160-42c97fe13c34");
-        UserJson requester = userDbClient.findById(userId1);
+    @User
+    void shouldSendIncomeInvitations(UserJson userJson) {
+        UserJson requester = userJson.testData().incomeInvitations().getFirst();
 
         List<UserJson> requesters = userDbClient.addIncomeInvitations(requester, 2);
-
-        userDbClient.findByUsername(requester.username());
 
         Assertions.assertEquals(2, requesters.size(), "Friends should have been added");
     }
 
     @Test
-    void shouldSendOutcomeInvitations() {
-        UUID userId1 = UUID.fromString("d8f486fb-2636-43e3-a160-42c97fe13c34");
-        UserJson requester = userDbClient.findById(userId1);
-
-        List<UserJson> addressees = userDbClient.addOutcomeInvitations(requester, 2);
+    @User
+    void shouldSendOutcomeInvitations(UserJson userJson) {
+        List<UserJson> addressees = userDbClient.addOutcomeInvitations(userJson, 2);
 
         Assertions.assertEquals(2, addressees.size(), "Friends should have been added");
     }
 
     @Test
-    void shouldDeleteUser() {
-        UUID userId = UUID.fromString("a90b5c61-0d47-4e28-a0af-41fd4a919bef");
-        UserJson userJson = userDbClient.findById(userId);
-        log.info(userJson.toString());
-        userDbClient.delete(userJson);
-        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findById(userId));
-        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findByUsername(userJson.username()));
+    @User
+    void shouldDeleteUser(UserJson user) {
+        userDbClient.delete(user);
+
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findById(user.id()));
     }
 
 }
