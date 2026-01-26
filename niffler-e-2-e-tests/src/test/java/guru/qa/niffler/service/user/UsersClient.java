@@ -21,9 +21,9 @@ public interface UsersClient {
     @Step("add {count} friends for user {user}")
     List<UserJson> addFriends(UserJson user, int count);
 
-    @Step("add {count} income invitations for user {user}")
+    @Step("add {count} income invitations for user")
     List<UserJson> addIncomeInvitations(UserJson user, int count);
 
-    @Step("add {count} outcome invitations for user {user}")
+    @Step("add {count} outcome invitations for user")
     List<UserJson> addOutcomeInvitations(UserJson user, int count);
 }
