@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,13 +59,13 @@ public class UserApiClient extends RestClient implements UsersClient {
     }
 
     @Override
-    public @Nonnull UserJson findByUsername(String username) {
+    public @Nullable UserJson findByUsername(String username) {
         try {
             Response<UserJson> response = usersApi.currentUser(username)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return Objects.requireNonNull(response.body());
+            return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
