@@ -10,11 +10,10 @@ import io.qameta.allure.Description;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @WebTest
 public class SpendingCategoryTest {
-
-    private final String username = "fishka";
 
     @User(categories = @SpendingCategory(
             archived = true))
@@ -30,15 +29,21 @@ public class SpendingCategoryTest {
                 .checkThatArchivedCategoriesExist();
     }
 
-    @User(username = username,
-            categories = @SpendingCategory(
-                    archived = true))
+    @User(categories = @SpendingCategory)
     @Test
     @Description("archived Category Should Be Present In Profile")
-    void activeCategoryShouldBePresentInProfilePositiveTest() {
+    void activeCategoryShouldBePresentInProfilePositiveTest(UserJson userJson) {
+        var username = userJson.username();
+        var password = userJson.testData().password();
+        var categories = userJson.testData().categories();
+        assertFalse(categories.isEmpty(), "Categories should not be empty");
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(username, "Querty67")
-                .checkThatActiveCategoryPresent();
+                .login(username, password)
+                .openProfilePopupMenu()
+                .chooseProfile()
+                .checkThatPageIsDisplayed()
+                .checkThatActiveCategoryPresent(categories.getFirst().name());
     }
 
 }

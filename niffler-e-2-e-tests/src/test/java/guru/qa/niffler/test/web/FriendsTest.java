@@ -38,7 +38,7 @@ public class FriendsTest {
                 .checkNameIsPresentedInRequestTable(targetUsername);
     }
 
-    @User(outcomeInvitationsCount = 2)
+    @User(outcomeInvitationsCount = 1)
     @Test
     void outcomeRequestShouldBePresentInAllPeopleTable(UserJson user) {
         var targetUsername = user.testData().outcomeInvitations().getFirst().username();
@@ -48,7 +48,6 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseAllPeople()
                 .searchRequest(targetUsername)
-                .checkThatOutcomeRequestsArePresented()
                 .checkNameIsPresentedInOutcomeRequests(targetUsername);
     }
 

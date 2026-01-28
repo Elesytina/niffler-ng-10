@@ -3,7 +3,6 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.SearchField;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
@@ -31,15 +30,15 @@ public class MainPage extends BasePage<MainPage> {
     }
 
     @Step("click create new spending")
-    public AddNewPendingPage clickCreateNewSpendingButton() {
+    public AddNewSpendingPage clickCreateNewSpendingButton() {
         createNewSpendingButton.click();
 
-        return page(AddNewPendingPage.class);
+        return page(AddNewSpendingPage.class);
     }
 
     @Step("search spending by text {text}")
     public MainPage searchSpending(String text) {
-        searchField.search(text, MainPage.class);
+        searchField.search(text);
 
         return this;
     }
@@ -81,10 +80,5 @@ public class MainPage extends BasePage<MainPage> {
     public AllPeoplePage chooseAllPeople() {
         allPeopleItem.click();
         return new AllPeoplePage();
-    }
-
-    @Step("verify that at least active category presented")
-    public void checkThatActiveCategoryPresent() {
-        $$(By.xpath("//table/tbody/tr")).shouldHave(sizeGreaterThanOrEqual(1));
     }
 }

@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
@@ -30,40 +31,40 @@ public class UserApiClient extends RestClient implements UsersClient {
     }
 
     @Override
-    public @Nullable UserJson create(String username, String password) {
+    public @Nonnull UserJson create(String username, String password) {
         authApiClient.register(username, password);
         try {
             Response<UserJson> responseInfo = usersApi.currentUser(username)
                     .execute();
             Assertions.assertEquals(200, responseInfo.code(), "Unexpected response code");
 
-            return responseInfo.body();
+            return Objects.requireNonNull(responseInfo.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public @Nullable UserJson update(UserJson userJson) {
+    public @Nonnull UserJson update(UserJson userJson) {
         try {
             Response<UserJson> response = usersApi.updateUserInfo(userJson)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public @Nullable UserJson findByUsername(String username) {
+    public @Nonnull UserJson findByUsername(String username) {
         try {
             Response<UserJson> response = usersApi.currentUser(username)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }

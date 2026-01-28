@@ -9,8 +9,10 @@ import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,21 +28,21 @@ public class SpendDbClient implements SpendClient {
             CFG.userdataJdbcUrl());
 
     @Override
-    public SpendJson getSpend(UUID id) {
+    public @Nonnull SpendJson getSpend(UUID id) {
         Optional<SpendEntity> entity = repository.findById(id);
 
         return entity.map(SpendJson::fromEntity)
                 .orElseThrow(() -> new RuntimeException("Spend not found"));
     }
 
-    public SpendJson findByUsernameAndSpendDescription(String username, String spendDescription) {
+    public @Nonnull SpendJson findByUsernameAndSpendDescription(String username, String spendDescription) {
         Optional<SpendEntity> entity = repository.findByUsernameAndSpendDescription(username, spendDescription);
 
         return entity.map(SpendJson::fromEntity)
                 .orElseThrow(() -> new RuntimeException("Spend not found"));
     }
 
-    public CategoryJson findCategoryById(UUID id) {
+    public @Nonnull CategoryJson findCategoryById(UUID id) {
         Optional<CategoryEntity> entity = repository.findCategoryById(id);
 
         return entity.map(CategoryJson::fromEntity)
@@ -58,38 +60,19 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public SpendJson addSpend(SpendJson spend) {
+    public @Nonnull SpendJson addSpend(SpendJson spend) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
+            SpendEntity newSpend = SpendEntity.fromJson(spend);
 
-        return xaTransactionTemplate.execute(() -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spend);
-
-            if (spend.category() != null) {
-                var categoryId = spend.category().id();
-
-                if (categoryId == null) {
-                    CategoryEntity categoryEntity = repository.createCategory(spendEntity.getCategory());
-                    spendEntity.setCategory(categoryEntity);
-                } else {
-                    Optional<CategoryEntity> categoryEntity = repository.findCategoryById(categoryId);
-
-                    if (categoryEntity.isPresent()) {
-                        spendEntity.setCategory(categoryEntity.get());
-                    } else {
-                        throw new RuntimeException("Category with id %s not found".formatted(spend.category().id()));
-                    }
-                }
-            } else {
-                throw new RuntimeException("Category must be not null");
-            }
-            SpendEntity entity = repository.create(spendEntity);
+            SpendEntity entity = repository.create(newSpend);
 
             return SpendJson.fromEntity(entity);
-        });
+        }));
     }
 
     @Override
-    public SpendJson editSpend(SpendJson spendJson) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull SpendJson editSpend(SpendJson spendJson) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
 
             if (spendEntity.isPresent()) {
@@ -99,7 +82,7 @@ public class SpendDbClient implements SpendClient {
             } else {
                 throw new RuntimeException("Spend with id %s not found".formatted(spendJson.id()));
             }
-        });
+        }));
     }
 
     public void remove(SpendJson spend) {
@@ -135,6 +118,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Nullable
     public CategoryJson createCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
             CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
@@ -144,9 +128,10 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Nullable
     public CategoryJson updateCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
-            CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
+            CategoryEntity entity = repository.updateCategory(CategoryEntity.fromJson(category));
 
             return CategoryJson.fromEntity(entity);
         });

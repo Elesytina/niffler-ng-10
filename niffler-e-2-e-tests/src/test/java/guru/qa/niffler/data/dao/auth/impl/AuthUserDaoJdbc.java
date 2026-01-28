@@ -6,6 +6,7 @@ import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
 
     @Override
-    public AuthUserEntity create(AuthUserEntity entity) {
+    public @Nonnull AuthUserEntity create(AuthUserEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO \"user\"( username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)",
                         RETURN_GENERATED_KEYS)) {

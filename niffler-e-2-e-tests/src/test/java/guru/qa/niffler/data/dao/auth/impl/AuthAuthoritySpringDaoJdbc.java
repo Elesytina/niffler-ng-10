@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,12 +18,13 @@ import java.util.UUID;
 import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
+@ParametersAreNonnullByDefault
 @RequiredArgsConstructor
 public class AuthAuthoritySpringDaoJdbc implements AuthAuthorityDao {
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
 
     @Override
-    public List<AuthorityEntity> findAllByUserId(UUID userId) {
+    public @Nonnull List<AuthorityEntity> findAllByUserId(UUID userId) {
 
         return jdbcTemplate.query("SELECT * FROM authority where user_id = ?",
                 AuthorityRowMapper.INSTANCE,

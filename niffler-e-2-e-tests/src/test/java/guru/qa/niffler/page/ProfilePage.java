@@ -1,6 +1,5 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
@@ -10,6 +9,7 @@ import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -20,7 +20,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement nameInput = $("#name");
     private final SelenideElement categoryInput = $("#category");
-    private final SelenideElement saveBtn = $(Selectors.byText("Save changes"));
+    private final SelenideElement saveBtn = $(byText("Save changes"));
 
     @Step("click show archived categories")
     public ProfilePage showArchived() {
@@ -66,5 +66,10 @@ public class ProfilePage extends BasePage<ProfilePage> {
     public void checkThatProfileUpdated() {
         $(byText("Profile successfully updated"))
                 .shouldBe(visible);
+    }
+
+    @Step("verify that at least active category presented")
+    public void checkThatActiveCategoryPresent(String categoryName) {
+        $(withText(categoryName)).shouldBe(visible);
     }
 }

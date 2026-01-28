@@ -6,6 +6,7 @@ import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,15 +46,13 @@ public class FriendshipDaoJdbc implements FriendshipDao {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement(
                         """
-                                UPDATE friendship
-                                SET status = ?
-                                WHERE requester_id in (?,?)
+                                INSERT INTO friendship(requester_id, addressee_id, status, created_date) values (?,?,?,?)
                                 """)) {
-
             for (FriendshipEntity entity : entities) {
-                ps.setString(1, entity.getStatus().name());
-                ps.setObject(2, entity.getRequester().getId());
-                ps.setObject(3, entity.getAddressee().getId());
+                ps.setObject(1, entity.getRequester().getId());
+                ps.setObject(2, entity.getAddressee().getId());
+                ps.setString(3, entity.getStatus().name());
+                ps.setObject(4, Date.valueOf(LocalDate.now()));
                 ps.addBatch();
                 ps.clearParameters();
             }

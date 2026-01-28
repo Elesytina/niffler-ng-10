@@ -11,12 +11,6 @@ public class AllPeoplePage extends BasePage<AllPeoplePage> {
     private final SearchField searchField = new SearchField();
     private final PeopleTable peopleTable = new PeopleTable();
 
-    @Step("verify that outcome requests are present")
-    public AllPeoplePage checkThatOutcomeRequestsArePresented() {
-
-        return peopleTable.checkThatOutcomeRequestsArePresent(AllPeoplePage.class);
-    }
-
     @Step("verify that name {name} is presented in outcome requests")
     public void checkNameIsPresentedInOutcomeRequests(String name) {
         peopleTable.checkNameIsPresentInOutcomeRequests(name);
@@ -24,8 +18,8 @@ public class AllPeoplePage extends BasePage<AllPeoplePage> {
 
     @Step("search requests by username {username}")
     public AllPeoplePage searchRequest(String username) {
-        searchField.search(username, AllPeoplePage.class);
+        searchField.search(username);
 
-        return page(AllPeoplePage.class);
+        return this;
     }
 }

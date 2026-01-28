@@ -11,16 +11,23 @@ import guru.qa.niffler.model.enums.RelationType;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
+import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
+import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
+import static guru.qa.niffler.model.enums.RelationType.FRIENDSHIP;
+import static guru.qa.niffler.model.enums.RelationType.INCOME_INVITATION;
+import static guru.qa.niffler.model.enums.RelationType.OUTCOME_INVITATION;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
@@ -40,33 +47,31 @@ public class UserDbClient implements UsersClient {
             CFG.userdataJdbcUrl());
 
     @Override
-    public UserJson create(String username, String password) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull UserJson create(String username, String password) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             AuthUserEntity authUserEntity = getDefaultAuthUserEntity(username, DEFAULT_PASSWORD);
-
             authUserRepository.create(authUserEntity);
 
             UserEntity userEntity = getDefaultUserEntity(username);
+            var created = userdataUserRepository.create(userEntity);
 
-            var user = userdataUserRepository.create(userEntity);
-
-            return UserJson.fromEntity(user);
-        });
+            return UserJson.fromEntity(created);
+        }));
     }
 
     @Override
-    public UserJson update(UserJson userJson) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull UserJson update(UserJson userJson) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             Optional<UserEntity> userEntity = userdataUserRepository.findById(userJson.id());
 
             if (userEntity.isPresent()) {
-                var user = userdataUserRepository.update(UserEntity.fromJson(userJson));
+                var updated = userdataUserRepository.update(UserEntity.fromJson(userJson));
 
-                return UserJson.fromEntity(user);
+                return UserJson.fromEntity(updated);
             } else {
                 throw new RuntimeException("User with id %s not found".formatted(userJson.id()));
             }
-        });
+        }));
     }
 
     public void delete(UserJson userJson) {
@@ -86,7 +91,7 @@ public class UserDbClient implements UsersClient {
         });
     }
 
-    public UserJson findById(UUID id) {
+    public @Nonnull UserJson findById(UUID id) {
         Optional<UserEntity> userEntity = userdataUserRepository.findById(id);
 
         if (userEntity.isPresent()) {
@@ -97,7 +102,7 @@ public class UserDbClient implements UsersClient {
     }
 
     @Override
-    public UserJson findByUsername(String username) {
+    public @Nonnull UserJson findByUsername(String username) {
         Optional<UserEntity> userEntity = userdataUserRepository.findByUsername(username);
 
         if (userEntity.isPresent()) {
@@ -108,21 +113,21 @@ public class UserDbClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> addFriends(UserJson user, int count) {
-        return addRelations(user, RelationType.FRIENDSHIP, count);
+    public @Nonnull List<UserJson> addFriends(UserJson user, int count) {
+        return addRelations(user, FRIENDSHIP, count);
     }
 
     @Override
-    public List<UserJson> addIncomeInvitations(UserJson user, int count) {
-        return addRelations(user, RelationType.INCOME_INVITATION, count);
+    public @Nonnull List<UserJson> addIncomeInvitations(UserJson user, int count) {
+        return addRelations(user, INCOME_INVITATION, count);
     }
 
     @Override
-    public List<UserJson> addOutcomeInvitations(UserJson user, int count) {
-        return addRelations(user, RelationType.OUTCOME_INVITATION, count);
+    public @Nonnull List<UserJson> addOutcomeInvitations(UserJson user, int count) {
+        return addRelations(user, OUTCOME_INVITATION, count);
     }
 
-    public static UserEntity getDefaultUserEntity(String username) {
+    public static @Nonnull UserEntity getDefaultUserEntity(String username) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
         userEntity.setFirstname(randomName());
@@ -133,7 +138,7 @@ public class UserDbClient implements UsersClient {
         return userEntity;
     }
 
-    public static AuthUserEntity getDefaultAuthUserEntity(String username, String password) {
+    public static @Nonnull AuthUserEntity getDefaultAuthUserEntity(String username, String password) {
         AuthUserEntity userEntity = new AuthUserEntity();
         userEntity.setUsername(username);
         userEntity.setPassword(PASSWORD_ENCODER.encode(password));
@@ -155,35 +160,33 @@ public class UserDbClient implements UsersClient {
         return userEntity;
     }
 
-    private List<UserJson> addRelations(UserJson user, RelationType relationType, int count) {
+    private @Nonnull List<UserJson> addRelations(UserJson user, RelationType relationType, int count) {
         List<UserJson> friends = new ArrayList<>();
 
-        return xaTransactionTemplate.execute(() -> {
-            Optional<UserEntity> userEntity = userdataUserRepository.findById(user.id());
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
+            Optional<UserEntity> foundUserEntity = userdataUserRepository.findById(user.id());
 
-            if (userEntity.isPresent()) {
+            if (foundUserEntity.isPresent()) {
                 for (int i = 0; i < count; i++) {
                     var username = randomUsername();
                     UserEntity friendUserEntity = getDefaultUserEntity(username);
-                    userdataUserRepository.create(friendUserEntity);
-                    authUserRepository.create(getDefaultAuthUserEntity(username, "123"));
+                    UserEntity createdFriend = userdataUserRepository.create(friendUserEntity);
+                    authUserRepository.create(getDefaultAuthUserEntity(username, DEFAULT_PASSWORD));
 
+                    UserEntity userEntity = foundUserEntity.get();
                     switch (relationType) {
-                        case FRIENDSHIP ->
-                                userdataUserRepository.addFriend(friendUserEntity, UserEntity.fromJson(user));
-                        case INCOME_INVITATION ->
-                                userdataUserRepository.sendInvitation(UserEntity.fromJson(user), friendUserEntity);
-                        case OUTCOME_INVITATION ->
-                                userdataUserRepository.sendInvitation(friendUserEntity, UserEntity.fromJson(user));
+                        case FRIENDSHIP -> userdataUserRepository.addFriend(createdFriend, userEntity);
+                        case INCOME_INVITATION -> userdataUserRepository.sendInvitation(userEntity, createdFriend);
+                        case OUTCOME_INVITATION -> userdataUserRepository.sendInvitation(createdFriend, userEntity);
                     }
-                    friends.add(UserJson.fromEntity(friendUserEntity));
+                    friends.add(UserJson.fromEntity(createdFriend));
                 }
 
                 return friends;
             } else {
                 throw new RuntimeException("User with id %s not found".formatted(user.id()));
             }
-        });
+        }));
     }
 
 }

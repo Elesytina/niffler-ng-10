@@ -33,7 +33,7 @@ public class SpendResultSetExtractor implements ResultSetExtractor<List<SpendEnt
                             spendEntity.setUsername(rs.getString("username"));
                             spendEntity.setAmount(rs.getDouble("amount"));
                             spendEntity.setDescription(rs.getString("description"));
-                            spendEntity.setCurrency(rs.getObject("currency", CurrencyValues.class));
+                            spendEntity.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                             spendEntity.setSpendDate(rs.getDate("spend_date"));
 
                             CategoryEntity category = new CategoryEntity();
