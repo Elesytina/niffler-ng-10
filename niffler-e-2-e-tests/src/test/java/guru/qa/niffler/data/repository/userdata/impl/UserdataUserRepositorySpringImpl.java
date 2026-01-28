@@ -8,6 +8,7 @@ import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import static guru.qa.niffler.model.enums.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 import static java.time.LocalDate.now;
 
+@ParametersAreNonnullByDefault
 public class UserdataUserRepositorySpringImpl implements UserdataUserRepository {
 
     private final FriendshipDao friendshipDao = new FriendshipDaoSpringJdbc();

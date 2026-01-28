@@ -6,12 +6,14 @@ import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
 import jakarta.persistence.EntityManager;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
+@ParametersAreNonnullByDefault
 public class SpendRepositoryHiberImpl implements SpendRepository {
 
     private final EntityManager em = EntityManagers.em(CFG.spendJdbcUrl());
@@ -109,14 +111,16 @@ public class SpendRepositoryHiberImpl implements SpendRepository {
     @Override
     public void removeSpend(SpendEntity spend) {
         em.joinTransaction();
-        SpendEntity attached = em.contains(spend) ? spend : em.merge(spend);
-        em.remove(attached);
+        em.remove(em.contains(spend)
+                ? spend
+                : em.merge(spend));
     }
 
     @Override
     public void removeCategory(CategoryEntity category) {
         em.joinTransaction();
-        CategoryEntity attached = em.contains(category) ? category : em.merge(category);
-        em.remove(attached);
+        em.remove(em.contains(category)
+                ? category
+                : em.merge(category));
     }
 }

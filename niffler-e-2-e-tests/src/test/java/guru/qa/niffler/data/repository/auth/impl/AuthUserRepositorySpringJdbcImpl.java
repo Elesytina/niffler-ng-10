@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,6 +23,7 @@ import static guru.qa.niffler.data.tpl.DataSources.getDataSource;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 
+@ParametersAreNonnullByDefault
 public class AuthUserRepositorySpringJdbcImpl implements AuthUserRepository {
 
     private final JdbcTemplate template = new JdbcTemplate(getDataSource(CFG.authJdbcUrl()));
@@ -35,7 +37,7 @@ public class AuthUserRepositorySpringJdbcImpl implements AuthUserRepository {
                             INSERT INTO "user"( username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) values (?,?,?,?,?,?)
                             """, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, authUser.getUsername());
-            ps.setString(2, PASSWORD_ENCODER.encode(authUser.getPassword()));
+            ps.setString(2, authUser.getPassword());
             ps.setBoolean(3, authUser.getEnabled());
             ps.setBoolean(4, authUser.getAccountNonExpired());
             ps.setBoolean(5, authUser.getAccountNonLocked());

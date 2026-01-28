@@ -6,6 +6,8 @@ import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import guru.qa.niffler.model.enums.Authority;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,11 +18,12 @@ import java.util.UUID;
 import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
+@ParametersAreNonnullByDefault
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
 
     @Override
-    public List<AuthorityEntity> findAllByUserId(UUID userId) {
+    public @Nonnull List<AuthorityEntity> findAllByUserId(UUID userId) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("SELECT * FROM authority WHERE user_id = ?")) {
             ps.setObject(1, userId);

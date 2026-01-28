@@ -14,37 +14,42 @@ public class FriendsTest {
     @User(friendsCount = 1)
     @Test
     void friendsShouldBePresentInFriendsTable(UserJson user) {
+        var friendUsername = user.testData().friends().getFirst().username();
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
-                .searchFriend(user.testData().friends().getFirst().username())
-                .checkFriendsArePresent()
-                .checkNameIsPresentInFriendsTable(user.testData().friends().getFirst().username());
+                .searchFriend(friendUsername)
+                .checkFriendsArePresented()
+                .checkNameIsPresentedInFriendsTable(friendUsername);
     }
 
     @User(incomeInvitationsCount = 1)
     @Test
     void incomeRequestShouldBePresentInFriendsTable(UserJson user) {
+        var targetUsername = user.testData().incomeInvitations().getFirst().username();
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
-                .searchFriend(user.testData().incomeInvitations().getFirst().username())
-                .checkRequestsArePresent()
-                .checkNameIsPresentInRequestTable(user.testData().incomeInvitations().getFirst().username());
+                .searchFriend(targetUsername)
+                .checkRequestsArePresented()
+                .checkNameIsPresentedInRequestTable(targetUsername);
     }
 
     @User(outcomeInvitationsCount = 1)
     @Test
     void outcomeRequestShouldBePresentInAllPeopleTable(UserJson user) {
+        var targetUsername = user.testData().outcomeInvitations().getFirst().username();
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseAllPeople()
-                .searchRequest(user.testData().outcomeInvitations().getFirst().username())
-                .checkThatOutcomeRequestsArePresent()
-                .checkNameIsPresentInOutcomeRequests(user.testData().outcomeInvitations().getFirst().username());
+                .searchRequest(targetUsername)
+                .checkNameIsPresentedInOutcomeRequests(targetUsername);
     }
 
     @User
@@ -55,6 +60,38 @@ public class FriendsTest {
                 .openProfilePopupMenu()
                 .chooseFriends()
                 .checkFriendsTableIsEmpty();
+    }
+
+    @User(incomeInvitationsCount = 1)
+    @Test
+    void shouldAcceptRequestForFriendship(UserJson user) {
+        var targetUsername = user.testData().incomeInvitations().getFirst().username();
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .openProfilePopupMenu()
+                .chooseFriends()
+                .searchFriend(targetUsername)
+                .checkRequestsArePresented()
+                .checkNameIsPresentedInRequestTable(targetUsername)
+                .acceptRequest()
+                .checkNameIsPresentInFriendsTable(targetUsername);
+    }
+
+    @User(incomeInvitationsCount = 1)
+    @Test
+    void shouldDeclineRequestForFriendship(UserJson user) {
+        var targetUsername = user.testData().incomeInvitations().getFirst().username();
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .openProfilePopupMenu()
+                .chooseFriends()
+                .searchFriend(targetUsername)
+                .checkRequestsArePresented()
+                .checkNameIsPresentedInRequestTable(targetUsername)
+                .declineRequest()
+                .checkNameIsAbsentInRequestTable(targetUsername);
     }
 
 }

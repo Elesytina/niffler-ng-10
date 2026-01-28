@@ -3,11 +3,13 @@ package guru.qa.niffler.data.tpl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@ParametersAreNonnullByDefault
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Connections {
 

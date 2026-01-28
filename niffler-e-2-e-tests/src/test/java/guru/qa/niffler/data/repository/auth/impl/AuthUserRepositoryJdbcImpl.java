@@ -6,6 +6,7 @@ import guru.qa.niffler.data.mapper.extractor.AuthUserResultSetExtractor;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +18,7 @@ import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-
+@ParametersAreNonnullByDefault
 public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
 
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.authJdbcUrl());
@@ -33,7 +34,7 @@ public class AuthUserRepositoryJdbcImpl implements AuthUserRepository {
              PreparedStatement authorityPs = connectionHolder.getConnection()
                      .prepareStatement("INSERT INTO authority(user_id, authority) values (?,?)")) {
             userPs.setString(1, userEntity.getUsername());
-            userPs.setString(2, PASSWORD_ENCODER.encode(userEntity.getPassword()));
+            userPs.setString(2, userEntity.getPassword());
             userPs.setBoolean(3, userEntity.getEnabled());
             userPs.setBoolean(4, userEntity.getAccountNonExpired());
             userPs.setBoolean(5, userEntity.getAccountNonLocked());

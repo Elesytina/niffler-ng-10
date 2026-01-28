@@ -28,7 +28,6 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
 
     private final CategoryClient categoryClient = new CategoryDbClient();
 
-
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(
@@ -71,9 +70,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
                             }
 
                             if (testUser.isPresent()) {
-                                List<CategoryJson> categoryList = testUser.get().testData().categories();
-                                testUser.get().testData().categories().addAll(categoryList);
-                                //  context.getStore(NAMESPACE).put(context.getUniqueId(), testUser.get());
+                                testUser.get().testData().categories().addAll(categories);
                             } else {
                                 context.getStore(NAMESPACE).put(
                                         context.getUniqueId(),

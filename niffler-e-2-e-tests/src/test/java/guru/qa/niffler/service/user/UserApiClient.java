@@ -12,17 +12,21 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 
+@ParametersAreNonnullByDefault
 public class UserApiClient implements UsersClient {
 
     private static final CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
@@ -52,7 +56,7 @@ public class UserApiClient implements UsersClient {
     private final UsersApi usersApi = udRetrofit.create(UsersApi.class);
 
     @Override
-    public UserJson create(String username, String password) {
+    public @Nonnull UserJson create(String username, String password) {
         try {
             Response<Void> response = authApi.requestRegisterForm().execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
@@ -74,40 +78,40 @@ public class UserApiClient implements UsersClient {
                     .execute();
             Assertions.assertEquals(200, responseInfo.code(), "Unexpected response code");
 
-            return responseInfo.body();
+            return Objects.requireNonNull(responseInfo.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public UserJson update(UserJson userJson) {
+    public @Nonnull UserJson update(UserJson userJson) {
         try {
             Response<UserJson> response = usersApi.updateUserInfo(userJson)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public UserJson findByUsername(String username) {
+    public @Nonnull UserJson findByUsername(String username) {
         try {
             Response<UserJson> response = usersApi.currentUser(username)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return response.body();
+            return Objects.requireNonNull(response.body());
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
 
     @Override
-    public List<UserJson> addFriends(UserJson user, int count) {
+    public @Nonnull List<UserJson> addFriends(UserJson user, int count) {
         try {
             var username = user.username();
             List<UserJson> friends = new ArrayList<>();
@@ -132,7 +136,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> addIncomeInvitations(UserJson user, int count) {
+    public @Nonnull List<UserJson> addIncomeInvitations(UserJson user, int count) {
         try {
             var username = user.username();
             List<UserJson> incomeInvitations = new ArrayList<>();
@@ -154,7 +158,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> addOutcomeInvitations(UserJson user, int count) {
+    public @Nonnull List<UserJson> addOutcomeInvitations(UserJson user, int count) {
         try {
             var username = user.username();
             List<UserJson> outcomeInvitations = new ArrayList<>();

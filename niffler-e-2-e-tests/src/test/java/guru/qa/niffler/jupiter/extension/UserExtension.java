@@ -5,7 +5,6 @@ import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.user.UserDbClient;
 import guru.qa.niffler.service.user.UsersClient;
-import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -18,21 +17,22 @@ import java.util.List;
 import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
-import static guru.qa.niffler.model.enums.RepositoryImplType.SPRING_JDBC;
+import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
     public static final String DEFAULT_PASSWORD = "123";
 
-    private final UsersClient usersClient = new UserDbClient(SPRING_JDBC);
+    private final UsersClient usersClient = new UserDbClient(HIBERNATE);
 
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(userAnno -> {
                             if ("".equals(userAnno.username())) {
-                                final String username = RandomDataUtils.randomUsername();
+                                final String username = randomUsername();
                                 final UserJson user = usersClient.create(username, DEFAULT_PASSWORD);
                                 final List<UserJson> incomeInvitations = usersClient.addIncomeInvitations(user, userAnno.incomeInvitationsCount());
                                 final List<UserJson> outcomeInvitations = usersClient.addOutcomeInvitations(user, userAnno.outcomeInvitationsCount());
@@ -70,6 +70,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     public static Optional<UserJson> createdUser() {
         final ExtensionContext methodContext = context();
+
         return Optional.ofNullable(methodContext.getStore(NAMESPACE)
                 .get(methodContext.getUniqueId(), UserJson.class));
     }

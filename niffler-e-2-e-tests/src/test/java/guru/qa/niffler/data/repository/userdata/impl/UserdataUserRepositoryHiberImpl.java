@@ -5,6 +5,7 @@ import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.model.enums.FriendshipStatus.PENDING;
 
+@ParametersAreNonnullByDefault
 public class UserdataUserRepositoryHiberImpl implements UserdataUserRepository {
 
     private final EntityManager em = EntityManagers.em(CFG.userdataJdbcUrl());
@@ -54,7 +56,8 @@ public class UserdataUserRepositoryHiberImpl implements UserdataUserRepository {
     @Override
     public void sendInvitation(UserEntity requester, UserEntity addressee) {
         em.joinTransaction();
-        addressee.addFriends(PENDING, requester);
+        UserEntity attachedAddr = em.contains(addressee) ? addressee : em.merge(addressee);
+        attachedAddr.addFriends(PENDING, requester);
     }
 
     @Override

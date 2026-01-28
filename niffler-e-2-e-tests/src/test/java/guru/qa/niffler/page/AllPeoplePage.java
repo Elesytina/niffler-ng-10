@@ -1,36 +1,22 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
-
-import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byTagName;
-import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.page;
+import guru.qa.niffler.page.component.PeopleTable;
+import guru.qa.niffler.page.component.SearchField;
+import io.qameta.allure.Step;
 
 public class AllPeoplePage {
-    private final SelenideElement allPeopleTable = $("#all");
-    private final ElementsCollection outcomeRequests = allPeopleTable.$$(byText("Waiting..."));
-    private final SelenideElement searchInput = $(byTagName("input"));
+    private final SearchField searchField = new SearchField();
+    private final PeopleTable peopleTable = new PeopleTable();
 
-    public AllPeoplePage checkThatOutcomeRequestsArePresent() {
-        outcomeRequests.shouldHave(sizeGreaterThanOrEqual(1));
-        return this;
+    @Step("verify that name {name} is presented in outcome requests")
+    public void checkNameIsPresentedInOutcomeRequests(String name) {
+        peopleTable.checkNameIsPresentInOutcomeRequests(name);
     }
 
-    public void checkNameIsPresentInOutcomeRequests(String name) {
-        allPeopleTable.$$(byTagName("tr"))
-                .filterBy(text(name))
-                .filterBy(text("Waiting..."))
-                .shouldHave(sizeGreaterThanOrEqual(1));
-    }
-
+    @Step("search requests by username {username}")
     public AllPeoplePage searchRequest(String username) {
-        searchInput.sendKeys(username);
-        searchInput.submit();
+        searchField.search(username);
 
-        return page(AllPeoplePage.class);
+        return this;
     }
 }

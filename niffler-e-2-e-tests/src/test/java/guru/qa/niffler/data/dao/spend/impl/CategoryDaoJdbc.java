@@ -4,6 +4,8 @@ import guru.qa.niffler.data.dao.spend.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +18,7 @@ import static guru.qa.niffler.data.tpl.Connections.getHolder;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
+@ParametersAreNonnullByDefault
 public class CategoryDaoJdbc implements CategoryDao {
     private final JdbcConnectionHolder connectionHolder = getHolder(CFG.spendJdbcUrl());
 
@@ -59,7 +62,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public List<CategoryEntity> findAllByUsername(String username) {
+    public @Nonnull List<CategoryEntity> findAllByUsername(String username) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("SELECT * FROM category WHERE username = ?")) {
             ps.setString(1, username);
@@ -78,7 +81,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public List<CategoryEntity> findAll() {
+    public @Nonnull List<CategoryEntity> findAll() {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("SELECT * FROM category")) {
             ResultSet resultSet = ps.executeQuery();
@@ -96,7 +99,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public CategoryEntity create(CategoryEntity entity) {
+    public @Nonnull CategoryEntity create(CategoryEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("INSERT INTO category(name, username, archived) values (?,?,?)",
                         RETURN_GENERATED_KEYS)) {
@@ -120,7 +123,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public CategoryEntity update(CategoryEntity entity) {
+    public @Nonnull CategoryEntity update(CategoryEntity entity) {
         try (PreparedStatement ps = connectionHolder.getConnection()
                 .prepareStatement("UPDATE category SET name = ?,  archived = ? WHERE id = ?")) {
             ps.setString(1, entity.getName());
@@ -149,7 +152,7 @@ public class CategoryDaoJdbc implements CategoryDao {
         }
     }
 
-    private CategoryEntity getCategoryEntity(ResultSet resultSet) throws SQLException {
+    private @Nonnull CategoryEntity getCategoryEntity(ResultSet resultSet) throws SQLException {
         CategoryEntity category = new CategoryEntity();
         category.setId(resultSet.getObject("id", UUID.class));
         category.setName(resultSet.getString("name"));
