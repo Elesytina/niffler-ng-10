@@ -19,7 +19,7 @@ public class RegistrationTest {
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()
-                .setUserName(userName)
+                .setUsername(userName)
                 .setPassword(password)
                 .setPasswordSubmit(password)
                 .clickRegisterBtn()
@@ -36,7 +36,7 @@ public class RegistrationTest {
                 .registerUser(userName, password)
                 .followToSignIn()
                 .clickCreateAccount()
-                .setUserName(userName)
+                .setUsername(userName)
                 .setPassword(password)
                 .setPasswordSubmit(password)
                 .clickRegisterBtn()
@@ -51,7 +51,7 @@ public class RegistrationTest {
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()
-                .setUserName(userName)
+                .setUsername(userName)
                 .setPassword(password)
                 .setPasswordSubmit(confirmPassword)
                 .clickRegisterBtn()

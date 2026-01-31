@@ -1,12 +1,25 @@
 package guru.qa.niffler.jupiter.extension;
 
+import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.category.CategoryClient;
 import guru.qa.niffler.service.category.CategoryDbClient;
-import guru.qa.niffler.utils.RandomDataUtils;
-import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 
 
 public class CategoryExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
@@ -14,7 +27,6 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
     private final CategoryClient categoryClient = new CategoryDbClient();
-
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -24,31 +36,47 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
         ).ifPresent(
                 anno -> {
                     if (anno.categories().length != 0) {
-                        var annoCategory = anno.categories()[0];
-                        var username = anno.username();
+                        Optional<UserJson> testUser = UserExtension.createdUser();
 
-                        var newCategoryName = RandomDataUtils.randomCategoryName();
+                        var username = testUser.isPresent()
+                                ? testUser.get().username()
+                                : anno.username();
 
-                        var categoryJson = new CategoryJson(
-                                null,
-                                newCategoryName,
-                                username,
-                                false);
+                        List<CategoryJson> categories = new ArrayList<>();
+                        for (SpendingCategory annoCategory : anno.categories()) {
+                            var newCategoryName = annoCategory.name().isEmpty()
+                                    ? randomCategoryName()
+                                    : annoCategory.name();
 
-                        CategoryJson created = categoryClient.createCategory(categoryJson);
-
-                        if (annoCategory.archived()) {
-                            var archivedCategoryJson = new CategoryJson(
-                                    created.id(),
-                                    created.name(),
+                            var categoryJson = new CategoryJson(
+                                    null,
+                                    newCategoryName,
                                     username,
-                                    true);
+                                    false);
 
-                            created = categoryClient.updateCategory(archivedCategoryJson);
+                            CategoryJson created = categoryClient.createCategory(categoryJson);
+
+                            if (annoCategory.archived()) {
+                                var archivedCategoryJson = new CategoryJson(
+                                        created.id(),
+                                        created.name(),
+                                        username,
+                                        true);
+
+                                CategoryJson updated = categoryClient.updateCategory(archivedCategoryJson);
+                                categories.add(updated);
+                            } else {
+                                categories.add(created);
+                            }
+
+                            if (testUser.isPresent()) {
+                                testUser.get().testData().categories().addAll(categories);
+                            } else {
+                                context.getStore(NAMESPACE).put(
+                                        context.getUniqueId(),
+                                        categories.toArray(CategoryJson[]::new));
+                            }
                         }
-
-                        context.getStore(NAMESPACE).put(context.getUniqueId(), created);
-
                     }
                 }
         );
@@ -61,20 +89,19 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
                 User.class
         ).ifPresent(
                 anno -> {
-                    if (anno.categories().length != 0) {
-                        var categoryAnno = anno.categories()[0];
-                        var username = anno.username();
+                    if (createdCategories() != null) {
 
-                        if (categoryAnno.archived()) {
-                            var categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+                        for (CategoryJson category : createdCategories()) {
 
-                            var categoryJsonForUpdate = new CategoryJson(
-                                    categoryJson.id(),
-                                    categoryJson.name(),
-                                    username,
-                                    true);
+                            if (!category.archived()) {
+                                var categoryJsonForUpdate = new CategoryJson(
+                                        category.id(),
+                                        category.name(),
+                                        category.username(),
+                                        true);
 
-                            categoryClient.updateCategory(categoryJsonForUpdate);
+                                categoryClient.updateCategory(categoryJsonForUpdate);
+                            }
                         }
                     }
                 }
@@ -83,11 +110,17 @@ public class CategoryExtension implements BeforeEachCallback, AfterEachCallback,
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().isAssignableFrom(CategoryJson.class);
+        return parameterContext.getParameter().getType().isAssignableFrom(CategoryJson[].class);
     }
 
     @Override
-    public CategoryJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), CategoryJson.class);
+    public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        return createdCategories();
+    }
+
+    public static CategoryJson[] createdCategories() {
+        final ExtensionContext methodContext = context();
+        return methodContext.getStore(NAMESPACE)
+                .get(methodContext.getUniqueId(), CategoryJson[].class);
     }
 }

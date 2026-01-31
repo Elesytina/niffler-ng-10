@@ -1,104 +1,173 @@
 package guru.qa.niffler.service.spend;
 
-import guru.qa.niffler.data.Databases;
-import guru.qa.niffler.data.dao.spend.impl.CategoryDaoJdbc;
-import guru.qa.niffler.data.dao.spend.impl.SpendDaoJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
-import guru.qa.niffler.model.enums.CurrencyValues;
-import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.data.repository.spend.SpendRepository;
+import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryHiberImpl;
+import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryJdbcImpl;
+import guru.qa.niffler.data.repository.spend.impl.SpendRepositorySpringImpl;
+import guru.qa.niffler.data.tpl.XaTransactionTemplate;
+import guru.qa.niffler.model.enums.RepositoryImplType;
+import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @Slf4j
+@ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
 
+    private final SpendRepository repository;
+
+    private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
+            CFG.userdataJdbcUrl());
+
+    public SpendDbClient(RepositoryImplType type) {
+        repository = switch (type) {
+            case JDBC -> new SpendRepositoryJdbcImpl();
+            case SPRING_JDBC -> new SpendRepositorySpringImpl();
+            case HIBERNATE -> new SpendRepositoryHiberImpl();
+        };
+    }
+
     @Override
-    public SpendJson getSpendById(UUID id) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            Optional<SpendEntity> spendEntity = new SpendDaoJdbc(connect).findById(id);
+    public @Nonnull SpendJson getSpend(UUID id) {
+        Optional<SpendEntity> entity = repository.findById(id);
+
+        return entity.map(SpendJson::fromEntity)
+                .orElseThrow(() -> new RuntimeException("Spend not found"));
+    }
+
+    public @Nonnull SpendJson findByUsernameAndSpendDescription(String username, String spendDescription) {
+        Optional<SpendEntity> entity = repository.findByUsernameAndSpendDescription(username, spendDescription);
+
+        return entity.map(SpendJson::fromEntity)
+                .orElseThrow(() -> new RuntimeException("Spend not found"));
+    }
+
+    public @Nonnull CategoryJson findCategoryById(UUID id) {
+        Optional<CategoryEntity> entity = repository.findCategoryById(id);
+
+        return entity.map(CategoryJson::fromEntity)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
+
+    public @Nonnull CategoryJson findCategoryByUsernameAndCategoryName(String userName, String categoryName) {
+        Optional<CategoryEntity> category = repository.findCategoryByUsernameAndCategoryName(userName, categoryName);
+
+        if (category.isPresent()) {
+            return CategoryJson.fromEntity(category.get());
+        } else {
+            throw new RuntimeException("Category not found");
+        }
+    }
+
+    @Override
+    public @Nonnull SpendJson addSpend(SpendJson spend) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
+            SpendEntity newSpend = SpendEntity.fromJson(spend);
+
+            SpendEntity entity = repository.create(newSpend);
+
+            return SpendJson.fromEntity(entity);
+        }));
+    }
+
+    @Override
+    public @Nonnull SpendJson editSpend(SpendJson spendJson) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
+            Optional<SpendEntity> spendEntity = repository.findById(spendJson.id());
 
             if (spendEntity.isPresent()) {
+                SpendEntity entity = repository.update(SpendEntity.fromJson(spendJson));
 
-                return SpendJson.fromEntity(spendEntity.get());
+                return SpendJson.fromEntity(entity);
+            } else {
+                throw new RuntimeException("Spend with id %s not found".formatted(spendJson.id()));
             }
-            throw new RuntimeException("Failed to find spend");
-        }, CFG.spendJdbcUrl()));
+        }));
     }
 
-    @Override
-    public List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            List<SpendEntity> spendEntities = new SpendDaoJdbc(connect).findAllByFiltersAndUsername(currencyFilter, dateFilterValues, userName);
+    public void remove(SpendJson spend) {
+        xaTransactionTemplate.execute(() -> {
+            Optional<SpendEntity> spendEntity = repository.findById(spend.id());
 
-            return spendEntities.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
-        }, CFG.spendJdbcUrl()));
-    }
+            if (spendEntity.isPresent()) {
+                repository.removeSpend(spendEntity.get());
 
-    @Override
-    public List<SpendJson> getAllSpendsByUsername(String userName) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            List<SpendEntity> spendEntities = new SpendDaoJdbc(connect).findByUsername(userName);
-
-            return spendEntities.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
-        }, CFG.spendJdbcUrl()));
-    }
-
-    @Override
-    public SpendJson createSpend(SpendJson spend) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spend);
-
-            if (spendEntity.getCategory().getId() == null) {
-                CategoryEntity categoryEntity = new CategoryDaoJdbc(connect).create(spendEntity.getCategory());
-                spendEntity.setCategory(categoryEntity);
+                return null;
+            } else {
+                throw new RuntimeException("Spend with id %s not found".formatted(spend.id()));
             }
-
-            SpendEntity created = new SpendDaoJdbc(connect).create(spendEntity);
-            return SpendJson.fromEntity(created);
-        }, CFG.spendJdbcUrl()));
+        });
     }
 
     @Override
-    public SpendJson updateSpend(SpendJson spendJson) {
-        return Databases.xaTransaction(new Databases.XaFunction<>(connect -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spendJson);
-            SpendEntity updated = new SpendDaoJdbc(connect).update(spendEntity);
+    public void deleteSpends(List<UUID> uuids, String username) {
+        xaTransactionTemplate.execute(() -> {
+            for (UUID uuid : uuids) {
+                Optional<SpendEntity> spendEntity = repository.findById(uuid);
 
-            return SpendJson.fromEntity(updated);
-        }, CFG.spendJdbcUrl()));
-    }
+                if (spendEntity.isPresent()) {
+                    repository.removeSpend(spendEntity.get());
 
-    public void deleteSpends(List<UUID> ids) {
-        Databases.xaTransaction(new Databases.XaConsumer(connect -> {
-            boolean isSuccess = new SpendDaoJdbc(connect).delete(ids);
-
-            if (!isSuccess) {
-                throw new RuntimeException("Failed to delete spends");
+                    return null;
+                } else {
+                    throw new RuntimeException("Spend with id %s not found".formatted(uuid));
+                }
             }
-        }, CFG.spendJdbcUrl()));
+            return null;
+        });
     }
 
     @Override
-    public void deleteSpend(SpendJson spend) {
-        Databases.xaTransaction(new Databases.XaConsumer(connect -> {
-            SpendEntity spendEntity = SpendEntity.fromJson(spend);
-            boolean isSuccess = new SpendDaoJdbc(connect).delete(spendEntity);
+    @Nullable
+    public CategoryJson createCategory(CategoryJson category) {
+        return xaTransactionTemplate.execute(() -> {
+            CategoryEntity entity = repository.createCategory(CategoryEntity.fromJson(category));
 
-            if (!isSuccess) {
-                throw new RuntimeException("Failed to delete spends");
+            return CategoryJson.fromEntity(entity);
+        });
+    }
+
+    @Override
+    @Nullable
+    public CategoryJson updateCategory(CategoryJson category) {
+        return xaTransactionTemplate.execute(() -> {
+            CategoryEntity entity = repository.updateCategory(CategoryEntity.fromJson(category));
+
+            return CategoryJson.fromEntity(entity);
+        });
+    }
+
+    @Override
+    public List<CategoryJson> getCategories(String username) {
+        List<CategoryEntity> categories = repository.findCategoriesByUsername(username);
+
+        return categories.stream().map(CategoryJson::fromEntity).toList();
+    }
+
+    public void removeCategory(CategoryJson category) {
+        xaTransactionTemplate.execute(() -> {
+            Optional<CategoryEntity> categoryEntity = repository.findCategoryById(category.id());
+
+            if (categoryEntity.isPresent()) {
+                repository.removeCategory(categoryEntity.get());
+
+                return null;
+            } else {
+                throw new RuntimeException("Category with id %s not found".formatted(category.id()));
             }
-        }, CFG.spendJdbcUrl()));
+        });
     }
 
 }

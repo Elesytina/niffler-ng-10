@@ -1,63 +1,84 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
+import guru.qa.niffler.page.component.SearchField;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byLinkText;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.page;
 
 public class MainPage {
+
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement profileItem = $(byLinkText("Profile"));
     private final SelenideElement friendsItem = $(byLinkText("Friends"));
     private final SelenideElement allPeopleItem = $(byLinkText("All People"));
-    private final SelenideElement createNewSpendingButton = $(byAttribute("href", "http://localhost:3000/spending"));
+    private final SelenideElement createNewSpendingButton = $(byText("New spending"));
+    private final SearchField searchField = new SearchField();
 
+    @Step("verify spending table is present")
     public void checkThatPageLoaded() {
         spendingTable.should(visible);
     }
 
-    public MainPage clickCreateNewSpendingButton() {
+    @Step("click create new spending")
+    public AddNewSpendingPage clickCreateNewSpendingButton() {
         createNewSpendingButton.click();
+
+        return page(AddNewSpendingPage.class);
+    }
+
+    @Step("search spending by text {text}")
+    public MainPage searchSpending(String text) {
+        searchField.search(text);
+
         return this;
     }
 
-    public EditSpendingPage editSpending(String description) {
-        spendingTable.$$("tbody tr").find(text(description)).$$("td").get(5).click();
-        return new EditSpendingPage();
+    @Step("click edit spending button")
+    public EditSpendingPage editSpending() {
+        $$(byAttribute("aria-label", "Edit spending"))
+                .shouldHave(sizeGreaterThanOrEqual(1))
+                .get(0)
+                .click();
+
+        return page(EditSpendingPage.class);
     }
 
+    @Step("verify that spending table contains description {description}")
     public void checkThatTableContains(String description) {
         spendingTable.$$("tbody tr").find(text(description)).should(visible);
     }
 
+    @Step("open profile popup menu")
     public MainPage openProfilePopupMenu() {
         personIcon.click();
         return this;
     }
 
+    @Step("choose profile item")
     public ProfilePage chooseProfile() {
         profileItem.click();
         return new ProfilePage();
     }
 
+    @Step("choose friends item")
     public FriendsPage chooseFriends() {
         friendsItem.click();
         return new FriendsPage();
     }
 
+    @Step("choose all people item")
     public AllPeoplePage chooseAllPeople() {
         allPeopleItem.click();
         return new AllPeoplePage();
-    }
-
-    public void checkThatActiveCategoryPresent() {
-        $$(By.xpath("//table/tbody/tr")).shouldHave(sizeGreaterThanOrEqual(1));
     }
 }

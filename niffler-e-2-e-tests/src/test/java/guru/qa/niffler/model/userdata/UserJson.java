@@ -1,18 +1,23 @@
 package guru.qa.niffler.model.userdata;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.model.TestData;
+import guru.qa.niffler.model.enums.CurrencyValues;
 
 import java.util.UUID;
 
 public record UserJson(
         UUID id,
         String username,
-        String currency,
+        CurrencyValues currency,
         String firstName,
         String surname,
         String fullName,
         byte[] photo,
-        byte[] photoSmall) {
+        byte[] photoSmall,
+        @JsonIgnore
+        TestData testData) {
 
     public static UserJson fromEntity(UserEntity entity) {
 
@@ -20,10 +25,25 @@ public record UserJson(
                 entity.getId(),
                 entity.getUsername(),
                 entity.getCurrency(),
-                entity.getFirstName(),
+                entity.getFirstname(),
                 entity.getSurname(),
-                entity.getFullName(),
+                entity.getFullname(),
                 entity.getPhoto(),
-                entity.getPhotoSmall());
+                entity.getPhotoSmall(),
+                null);
+    }
+
+    public UserJson addTestData(TestData testData) {
+        return new UserJson(
+                id,
+                username,
+                currency,
+                firstName,
+                surname,
+                fullName,
+                photo,
+                photoSmall,
+                testData
+        );
     }
 }

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TrnIsolationLevel {
+public enum TxIsolationLevel {
     NONE(0),
     READ_UNCOMMITTED(1),
     READ_COMMITED(2),

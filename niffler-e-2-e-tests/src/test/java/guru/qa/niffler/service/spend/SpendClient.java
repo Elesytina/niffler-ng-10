@@ -1,24 +1,34 @@
 package guru.qa.niffler.service.spend;
 
-import guru.qa.niffler.model.enums.CurrencyValues;
-import guru.qa.niffler.model.enums.DateFilterValues;
+import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
+import io.qameta.allure.Step;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public interface SpendClient {
 
-    SpendJson getSpendById(UUID id);
+    @Step("get spend by id {id}")
+    SpendJson getSpend(UUID id);
 
-    List<SpendJson> getAllSpendsByFiltersAndUsername(CurrencyValues currencyFilter, DateFilterValues dateFilterValues, String userName);
+    @Step("add new spend {spend}")
+    SpendJson addSpend(SpendJson spend);
 
-    List<SpendJson> getAllSpendsByUsername(String userName);
+    @Step("edit spend {spendJson}")
+    SpendJson editSpend(SpendJson spendJson);
 
-    SpendJson createSpend(SpendJson spend);
+    @Step("delete spends with id in {uuids} for user {username}")
+    void deleteSpends(List<UUID> uuids, String username);
 
-    SpendJson updateSpend(SpendJson spendJson);
+    @Step("create category {category}")
+    CategoryJson createCategory(CategoryJson category);
 
-    void deleteSpend(SpendJson spend);
+    @Step("update category {category}")
+    CategoryJson updateCategory(CategoryJson category);
 
+    @Step("get categories by username {username}")
+    List<CategoryJson> getCategories(String username);
 }
