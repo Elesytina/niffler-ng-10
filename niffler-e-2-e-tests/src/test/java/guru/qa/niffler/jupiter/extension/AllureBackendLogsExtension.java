@@ -3,6 +3,7 @@ package guru.qa.niffler.jupiter.extension;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
 import io.qameta.allure.model.TestResult;
+import lombok.SneakyThrows;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +13,7 @@ public class AllureBackendLogsExtension implements SuiteExtension {
 
     public static String caseName = "Niffler backend logs";
 
+    @SneakyThrows
     @Override
     public void afterSuite() {
         final AllureLifecycle lifecycle = Allure.getLifecycle();
@@ -26,6 +28,6 @@ public class AllureBackendLogsExtension implements SuiteExtension {
         lifecycle.addAttachment("Niffler-auth logs",
                 "text/html",
                 ".log",
-                Files.newInputStream(Path.of("/logs/niffler-auth/app.log"));
+                Files.newInputStream(Path.of("/logs/niffler-auth/app.log")));
     }
 }

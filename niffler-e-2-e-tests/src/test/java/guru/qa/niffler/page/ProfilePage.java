@@ -14,7 +14,8 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-public class ProfilePage {
+public class ProfilePage extends BasePage<ProfilePage> {
+
     private final SelenideElement showArchived = $(byText("Show archived"));
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement nameInput = $("#name");
@@ -37,6 +38,11 @@ public class ProfilePage {
     public void checkThatArchivedCategoriesExist() {
         $$(byAttribute("data-testid", "UnarchiveOutlinedIcon"))
                 .shouldHave(sizeGreaterThanOrEqual(1));
+    }
+
+    @Step("verify that active category is presented")
+    public void checkThatActiveCategoryPresent(String categoryName) {
+        $(Selectors.byText(categoryName)).shouldBe(visible);
     }
 
     @Step("set customer name {name}")

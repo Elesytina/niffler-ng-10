@@ -3,11 +3,7 @@ package guru.qa.niffler.service.spend;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.spend.SpendRepository;
-import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryHiberImpl;
-import guru.qa.niffler.data.repository.spend.impl.SpendRepositoryJdbcImpl;
-import guru.qa.niffler.data.repository.spend.impl.SpendRepositorySpringImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
-import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import lombok.extern.slf4j.Slf4j;
@@ -26,18 +22,10 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 @ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
 
-    private final SpendRepository repository;
+    private final SpendRepository repository = SpendRepository.getInstance();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.userdataJdbcUrl());
-
-    public SpendDbClient(RepositoryImplType type) {
-        repository = switch (type) {
-            case JDBC -> new SpendRepositoryJdbcImpl();
-            case SPRING_JDBC -> new SpendRepositorySpringImpl();
-            case HIBERNATE -> new SpendRepositoryHiberImpl();
-        };
-    }
 
     @Override
     public @Nonnull SpendJson getSpend(UUID id) {
@@ -140,13 +128,12 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    @Nullable
-    public CategoryJson updateCategory(CategoryJson category) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull CategoryJson updateCategory(CategoryJson category) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             CategoryEntity entity = repository.updateCategory(CategoryEntity.fromJson(category));
 
             return CategoryJson.fromEntity(entity);
-        });
+        }));
     }
 
     @Override

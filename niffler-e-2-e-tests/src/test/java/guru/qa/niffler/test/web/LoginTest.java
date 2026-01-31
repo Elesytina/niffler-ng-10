@@ -5,6 +5,7 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
@@ -13,7 +14,7 @@ public class LoginTest {
     @Test
     void mainPageShouldBeDisplayedAfterSuccessLogin() {
         var userName = randomUsername();
-        var password = "password";
+        var password = DEFAULT_PASSWORD;
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()
