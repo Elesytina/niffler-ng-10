@@ -1,7 +1,9 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.page.component.SearchField;
+import guru.qa.niffler.page.component.StatisticComponent;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
@@ -21,8 +23,10 @@ public class MainPage extends BasePage<MainPage> {
     private final SelenideElement profileItem = $(byLinkText("Profile"));
     private final SelenideElement friendsItem = $(byLinkText("Friends"));
     private final SelenideElement allPeopleItem = $(byLinkText("All People"));
+    private final SelenideElement currencySearchSelect = $("#currency");
     private final SelenideElement createNewSpendingButton = $(byText("New spending"));
     private final SearchField searchField = new SearchField();
+    private final StatisticComponent statisticComponent = new StatisticComponent();
 
     @Step("verify spending table is present")
     public void checkThatPageLoaded() {
@@ -80,5 +84,18 @@ public class MainPage extends BasePage<MainPage> {
     public AllPeoplePage chooseAllPeople() {
         allPeopleItem.click();
         return new AllPeoplePage();
+    }
+
+    @Step("get statistic component")
+    public StatisticComponent statisticComponent() {
+        return statisticComponent;
+    }
+
+    @Step("select currency")
+    public MainPage selectCurrency(CurrencyValues currency) {
+        currencySearchSelect.click();
+        $(byAttribute("data-value", currency.name())).click();
+
+        return this;
     }
 }

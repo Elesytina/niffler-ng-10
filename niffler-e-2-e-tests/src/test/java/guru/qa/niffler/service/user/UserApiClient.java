@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class UserApiClient extends RestClient implements UsersClient {
     }
 
     @Override
-    public @Nonnull UserJson findByUsername(String username) {
+    public @Nullable UserJson findByUsername(String username) {
         try {
             Response<UserJson> response = usersApi.currentUser(username)
                     .execute();
@@ -89,8 +90,7 @@ public class UserApiClient extends RestClient implements UsersClient {
             List<UserJson> friends = new ArrayList<>();
             for (int counter = 0; counter < count; counter++) {
                 String friendName = RandomDataUtils.randomUsername();
-                Response<Void> registerResponse = authApiClient.register(friendName, DEFAULT_PASSWORD, DEFAULT_PASSWORD, null).execute();
-                Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
+                authApiClient.register(friendName, DEFAULT_PASSWORD);
 
                 Response<UserJson> invitationResponse = usersApi.sendInvitation(friendName, username).execute();
                 Assertions.assertEquals(200, invitationResponse.code(), "Unexpected response code");
@@ -114,8 +114,7 @@ public class UserApiClient extends RestClient implements UsersClient {
             List<UserJson> incomeInvitations = new ArrayList<>();
             for (int counter = 0; counter < count; counter++) {
                 String friendName = RandomDataUtils.randomUsername();
-                Response<Void> registerResponse = authApiClient.register(friendName, DEFAULT_PASSWORD, DEFAULT_PASSWORD, null).execute();
-                Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
+                authApiClient.register(friendName, DEFAULT_PASSWORD);
 
                 Response<UserJson> invitationResponse = usersApi.sendInvitation(friendName, username).execute();
                 Assertions.assertEquals(200, invitationResponse.code(), "Unexpected response code");
@@ -136,8 +135,7 @@ public class UserApiClient extends RestClient implements UsersClient {
             List<UserJson> outcomeInvitations = new ArrayList<>();
             for (int counter = 0; counter < count; counter++) {
                 String friendName = RandomDataUtils.randomUsername();
-                Response<Void> registerResponse = authApiClient.register(friendName, DEFAULT_PASSWORD, DEFAULT_PASSWORD, null).execute();
-                Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
+                authApiClient.register(friendName, DEFAULT_PASSWORD);
 
                 Response<UserJson> invitationResponse = usersApi.sendInvitation(username, friendName).execute();
                 Assertions.assertEquals(200, invitationResponse.code(), "Unexpected response code");

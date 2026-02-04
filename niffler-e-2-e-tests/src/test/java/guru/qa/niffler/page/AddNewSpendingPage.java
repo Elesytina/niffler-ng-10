@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class AddNewSpendingPage extends BasePage<AddNewPendingPage> {
+public class AddNewSpendingPage extends BasePage<AddNewSpendingPage> {
 
     private final SelenideElement amountInput = $("#amount");
     private final SelenideElement currencySelect = $("#currency");
