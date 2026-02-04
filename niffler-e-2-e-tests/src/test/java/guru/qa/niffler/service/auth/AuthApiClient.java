@@ -1,44 +1,37 @@
 package guru.qa.niffler.service.auth;
 
 import guru.qa.niffler.api.AuthApi;
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
+import guru.qa.niffler.service.RestClient;
+import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
-public class AuthApiClient {
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
-  private static final CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+public class AuthApiClient extends RestClient {
 
-  private final Retrofit retrofit = new Retrofit.Builder()
-      .baseUrl("https://auth.niffler-stage.qa.guru/")
-      .addConverterFactory(JacksonConverterFactory.create())
-      .client(new OkHttpClient.Builder()
-          .cookieJar(new JavaNetCookieJar(
-              cm
-          ))
-          .build())
-      .build();
+    private final AuthApi authApi;
 
-  private final AuthApi authApi = retrofit.create(AuthApi.class);
+    public AuthApiClient() {
+        super(CFG.authUrl(), true);
+        this.authApi = create(AuthApi.class);
+    }
 
-  public Response<Void> register(String username, String password) throws IOException {
-    authApi.requestRegisterForm().execute();
-    return authApi.register(
-        username,
-        password,
-        password,
-        cm.getCookieStore().getCookies()
-            .stream()
-            .filter(c -> c.getName().equals("XSRF-TOKEN"))
-            .findFirst()
-            .get()
-            .getValue()
-    ).execute();
-  }
+    public void register(String username, String password) {
+        try {
+            authApi.requestRegisterForm().execute();
+            Response<Void> response = authApi.register(
+                    username,
+                    password,
+                    password,
+                    ThreadSafeCookieStore.INSTANCE.xsrfCookie()
+            ).execute();
+
+            Assertions.assertEquals(201, response.code(), "Unexpected response code");
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
 }

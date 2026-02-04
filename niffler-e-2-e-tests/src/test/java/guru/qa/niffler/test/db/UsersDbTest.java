@@ -1,27 +1,29 @@
 package guru.qa.niffler.test.db;
 
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.user.UserDbClient;
-import guru.qa.niffler.utils.RandomDataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.UUID;
 
-import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
+import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
+import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
+import static guru.qa.niffler.utils.RandomDataUtils.randomFullName;
+import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @Slf4j
 public class UsersDbTest {
 
-    UserDbClient userDbClient = new UserDbClient(HIBERNATE);
+    UserDbClient userDbClient = new UserDbClient();
 
     @Test
     void shouldRegisterNewUser() {
         var username = randomUsername();
-        UserJson created = userDbClient.create(username, "123");
+        UserJson created = userDbClient.create(username, DEFAULT_PASSWORD);
 
         UserJson foundUser = userDbClient.findById(created.id());
         log.info(foundUser.toString());
@@ -30,26 +32,23 @@ public class UsersDbTest {
     }
 
     @Test
-    void shouldUpdateUser() {
-        var username = randomUsername();
-        UserJson created = userDbClient.create(username, "123");
-        var newFirstName = RandomDataUtils.randomName();
-        var newFullName = RandomDataUtils.randomFullName();
-        var newCurrency = RandomDataUtils.randomCurrency();
-        UserJson forUpdate = new UserJson(created.id(),
-                created.username(),
+    @User
+    void shouldUpdateUser(UserJson user) {
+        var newFirstName = randomName();
+        var newFullName = randomFullName();
+        var newCurrency = randomCurrency();
+        UserJson forUpdate = new UserJson(user.id(),
+                user.username(),
                 newCurrency,
                 newFirstName,
-                created.surname(),
+                user.surname(),
                 newFullName,
-                created.photo(),
-                created.photoSmall(),
+                user.photo(),
+                user.photoSmall(),
                 null);
 
         userDbClient.update(forUpdate);
-
-        UserJson foundUser = userDbClient.findById(created.id());
-        log.info(foundUser.toString());
+        UserJson foundUser = userDbClient.findById(user.id());
 
         Assertions.assertNotNull(foundUser.id(), "User should have been found");
         Assertions.assertEquals(foundUser.firstName(), newFirstName, "First name should be the same");
@@ -58,48 +57,41 @@ public class UsersDbTest {
     }
 
     @Test
-    void shouldAddFriends() {
-        UUID userId1 = UUID.fromString("cc846c04-21fb-49be-9c87-fb68efcd62b3");
-        UserJson requester = userDbClient.findById(userId1);
+    @User
+    void shouldAddFriends(UserJson user) {
+        List<UserJson> friends = userDbClient.addFriends(user, 2);
 
-        List<UserJson> friends = userDbClient.addFriends(requester, 2);
+        UserJson found1 = userDbClient.findByUsername(user.username());
 
-        UserJson found1 = userDbClient.findByUsername(requester.username());
-
-        Assertions.assertEquals(requester.username(), found1.username());
+        Assertions.assertEquals(user.username(), found1.username());
         Assertions.assertEquals(2, friends.size(), "Friends should have been added");
     }
 
     @Test
-    void shouldSendIncomeInvitations() {
-        UUID userId1 = UUID.fromString("d8f486fb-2636-43e3-a160-42c97fe13c34");
-        UserJson requester = userDbClient.findById(userId1);
+    @User
+    void shouldSendIncomeInvitations(UserJson user) {
+        List<UserJson> requesters = userDbClient.addIncomeInvitations(user, 2);
 
-        List<UserJson> requesters = userDbClient.addIncomeInvitations(requester, 2);
-
-        userDbClient.findByUsername(requester.username());
+        userDbClient.findByUsername(user.username());
 
         Assertions.assertEquals(2, requesters.size(), "Friends should have been added");
     }
 
     @Test
-    void shouldSendOutcomeInvitations() {
-        UUID userId1 = UUID.fromString("d8f486fb-2636-43e3-a160-42c97fe13c34");
-        UserJson requester = userDbClient.findById(userId1);
-
-        List<UserJson> addressees = userDbClient.addOutcomeInvitations(requester, 2);
+    @User
+    void shouldSendOutcomeInvitations(UserJson user) {
+        List<UserJson> addressees = userDbClient.addOutcomeInvitations(user, 2);
 
         Assertions.assertEquals(2, addressees.size(), "Friends should have been added");
     }
 
     @Test
-    void shouldDeleteUser() {
-        UUID userId = UUID.fromString("a90b5c61-0d47-4e28-a0af-41fd4a919bef");
-        UserJson userJson = userDbClient.findById(userId);
-        log.info(userJson.toString());
-        userDbClient.delete(userJson);
-        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findById(userId));
-        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findByUsername(userJson.username()));
+    @User
+    void shouldDeleteUser(UserJson user) {
+        userDbClient.delete(user);
+
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findById(user.id()));
+        Assertions.assertThrows(RuntimeException.class, () -> userDbClient.findByUsername(user.username()));
     }
 
 }

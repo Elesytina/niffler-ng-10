@@ -14,7 +14,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
 
     private final SelenideElement spendingTable = $("#spendings");
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));

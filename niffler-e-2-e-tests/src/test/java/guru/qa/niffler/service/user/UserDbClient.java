@@ -4,17 +4,10 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.auth.AuthUserRepository;
-import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositoryHiberImpl;
-import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositoryJdbcImpl;
-import guru.qa.niffler.data.repository.auth.impl.AuthUserRepositorySpringJdbcImpl;
 import guru.qa.niffler.data.repository.userdata.UserdataUserRepository;
-import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositoryHiberImpl;
-import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositoryJdbcImpl;
-import guru.qa.niffler.data.repository.userdata.impl.UserdataUserRepositorySpringImpl;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.enums.Authority;
 import guru.qa.niffler.model.enums.RelationType;
-import guru.qa.niffler.model.enums.RepositoryImplType;
 import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +23,8 @@ import java.util.UUID;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
+import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
+import static guru.qa.niffler.helper.TestConstantHolder.PASSWORD_ENCODER;
 import static guru.qa.niffler.model.enums.RelationType.FRIENDSHIP;
 import static guru.qa.niffler.model.enums.RelationType.INCOME_INVITATION;
 import static guru.qa.niffler.model.enums.RelationType.OUTCOME_INVITATION;
@@ -43,30 +38,13 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 @ParametersAreNonnullByDefault
 public class UserDbClient implements UsersClient {
 
-    private AuthUserRepository authUserRepository;
+    private final AuthUserRepository authUserRepository = AuthUserRepository.getInstance();
 
-    private UserdataUserRepository userdataUserRepository;
+    private final UserdataUserRepository userdataUserRepository = UserdataUserRepository.getInstance();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl());
-
-    public UserDbClient(RepositoryImplType type) {
-        switch (type) {
-            case JDBC -> {
-                authUserRepository = new AuthUserRepositoryJdbcImpl();
-                userdataUserRepository = new UserdataUserRepositoryJdbcImpl();
-            }
-            case SPRING_JDBC -> {
-                authUserRepository = new AuthUserRepositorySpringJdbcImpl();
-                userdataUserRepository = new UserdataUserRepositorySpringImpl();
-            }
-            case HIBERNATE -> {
-                authUserRepository = new AuthUserRepositoryHiberImpl();
-                userdataUserRepository = new UserdataUserRepositoryHiberImpl();
-            }
-        }
-    }
 
     @Override
     public @Nonnull UserJson create(String username, String password) {

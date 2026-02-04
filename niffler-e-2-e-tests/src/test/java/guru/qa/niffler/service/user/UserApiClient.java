@@ -1,23 +1,17 @@
 package guru.qa.niffler.service.user;
 
-import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UsersApi;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.RestClient;
+import guru.qa.niffler.service.auth.AuthApiClient;
 import guru.qa.niffler.utils.RandomDataUtils;
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,53 +21,20 @@ import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
 
 @ParametersAreNonnullByDefault
-public class UserApiClient implements UsersClient {
+public class UserApiClient extends RestClient implements UsersClient {
 
-    private static final CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+    private final AuthApiClient authApiClient = new AuthApiClient();
 
-    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY);
+    private final UsersApi usersApi = create(UsersApi.class);
 
-    private static final OkHttpClient client = new OkHttpClient().newBuilder()
-            .addInterceptor(logging)
-            .cookieJar(new JavaNetCookieJar(cm))
-            .build();
-
-    private final Retrofit udRetrofit = new Retrofit.Builder()
-            .client(client)
-            .baseUrl(CFG.userdataUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
-    private final Retrofit authRetrofit = new Retrofit.Builder()
-            .client(client)
-            .baseUrl(CFG.authUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
-    private final AuthApi authApi = authRetrofit.create(AuthApi.class);
-
-    private final UsersApi usersApi = udRetrofit.create(UsersApi.class);
+    public UserApiClient() {
+        super(CFG.userdataUrl());
+    }
 
     @Override
     public @Nonnull UserJson create(String username, String password) {
+        authApiClient.register(username, password);
         try {
-            Response<Void> response = authApi.requestRegisterForm().execute();
-            Assertions.assertEquals(200, response.code(), "Unexpected response code");
-
-            Optional<HttpCookie> httpCookie = cm.getCookieStore().getCookies()
-                    .stream()
-                    .filter(c -> c.getName().equals("XSRF-TOKEN"))
-                    .findFirst();
-            var token = httpCookie.map(HttpCookie::getValue).orElseThrow();
-
-            Response<Void> registerResponse = authApi.register(
-                    username,
-                    password,
-                    password,
-                    token).execute();
-            Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
-
             Response<UserJson> responseInfo = usersApi.currentUser(username)
                     .execute();
             Assertions.assertEquals(200, responseInfo.code(), "Unexpected response code");
@@ -98,13 +59,13 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
-    public @Nonnull UserJson findByUsername(String username) {
+    public @Nullable UserJson findByUsername(String username) {
         try {
             Response<UserJson> response = usersApi.currentUser(username)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return Objects.requireNonNull(response.body());
+            return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
@@ -117,8 +78,7 @@ public class UserApiClient implements UsersClient {
             List<UserJson> friends = new ArrayList<>();
             for (int counter = 0; counter < count; counter++) {
                 String friendName = RandomDataUtils.randomUsername();
-                Response<Void> registerResponse = authApi.register(friendName, DEFAULT_PASSWORD, DEFAULT_PASSWORD, null).execute();
-                Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
+                authApiClient.register(friendName, DEFAULT_PASSWORD);
 
                 Response<UserJson> invitationResponse = usersApi.sendInvitation(friendName, username).execute();
                 Assertions.assertEquals(200, invitationResponse.code(), "Unexpected response code");
@@ -142,8 +102,7 @@ public class UserApiClient implements UsersClient {
             List<UserJson> incomeInvitations = new ArrayList<>();
             for (int counter = 0; counter < count; counter++) {
                 String friendName = RandomDataUtils.randomUsername();
-                Response<Void> registerResponse = authApi.register(friendName, DEFAULT_PASSWORD, DEFAULT_PASSWORD, null).execute();
-                Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
+                authApiClient.register(friendName, DEFAULT_PASSWORD);
 
                 Response<UserJson> invitationResponse = usersApi.sendInvitation(friendName, username).execute();
                 Assertions.assertEquals(200, invitationResponse.code(), "Unexpected response code");
@@ -164,8 +123,7 @@ public class UserApiClient implements UsersClient {
             List<UserJson> outcomeInvitations = new ArrayList<>();
             for (int counter = 0; counter < count; counter++) {
                 String friendName = RandomDataUtils.randomUsername();
-                Response<Void> registerResponse = authApi.register(friendName, DEFAULT_PASSWORD, DEFAULT_PASSWORD, null).execute();
-                Assertions.assertEquals(200, registerResponse.code(), "Unexpected response code");
+                authApiClient.register(friendName, DEFAULT_PASSWORD);
 
                 Response<UserJson> invitationResponse = usersApi.sendInvitation(username, friendName).execute();
                 Assertions.assertEquals(200, invitationResponse.code(), "Unexpected response code");

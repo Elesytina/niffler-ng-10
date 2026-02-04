@@ -1,6 +1,5 @@
 package guru.qa.niffler.test.web;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.time.LocalDate;
 
 import static com.codeborne.selenide.Selenide.open;
+import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
@@ -22,8 +22,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
 @ExtendWith(BrowserExtension.class)
 public class SpendingTest {
-
-    private static final Config CFG = Config.getInstance();
 
     @User(spendings = @Spending(
             category = "Учеба",
@@ -41,6 +39,7 @@ public class SpendingTest {
                 .editSpending()
                 .setNewSpendingDescription(newDescription)
                 .save()
+                .checkSnackBarText("Spending is edited successfully")
                 .checkThatTableContains(newDescription);
     }
 
@@ -59,6 +58,7 @@ public class SpendingTest {
                 .selectDate(LocalDate.now())
                 .setDescription(spendingDescription)
                 .clickSave()
+                .checkSnackBarText("New spending is successfully created")
                 .checkThatTableContains(spendingDescription);
     }
 
@@ -73,6 +73,7 @@ public class SpendingTest {
                 .editName(randomName())
                 .addCategory(randomCategoryName())
                 .save()
+                .checkSnackBarText("Profile successfully updated")
                 .checkThatProfileUpdated();
     }
 }

@@ -9,7 +9,8 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class RegisterPage {
+public class RegisterPage extends BasePage<RegisterPage> {
+
     private final SelenideElement userNameInput = $("#username");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement passwordSubmitInput = $("#passwordSubmit");

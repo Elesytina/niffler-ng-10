@@ -5,7 +5,8 @@ import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class EditSpendingPage {
+public class EditSpendingPage extends BasePage<EditSpendingPage> {
+
     private final SelenideElement descriptionInput = $("#description");
     private final SelenideElement saveBtn = $("#save");
 
