@@ -12,11 +12,11 @@ import guru.qa.niffler.model.userdata.UserJson;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,8 +45,8 @@ public class UserDbClient implements UsersClient {
             CFG.userdataJdbcUrl());
 
     @Override
-    public @Nullable UserJson create(String username, String password) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull UserJson create(String username, String password) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             AuthUserEntity authUserEntity = getDefaultAuthUserEntity(username, DEFAULT_PASSWORD);
             authUserRepository.create(authUserEntity);
 
@@ -54,12 +54,12 @@ public class UserDbClient implements UsersClient {
             var created = userdataUserRepository.create(userEntity);
 
             return UserJson.fromEntity(created);
-        });
+        }));
     }
 
     @Override
-    public @Nullable UserJson update(UserJson userJson) {
-        return xaTransactionTemplate.execute(() -> {
+    public @Nonnull UserJson update(UserJson userJson) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             Optional<UserEntity> userEntity = userdataUserRepository.findById(userJson.id());
 
             if (userEntity.isPresent()) {
@@ -69,7 +69,7 @@ public class UserDbClient implements UsersClient {
             } else {
                 throw new RuntimeException("User with id %s not found".formatted(userJson.id()));
             }
-        });
+        }));
     }
 
     public void delete(UserJson userJson) {
@@ -125,7 +125,7 @@ public class UserDbClient implements UsersClient {
         return addRelations(user, OUTCOME_INVITATION, count);
     }
 
-    public static UserEntity getDefaultUserEntity(String username) {
+    public static @Nonnull UserEntity getDefaultUserEntity(String username) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
         userEntity.setFirstname(randomName());
@@ -158,10 +158,10 @@ public class UserDbClient implements UsersClient {
         return userEntity;
     }
 
-    private List<UserJson> addRelations(UserJson user, RelationType relationType, int count) {
+    private @Nonnull List<UserJson> addRelations(UserJson user, RelationType relationType, int count) {
         List<UserJson> friends = new ArrayList<>();
 
-        return xaTransactionTemplate.execute(() -> {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
             Optional<UserEntity> foundUserEntity = userdataUserRepository.findById(user.id());
 
             if (foundUserEntity.isPresent()) {
@@ -184,7 +184,7 @@ public class UserDbClient implements UsersClient {
             } else {
                 throw new RuntimeException("User with id %s not found".formatted(user.id()));
             }
-        });
+        }));
     }
 
 }
