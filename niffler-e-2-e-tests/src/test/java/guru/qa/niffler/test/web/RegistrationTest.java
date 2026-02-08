@@ -47,7 +47,7 @@ public class RegistrationTest {
     void shouldShowErrorWhenPasswordAndConfirmPasswordAreNotEqual() {
         var userName = randomUsername();
         var password = randomAlphanumeric(10);
-        var confirmPassword = randomAlphanumeric(9);
+        var confirmPassword = randomAlphanumeric(2);
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()

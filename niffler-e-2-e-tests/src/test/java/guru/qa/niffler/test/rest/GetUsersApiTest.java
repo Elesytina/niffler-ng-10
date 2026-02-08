@@ -25,7 +25,7 @@ public class GetUsersApiTest {
     @Order(2)
     @User(incomeInvitationsCount = 1)
     @Test
-    void shouldGelAllUsers(UserJson user) {
+    void shouldGetAllUsers(UserJson user) {
         var username = user.username();
         var friend = user.testData().incomeInvitations().getFirst();
 
@@ -39,7 +39,7 @@ public class GetUsersApiTest {
     @Order(1)
     @User
     @Test
-    void shouldGelNoUsers(UserJson user) {
+    void shouldGetNoUsers(UserJson user) {
         var username = user.username();
 
         List<UserJson> found = userApiClient.findAllByUsername(username, randomAlphanumeric(25));
