@@ -64,7 +64,7 @@ public class UserApiClient extends RestClient implements UsersClient {
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return Objects.requireNonNull(response.body());
+            return response.body();
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }

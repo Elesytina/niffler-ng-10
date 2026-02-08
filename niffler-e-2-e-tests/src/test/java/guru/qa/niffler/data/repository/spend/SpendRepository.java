@@ -21,7 +21,8 @@ public interface SpendRepository {
             case "jpa" -> new SpendRepositoryHiberImpl();
             case "jdbc" -> new SpendRepositoryJdbcImpl();
             case "sjdbc" -> new SpendRepositorySpringImpl();
-            default -> throw new IllegalStateException("Unsupported repository: " + System.getProperty("repository"));
+            default ->
+                    throw new IllegalStateException("Unsupported repository: %s".formatted(System.getProperty("repository")));
         };
     }
 

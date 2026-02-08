@@ -19,7 +19,8 @@ public interface AuthUserRepository {
             case "jpa" -> new AuthUserRepositoryHiberImpl();
             case "jdbc" -> new AuthUserRepositoryJdbcImpl();
             case "sjdbc" -> new AuthUserRepositorySpringJdbcImpl();
-            default -> throw new IllegalStateException("Unsupported repository: " + System.getProperty("repository"));
+            default ->
+                    throw new IllegalStateException("Unsupported repository: %s".formatted(System.getProperty("repository")));
         };
     }
 
