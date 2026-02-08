@@ -24,10 +24,11 @@ public class UserApiClient extends RestClient implements UsersClient {
 
     private final AuthApiClient authApiClient = new AuthApiClient();
 
-    private final UsersApi usersApi = create(UsersApi.class);
+    private final UsersApi usersApi;
 
     public UserApiClient() {
         super(CFG.userdataUrl());
+        this.usersApi = create(UsersApi.class);
     }
 
     @Override

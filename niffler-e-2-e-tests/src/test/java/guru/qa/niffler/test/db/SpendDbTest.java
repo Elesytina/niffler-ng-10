@@ -130,7 +130,7 @@ public class SpendDbTest {
         Assertions.assertNotNull(createdCategory, "Category should not be null");
         Assertions.assertDoesNotThrow(() ->
                 spendDbClient.findCategoryByUsernameAndCategoryName(
-                        username
+                        username,
                         createdCategory.name()));
 
 
