@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
-import static guru.qa.niffler.model.enums.RepositoryImplType.HIBERNATE;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {

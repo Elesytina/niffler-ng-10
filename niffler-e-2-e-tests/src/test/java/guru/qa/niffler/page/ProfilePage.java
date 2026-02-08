@@ -1,5 +1,6 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
@@ -40,6 +41,11 @@ public class ProfilePage extends BasePage<ProfilePage> {
                 .shouldHave(sizeGreaterThanOrEqual(1));
     }
 
+    @Step("verify that active category is presented")
+    public void checkThatActiveCategoryPresent(String categoryName) {
+        $(Selectors.byText(categoryName)).shouldBe(visible);
+    }
+
     @Step("set customer name {name}")
     public ProfilePage editName(String name) {
         nameInput.setValue(name);
@@ -66,10 +72,5 @@ public class ProfilePage extends BasePage<ProfilePage> {
     public void checkThatProfileUpdated() {
         $(byText("Profile successfully updated"))
                 .shouldBe(visible);
-    }
-
-    @Step("verify that at least active category presented")
-    public void checkThatActiveCategoryPresent(String categoryName) {
-        $(withText(categoryName)).shouldBe(visible);
     }
 }

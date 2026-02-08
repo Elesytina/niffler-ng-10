@@ -1,7 +1,9 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
@@ -27,14 +29,12 @@ public class RegistrationTest {
     }
 
     @Test
-    void shouldNotRegisterWithExistingUser() {
-        var userName = randomUsername();
-        var password = randomAlphanumeric(10);
+    @User
+    void shouldNotRegisterWithExistingUser(UserJson user) {
+        var userName = user.username();
+        var password = user.testData().password();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateAccount()
-                .registerUser(userName, password)
-                .followToSignIn()
                 .clickCreateAccount()
                 .setUsername(userName)
                 .setPassword(password)
@@ -47,7 +47,7 @@ public class RegistrationTest {
     void shouldShowErrorWhenPasswordAndConfirmPasswordAreNotEqual() {
         var userName = randomUsername();
         var password = randomAlphanumeric(10);
-        var confirmPassword = randomAlphanumeric(10);
+        var confirmPassword = randomAlphanumeric(9);
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()

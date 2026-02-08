@@ -1,7 +1,6 @@
 package guru.qa.niffler.page.component;
 
 import guru.qa.niffler.page.AllPeoplePage;
-import guru.qa.niffler.page.BasePage;
 import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.FriendsPage;
 import guru.qa.niffler.page.LoginPage;
@@ -10,12 +9,18 @@ import guru.qa.niffler.page.ProfilePage;
 
 import java.util.UUID;
 
+import static com.codeborne.selenide.Selectors.byTagName;
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
-public class Header extends BasePage<Header> {
+public class Header extends BaseComponent<Header> {
 
     private final String FRONT_URL = CFG.frontUrl();
+
+    public Header() {
+        super($(byTagName("header")));
+    }
 
     public FriendsPage toFriendsPage() {
         open(FRONT_URL + "people/friends");

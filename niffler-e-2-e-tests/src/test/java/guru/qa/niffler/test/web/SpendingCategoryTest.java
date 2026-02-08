@@ -7,10 +7,10 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import io.qameta.allure.Description;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @WebTest
 public class SpendingCategoryTest {
@@ -32,18 +32,20 @@ public class SpendingCategoryTest {
     @User(categories = @SpendingCategory)
     @Test
     @Description("archived Category Should Be Present In Profile")
-    void activeCategoryShouldBePresentInProfilePositiveTest(UserJson userJson) {
-        var username = userJson.username();
-        var password = userJson.testData().password();
-        var categories = userJson.testData().categories();
-        assertFalse(categories.isEmpty(), "Categories should not be empty");
+    void activeCategoryShouldBePresentInProfilePositiveTest(UserJson user) {
+        var username = user.username();
+        var password = user.testData().password();
+        var activeCategory = user.testData().categories()
+                .stream()
+                .filter(c -> !c.archived()).findAny();
+        Assertions.assertTrue(activeCategory.isPresent(), "Active Category should not be present");
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .openProfilePopupMenu()
                 .chooseProfile()
                 .checkThatPageIsDisplayed()
-                .checkThatActiveCategoryPresent(categories.getFirst().name());
+                .checkThatActiveCategoryPresent(activeCategory.get().name());
     }
 
 }

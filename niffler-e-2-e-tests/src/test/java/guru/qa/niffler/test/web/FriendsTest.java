@@ -2,12 +2,13 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-
+@WebTest
 public class FriendsTest {
 
     @User(friendsCount = 1)

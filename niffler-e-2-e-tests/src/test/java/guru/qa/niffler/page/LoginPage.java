@@ -3,6 +3,8 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
+import java.time.Duration;
+
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
@@ -26,7 +28,7 @@ public class LoginPage extends BasePage<LoginPage> {
 
     @Step("input username {username}")
     public LoginPage inputUsername(String username) {
-        usernameInput.sendKeys(username);
+        usernameInput.shouldBe(visible, Duration.ofSeconds(8)).sendKeys(username);
         return this;
     }
 
@@ -44,7 +46,7 @@ public class LoginPage extends BasePage<LoginPage> {
 
     @Step("click create new account")
     public RegisterPage clickCreateAccount() {
-        createNewBtn.click();
+        createNewBtn.shouldBe(visible, Duration.ofSeconds(8)).click();
         return page(RegisterPage.class);
     }
 
