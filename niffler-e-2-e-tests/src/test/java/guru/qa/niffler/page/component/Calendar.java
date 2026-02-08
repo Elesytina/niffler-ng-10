@@ -1,6 +1,5 @@
 package guru.qa.niffler.page.component;
 
-import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.Keys;
 
 import java.time.LocalDate;

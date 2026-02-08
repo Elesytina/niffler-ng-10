@@ -2,7 +2,7 @@ package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.SelenideElement;
 
-public abstract class BaseComponent<T extends  BaseComponent<T>> {
+public abstract class BaseComponent<T extends  BaseComponent<?>> {
 
     protected final SelenideElement self;
 
