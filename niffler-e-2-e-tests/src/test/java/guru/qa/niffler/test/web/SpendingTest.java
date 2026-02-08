@@ -23,7 +23,7 @@ public class SpendingTest {
 
     @User(spendings = @Spending(
             category = "Учеба",
-            amount = 899,
+            amount = 599,
             currency = RUB,
             description = "new description"
     ))
