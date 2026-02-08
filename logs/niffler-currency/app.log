@@ -1,8 +1,0 @@
-2026-02-08 00:12:04 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=4h34m23s869ms764µs500ns).
-2026-02-08 04:11:32 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3h29m57s270ms505µs200ns).
-2026-02-08 05:11:57 WARN  com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Failed to validate connection org.postgresql.jdbc.PgConnection@45645a79 (Соединение уже было закрыто). Possibly consider using a shorter maxLifetime value.
-2026-02-08 05:11:58 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h25s933ms697µs400ns).
-2026-02-08 06:42:45 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h47s82ms834µs600ns).
-2026-02-08 11:21:27 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=4h37m39s416ms145µs700ns).
-2026-02-08 14:13:57 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2h51m33s764ms188µs600ns).
-2026-02-08 15:01:59 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=16m31s278ms390µs100ns).
