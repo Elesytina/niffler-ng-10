@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
@@ -25,10 +24,11 @@ public class UserApiClient extends RestClient implements UsersClient {
 
     private final AuthApiClient authApiClient = new AuthApiClient();
 
-    private final UsersApi usersApi = create(UsersApi.class);
+    private final UsersApi usersApi;
 
     public UserApiClient() {
         super(CFG.userdataUrl());
+        usersApi = create(UsersApi.class);
     }
 
     @Override
