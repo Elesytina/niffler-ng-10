@@ -6,19 +6,16 @@ import guru.qa.niffler.service.user.UserApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.ClassOrderer;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
-import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
 
 @Slf4j
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(1)
-public class GetUsersApiTest {
+public class CheckNoUsersApiTest {
 
     private final UserApiClient userApiClient = new UserApiClient();
 

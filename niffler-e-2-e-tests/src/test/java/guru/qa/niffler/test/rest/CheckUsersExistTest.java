@@ -10,7 +10,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import java.util.List;
 
 @Isolated
-public class CheckUsersTest {
+public class CheckUsersExistTest {
 
     private final UserApiClient userApiClient = new UserApiClient();
 
