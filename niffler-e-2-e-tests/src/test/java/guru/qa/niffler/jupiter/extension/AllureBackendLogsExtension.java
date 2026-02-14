@@ -3,7 +3,6 @@ package guru.qa.niffler.jupiter.extension;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
 import io.qameta.allure.model.TestResult;
-import lombok.SneakyThrows;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
@@ -24,7 +23,6 @@ public class AllureBackendLogsExtension implements SuiteExtension {
             "niffler-userdata"
     );
 
-    @SneakyThrows
     @Override
     public void afterSuite() {
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
@@ -32,9 +30,13 @@ public class AllureBackendLogsExtension implements SuiteExtension {
         allureLifecycle.scheduleTestCase(new TestResult().setUuid(caseId).setName(caseName));
         allureLifecycle.startTestCase(caseId);
 
-        for (String serviceName : services) {
-            addAttachmentForService(allureLifecycle, serviceName);
-        }
+        services.forEach(service -> {
+            try {
+                addAttachmentForService(allureLifecycle, service);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         allureLifecycle.stopTestCase(caseId);
         allureLifecycle.writeTestCase(caseId);

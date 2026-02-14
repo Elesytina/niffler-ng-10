@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @WebTest
 public class SpendingCategoryTest {

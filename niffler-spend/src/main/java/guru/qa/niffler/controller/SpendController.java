@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/internal/spends")
-public class SpendController {
+public class  SpendController {
 
   private final SpendService spendService;
 

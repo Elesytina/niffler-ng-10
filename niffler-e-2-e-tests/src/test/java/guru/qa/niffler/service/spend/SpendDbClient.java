@@ -25,7 +25,7 @@ public class SpendDbClient implements SpendClient {
     private final SpendRepository repository = SpendRepository.getInstance();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
-            CFG.userdataJdbcUrl());
+            CFG.spendJdbcUrl());
 
     @Override
     public @Nonnull SpendJson getSpend(UUID id) {

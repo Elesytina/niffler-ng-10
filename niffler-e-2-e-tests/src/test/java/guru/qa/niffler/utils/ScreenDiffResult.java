@@ -1,11 +1,14 @@
 package guru.qa.niffler.utils;
 
-import guru.qa.niffler.jupiter.extension.ScreenShotTestExtension;
 import ru.yandex.qatools.ashot.comparison.ImageDiff;
 import ru.yandex.qatools.ashot.comparison.ImageDiffer;
 
 import java.awt.image.BufferedImage;
 import java.util.function.BooleanSupplier;
+
+import static guru.qa.niffler.jupiter.extension.ScreenShotTestExtension.setActual;
+import static guru.qa.niffler.jupiter.extension.ScreenShotTestExtension.setDiff;
+import static guru.qa.niffler.jupiter.extension.ScreenShotTestExtension.setExpected;
 
 public class ScreenDiffResult implements BooleanSupplier {
 
@@ -21,13 +24,12 @@ public class ScreenDiffResult implements BooleanSupplier {
         this.hasDiff = diff.hasDiff();
     }
 
-
     @Override
     public boolean getAsBoolean() {
         if (hasDiff) {
-            ScreenShotTestExtension.setActual(actual);
-            ScreenShotTestExtension.setExpected(expected);
-            ScreenShotTestExtension.setDiff(diff.getMarkedImage());
+            setActual(actual);
+            setExpected(expected);
+            setDiff(diff.getMarkedImage());
         }
 
         return hasDiff;

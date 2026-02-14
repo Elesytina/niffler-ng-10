@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
@@ -42,7 +41,8 @@ public class SpendingTest {
                 .setNewSpendingDescription(newDescription)
                 .save()
                 .checkSnackBarText("Spending is edited successfully")
-                .checkThatTableContains(newDescription);
+                .spendingTable()
+                .checkTableContains(newDescription);
     }
 
     @User(categories = {@SpendingCategory})
@@ -61,7 +61,8 @@ public class SpendingTest {
                 .setDescription(spendingDescription)
                 .clickSave()
                 .checkSnackBarText("New spending is successfully created")
-                .checkThatTableContains(spendingDescription);
+                .spendingTable()
+                .checkTableContains(spendingDescription);
     }
 
     @User

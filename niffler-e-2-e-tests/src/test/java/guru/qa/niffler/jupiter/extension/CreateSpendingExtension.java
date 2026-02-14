@@ -16,9 +16,11 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
 
@@ -42,6 +44,19 @@ public class CreateSpendingExtension implements BeforeEachCallback, ParameterRes
                                 List<SpendJson> result = new ArrayList<>();
 
                                 for (Spending spendAnno : userAnno.spendings()) {
+//                                    CategoryJson categoryJson;
+//                                    if (testUser.isPresent()) {
+//                                        List<CategoryJson> categories = testUser.get().testData().categories();
+//
+//                                        Predicate<CategoryJson> filterCategory = c -> c.name().equals(spendAnno.category());
+//                                        if (categories.stream().noneMatch(filterCategory)) {
+//                                            categoryJson = Arrays.stream(CategoryExtension.createdCategories())
+//                                                    .filter(filterCategory)
+//                                                    .toList().get(0);
+//                                        }
+//
+//                                    }
+
                                     SpendJson spendJson = new SpendJson(
                                             null,
                                             new Date(),
