@@ -5,6 +5,7 @@ import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.user.UserDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @Slf4j
+@Order(2)
 public class UsersDbTest {
 
     private final UserDbClient userDbClient = new UserDbClient();

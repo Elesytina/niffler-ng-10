@@ -7,10 +7,11 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.service.spend.SpendApiClient;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
+@Order(2)
 public class SpendingCategoryTest {
 
     private final SpendApiClient categoryApiClient = new SpendApiClient();
