@@ -22,7 +22,6 @@ public class CheckUsersExistTest {
 
         List<UserJson> found = userApiClient.findAllByUsername(username, friend.username());
 
-        Assertions.assertNotNull(found, "User not found");
         Assertions.assertFalse(found.isEmpty(), "users are not found");
         Assertions.assertTrue(found.stream().anyMatch(u -> u.id().equals(friend.id())), "id should be in results");
     }

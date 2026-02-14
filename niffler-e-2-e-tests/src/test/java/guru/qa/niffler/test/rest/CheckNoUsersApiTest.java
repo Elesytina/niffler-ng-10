@@ -12,6 +12,8 @@ import org.junit.jupiter.api.TestClassOrder;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+
 @Slf4j
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(1)
@@ -19,14 +21,12 @@ public class CheckNoUsersApiTest {
 
     private final UserApiClient userApiClient = new UserApiClient();
 
-
     @User
     @Test
-    void shouldGetNoUsers(UserJson userJson) {
-        List<UserJson> found = userApiClient.findAllByUsername(userJson.username(), "");
+    void shouldGetNoUsers(UserJson user) {
+        List<UserJson> found = userApiClient.findAllByUsername(user.username(), randomAlphanumeric(5));
 
-        Assertions.assertNotNull(found, "User not found");
-        Assertions.assertFalse(found.isEmpty(), "users are not found");
+        Assertions.assertTrue(found.isEmpty(), "users are found");
     }
 
 }
