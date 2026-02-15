@@ -33,7 +33,6 @@ public class CreateSpendingExtension implements BeforeEachCallback, ParameterRes
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(userAnno -> {
-
                             if (ArrayUtils.isNotEmpty(userAnno.spendings())) {
 
                                 Optional<UserJson> testUser = UserExtension.createdUser();
@@ -44,19 +43,6 @@ public class CreateSpendingExtension implements BeforeEachCallback, ParameterRes
                                 List<SpendJson> result = new ArrayList<>();
 
                                 for (Spending spendAnno : userAnno.spendings()) {
-//                                    CategoryJson categoryJson;
-//                                    if (testUser.isPresent()) {
-//                                        List<CategoryJson> categories = testUser.get().testData().categories();
-//
-//                                        Predicate<CategoryJson> filterCategory = c -> c.name().equals(spendAnno.category());
-//                                        if (categories.stream().noneMatch(filterCategory)) {
-//                                            categoryJson = Arrays.stream(CategoryExtension.createdCategories())
-//                                                    .filter(filterCategory)
-//                                                    .toList().get(0);
-//                                        }
-//
-//                                    }
-
                                     SpendJson spendJson = new SpendJson(
                                             null,
                                             new Date(),
@@ -90,6 +76,7 @@ public class CreateSpendingExtension implements BeforeEachCallback, ParameterRes
                         }
                 );
     }
+
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws

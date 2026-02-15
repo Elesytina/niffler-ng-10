@@ -33,11 +33,11 @@ public class SpendingTest {
     @Test
     void spendingDescriptionShouldBeEditedByTableAction(UserJson userJson) {
         final String newDescription = "Обучение Niffler Next Generation";
+        final String oldDescription = userJson.testData().spends().getFirst().description();
 
         open(CFG.frontUrl(), LoginPage.class)
                 .login(userJson.username(), userJson.testData().password())
-                .searchSpending(userJson.testData().spends().getFirst().description())
-                .editSpending()
+                .editSpending(oldDescription)
                 .setNewSpendingDescription(newDescription)
                 .save()
                 .checkSnackBarText("Spending is edited successfully")

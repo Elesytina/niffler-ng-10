@@ -3,12 +3,17 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.model.enums.CurrencyValues;
+import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.page.component.SearchField;
 import guru.qa.niffler.page.component.SpendingTable;
 import guru.qa.niffler.page.component.StatisticComponent;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Assertions;
 
+import java.text.DecimalFormat;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.CollectionCondition.texts;
@@ -16,7 +21,6 @@ import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 
 public class MainPage extends BasePage<MainPage> {
@@ -59,11 +63,8 @@ public class MainPage extends BasePage<MainPage> {
     }
 
     @Step("click edit spending button")
-    public EditSpendingPage editSpending() {
-        $$(byAttribute("aria-label", "Edit spending"))
-                .shouldHave(sizeGreaterThanOrEqual(1))
-                .get(0)
-                .click();
+    public EditSpendingPage editSpending(String description) {
+        spendingTable.editSpending(description);
 
         return page(EditSpendingPage.class);
     }
@@ -113,9 +114,42 @@ public class MainPage extends BasePage<MainPage> {
     }
 
     @Step("verify that statistic items contain text {text}")
-    public MainPage checkStatisticItems(String... texts) {
+    public MainPage checkExistingStatisticItems(String... itemTxtList) {
         statisticsItems.shouldHave(sizeGreaterThanOrEqual(1), Duration.ofSeconds(6))
-                .shouldHave(texts(texts));
+                .shouldHave(texts(itemTxtList));
         return this;
     }
+
+
+    public static String[] getExpectedStatisticItems(SpendJson... spends) {
+        DecimalFormat df = new DecimalFormat("0.######");
+
+        return Arrays.stream(spends)
+                .map(spend -> "%s %s %s".formatted(
+                        spend.category().name(),
+                        df.format(spend.amount()),
+                        getCurrencyCharacter(spend.currency())))
+                .toArray(String[]::new);
+    }
+
+    public static String getExpectedStatisticArchivedItems(List<SpendJson> spends) {
+        Assertions.assertFalse(spends.isEmpty(), "spends list is empty");
+        DecimalFormat df = new DecimalFormat("0.######");
+        Double sum = spends.stream()
+                .map(SpendJson::amount)
+                .reduce(Double::sum)
+                .get();
+
+        return "Archived %s %s".formatted(df.format(sum), getCurrencyCharacter(spends.getFirst().currency()));
+    }
+
+    public static String getCurrencyCharacter(CurrencyValues currency) {
+        return switch (currency) {
+            case EUR -> "€";
+            case USD -> "$";
+            case KZT -> "₸";
+            case RUB -> "₽";
+        };
+    }
+
 }

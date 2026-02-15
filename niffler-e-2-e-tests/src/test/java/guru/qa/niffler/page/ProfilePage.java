@@ -1,8 +1,12 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.AvaComponent;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SubmitModal;
 import io.qameta.allure.Step;
 
+import java.io.File;
 import java.time.Duration;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
@@ -17,10 +21,13 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class ProfilePage extends BasePage<ProfilePage> {
 
     private final SelenideElement showArchived = $(byText("Show archived"));
+    private final SelenideElement archiveBtn = $(byAttribute("aria-label", "Archive category"));
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement nameInput = $("#name");
     private final SelenideElement categoryInput = $("#category");
     private final SelenideElement saveBtn = $(byText("Save changes"));
+    private final SelenideElement fileInput = $("input[type='file']");
+    private final SubmitModal submitModal = new SubmitModal();
 
     @Step("click show archived categories")
     public ProfilePage showArchived() {
@@ -43,6 +50,13 @@ public class ProfilePage extends BasePage<ProfilePage> {
     @Step("set customer name {name}")
     public ProfilePage editName(String name) {
         nameInput.setValue(name);
+
+        return this;
+    }
+
+    @Step("upload new picture")
+    public ProfilePage uploadNewPicture(String path) {
+        fileInput.uploadFile(new File(path));
 
         return this;
     }
@@ -72,4 +86,17 @@ public class ProfilePage extends BasePage<ProfilePage> {
     public void checkThatActiveCategoryPresent(String categoryName) {
         $(withText(categoryName)).shouldBe(visible);
     }
+
+    @Step("archive category")
+    public Header archiveCategory(String categoryName) {
+        archiveBtn.click();
+        submitModal.submit("Archive");
+
+        return new Header();
+    }
+
+    public AvaComponent avatarComponent() {
+        return new AvaComponent();
+    }
+
 }
