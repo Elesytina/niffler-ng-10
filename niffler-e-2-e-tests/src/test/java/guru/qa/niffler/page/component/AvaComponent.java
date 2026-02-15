@@ -15,7 +15,7 @@ public class AvaComponent extends BaseComponent<AvaComponent> {
 
 
     public AvaComponent() {
-        super($(img[class]"));
+        super($("img[class]"));
     }
 
     @Step("verify avatar img")
