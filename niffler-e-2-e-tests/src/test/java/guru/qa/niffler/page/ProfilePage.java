@@ -1,7 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.page.component.AvaComponent;
+import guru.qa.niffler.page.component.AvatarComponent;
 import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.page.component.SubmitModal;
 import io.qameta.allure.Step;
@@ -95,8 +95,8 @@ public class ProfilePage extends BasePage<ProfilePage> {
         return new Header();
     }
 
-    public AvaComponent avatarComponent() {
-        return new AvaComponent();
+    public AvatarComponent avatarComponent() {
+        return new AvatarComponent();
     }
 
 }

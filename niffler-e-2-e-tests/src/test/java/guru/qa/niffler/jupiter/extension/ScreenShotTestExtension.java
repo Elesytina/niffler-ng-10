@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.qa.niffler.exception.ScreenshotException;
 import guru.qa.niffler.jupiter.annotation.ScreenshotTest;
 import io.qameta.allure.Allure;
@@ -20,15 +19,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 
 @ParametersAreNonnullByDefault
 public class ScreenShotTestExtension implements ParameterResolver, TestExecutionExceptionHandler {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ScreenShotTestExtension.class);
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Base64.Encoder encoder = Base64.getEncoder();
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
@@ -42,6 +37,7 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
             final String expectedScreenFilePath = extensionContext
                     .getRequiredTestMethod()
                     .getAnnotation(ScreenshotTest.class).value();
+
             return ImageIO.read(
                     new ClassPathResource(expectedScreenFilePath)
                             .getInputStream()
@@ -59,16 +55,17 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
             byte[] diff = imageToBytes(getDiff());
 
             attachDiffScreenshots(actual, expected, diff);
-        }
-        ScreenshotTest screenshotTest = context.getRequiredTestMethod().getAnnotation(ScreenshotTest.class);
 
-        if (screenshotTest.rewriteExpected()) {
-            final BufferedImage actual = getActual();
-            ImageIO.write(
-                    actual,
-                    "png",
-                    new File("src/test/resources/" + screenshotTest.value())
-            );
+            ScreenshotTest screenshotTest = context.getRequiredTestMethod().getAnnotation(ScreenshotTest.class);
+
+            if (screenshotTest.rewriteExpected()) {
+                final BufferedImage actualBuffImg = getActual();
+                ImageIO.write(
+                        actualBuffImg,
+                        "png",
+                        new File("src/test/resources/" + screenshotTest.value())
+                );
+            }
         }
         throw throwable;
     }

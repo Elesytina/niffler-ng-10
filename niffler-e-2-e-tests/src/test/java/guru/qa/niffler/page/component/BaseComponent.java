@@ -14,7 +14,4 @@ public abstract class BaseComponent<T extends BaseComponent<?>> {
         this.self = self;
     }
 
-    public @Nonnull SelenideElement getSelf() {
-        return self;
-    }
 }

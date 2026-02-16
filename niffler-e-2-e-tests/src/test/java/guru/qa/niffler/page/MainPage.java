@@ -129,6 +129,7 @@ public class MainPage extends BasePage<MainPage> {
                         spend.category().name(),
                         df.format(spend.amount()),
                         getCurrencyCharacter(spend.currency())))
+                .sorted()
                 .toArray(String[]::new);
     }
 

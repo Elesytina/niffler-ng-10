@@ -1,8 +1,9 @@
 package guru.qa.niffler.page.component;
 
-import guru.qa.niffler.exception.ScreenshotException;
+import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Assertions;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -11,11 +12,10 @@ import java.util.Objects;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class AvaComponent extends BaseComponent<AvaComponent> {
+public class AvatarComponent extends BaseComponent<AvatarComponent> {
 
-
-    public AvaComponent() {
-        super($("img[class]"));
+    public AvatarComponent() {
+        super($(".MuiAvatar-img"));
     }
 
     @Step("verify avatar img")
@@ -23,9 +23,7 @@ public class AvaComponent extends BaseComponent<AvaComponent> {
         try {
             BufferedImage actualImage = ImageIO.read(Objects.requireNonNull(self.screenshot()));
             boolean hasDiff = new ScreenDiffResult(expectedImg, actualImage).getAsBoolean();
-            if (hasDiff) {
-                throw new ScreenshotException("Image doesn't match expected image");
-            }
+            Assertions.assertFalse(hasDiff, "screenshot did not match");
         } catch (IOException e) {
             throw new RuntimeException("Couldn't read avatar element screenshot", e);
         }

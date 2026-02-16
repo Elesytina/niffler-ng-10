@@ -24,10 +24,10 @@ import static guru.qa.niffler.page.MainPage.getExpectedStatisticItems;
 public class ScreenshotStatisticsTest {
 
     @User(spendings = @Spending(category = "restaurant",
-            description = "dinner",
-            amount = 899,
+            description = "anniversary dinner",
+            amount = 8999,
             currency = RUB))
-    @ScreenshotTest(value = "img/statistics-component.png")
+    @ScreenshotTest(value = "img/statistics-component.png", rewriteExpected = true)
     void shouldDisplayStatComponent(UserJson userJson, BufferedImage expectedImage) {
         var currency = userJson.testData().spends().getFirst().currency();
         var username = userJson.username();
@@ -46,12 +46,12 @@ public class ScreenshotStatisticsTest {
             @Spending(
                     category = "Public transport",
                     description = "Metro tickets",
-                    amount = 2000),
+                    amount = 200),
             @Spending(
                     category = "Presents",
                     description = "Fruits",
                     amount = 1350)})
-    @ScreenshotTest(value = "img/statistics-archived.png", rewriteExpected = true)
+    @ScreenshotTest(value = "img/statistics-delete.png", rewriteExpected = true)
     void shouldDisplayCorrectStatisticsAfterDelete(UserJson user, BufferedImage expected) {
         List<SpendJson> spends = user.testData().spends();
         var currency = spends.getFirst().currency();
@@ -95,7 +95,7 @@ public class ScreenshotStatisticsTest {
             @Spending(
                     category = "car",
                     description = "new car",
-                    amount = 110000,
+                    amount = 310000,
                     currency = USD
             )})
     @ScreenshotTest(value = "img/statistics-archived.png")
@@ -120,9 +120,9 @@ public class ScreenshotStatisticsTest {
     }
 
     @User
-    @ScreenshotTest(value = "img/ava.png")
+    @ScreenshotTest(value = "img/icon.png")
     void shouldDisplayAvatarImg(UserJson user, BufferedImage expected) {
-        String path = "D:\\Courses\\niffler-at-courses\\niffler-e-2-e-tests\\src\\test\\resources\\img\\ava.png";
+        String path = "D:\\Courses\\niffler-at-courses\\niffler-e-2-e-tests\\src\\test\\resources\\img\\moana.png";
 
         open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
