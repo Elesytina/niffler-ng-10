@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.helper.TestConstantHolder.DEFAULT_PASSWORD;
@@ -25,10 +24,11 @@ public class UserApiClient extends RestClient implements UsersClient {
 
     private final AuthApiClient authApiClient = new AuthApiClient();
 
-    private final UsersApi usersApi = create(UsersApi.class);
+    private final UsersApi usersApi;
 
     public UserApiClient() {
         super(CFG.userdataUrl());
+        usersApi = create(UsersApi.class);
     }
 
     @Override
@@ -66,6 +66,23 @@ public class UserApiClient extends RestClient implements UsersClient {
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
             return response.body();
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+
+    public @Nonnull List<UserJson> findAllByUsername(String username, @Nullable String searchQuery) {
+        try {
+            Response<List<UserJson>> response = usersApi.allUsers(username, searchQuery)
+                    .execute();
+            Assertions.assertEquals(200, response.code(), "Unexpected response code");
+
+            if (response.body() != null) {
+                return response.body();
+            } else {
+                return List.of();
+            }
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }

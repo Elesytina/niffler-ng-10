@@ -31,6 +31,7 @@ import java.util.Map;
 
 @ParametersAreNonnullByDefault
 public class ThreadSafeEntityManager implements EntityManager {
+
     private final ThreadLocal<EntityManager> threadEm = new ThreadLocal<>();
     private final EntityManagerFactory emf;
 

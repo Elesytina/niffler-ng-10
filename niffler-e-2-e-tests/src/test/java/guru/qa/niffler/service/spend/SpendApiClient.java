@@ -16,7 +16,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
-import static okhttp3.logging.HttpLoggingInterceptor.Level;
 
 @ParametersAreNonnullByDefault
 public class SpendApiClient extends RestClient implements SpendClient {
