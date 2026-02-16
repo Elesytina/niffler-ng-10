@@ -12,7 +12,7 @@ public enum ThreadSafeCookieStore implements java.net.CookieStore {
 
     INSTANCE;
 
-    private final ThreadLocal<CookieStore> cs = ThreadLocal.withInitial(ThreadSafeCookieStore::getInMemoryCookieStore);
+    private final ThreadLocal<CookieStore> cs = ThreadLocal.withInitial(this::getInMemoryCookieStore);
 
     @Override
     public void add(URI uri, HttpCookie cookie) {
@@ -58,7 +58,7 @@ public enum ThreadSafeCookieStore implements java.net.CookieStore {
         return cookie.map(HttpCookie::getValue).orElse("");
     }
 
-    private static CookieStore getInMemoryCookieStore() {
+    private CookieStore getInMemoryCookieStore() {
 
         return new CookieManager(null, CookiePolicy.ACCEPT_ALL)
                 .getCookieStore();

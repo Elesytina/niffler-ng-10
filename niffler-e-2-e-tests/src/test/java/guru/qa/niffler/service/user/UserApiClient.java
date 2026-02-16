@@ -28,7 +28,7 @@ public class UserApiClient extends RestClient implements UsersClient {
 
     public UserApiClient() {
         super(CFG.userdataUrl());
-        this.usersApi = create(UsersApi.class);
+        usersApi = create(UsersApi.class);
     }
 
     @Override
@@ -72,13 +72,17 @@ public class UserApiClient extends RestClient implements UsersClient {
     }
 
 
-    public @Nonnull List<UserJson> findAllByUsername(String username, String searchQuery) {
+    public @Nonnull List<UserJson> findAllByUsername(String username, @Nullable String searchQuery) {
         try {
             Response<List<UserJson>> response = usersApi.allUsers(username, searchQuery)
                     .execute();
             Assertions.assertEquals(200, response.code(), "Unexpected response code");
 
-            return Objects.requireNonNull(response.body());
+            if (response.body() != null) {
+                return response.body();
+            } else {
+                return List.of();
+            }
         } catch (IOException exception) {
             throw new AssertionError(exception);
         }
