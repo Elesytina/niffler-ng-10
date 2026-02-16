@@ -8,13 +8,11 @@ import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @WebTest
-@Order(2)
 public class SpendingCategoryTest {
 
     @User(categories = @SpendingCategory(

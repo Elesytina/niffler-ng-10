@@ -10,8 +10,6 @@ import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.spend.SpendDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -24,7 +22,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
 @Slf4j
-@Order(2)
 public class SpendDbTest {
 
     private final SpendDbClient spendDbClient = new SpendDbClient();

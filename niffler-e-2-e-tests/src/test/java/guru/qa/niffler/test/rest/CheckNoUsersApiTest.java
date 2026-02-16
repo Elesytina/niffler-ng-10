@@ -15,7 +15,6 @@ import java.util.List;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 @Slf4j
-@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(1)
 public class CheckNoUsersApiTest {
 

@@ -5,7 +5,6 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -13,7 +12,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 @WebTest
-@Order(2)
 public class RegistrationTest {
 
     @Test
