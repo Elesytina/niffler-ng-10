@@ -1,5 +1,6 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.AvatarComponent;
 import guru.qa.niffler.page.component.Header;
@@ -9,7 +10,9 @@ import io.qameta.allure.Step;
 import java.io.File;
 import java.time.Duration;
 
+import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
+import static com.codeborne.selenide.Condition.innerText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byText;
@@ -89,7 +92,11 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
     @Step("archive category")
     public Header archiveCategory(String categoryName) {
-        archiveBtn.click();
+        $(withText(categoryName))
+                .closest(".MuiGrid-root MuiGrid-item")
+                .$("button[aria-label='Archive category']")
+                .shouldBe(visible)
+                .click();
         submitModal.submit("Archive");
 
         return new Header();
