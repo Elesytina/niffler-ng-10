@@ -1,6 +1,5 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.AvatarComponent;
 import guru.qa.niffler.page.component.Header;
@@ -10,9 +9,7 @@ import io.qameta.allure.Step;
 import java.io.File;
 import java.time.Duration;
 
-import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
-import static com.codeborne.selenide.Condition.innerText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byText;
@@ -24,7 +21,6 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class ProfilePage extends BasePage<ProfilePage> {
 
     private final SelenideElement showArchived = $(byText("Show archived"));
-    private final SelenideElement archiveBtn = $(byAttribute("aria-label", "Archive category"));
     private final SelenideElement personIcon = $(byAttribute("data-testid", "PersonIcon"));
     private final SelenideElement nameInput = $("#name");
     private final SelenideElement categoryInput = $("#category");
