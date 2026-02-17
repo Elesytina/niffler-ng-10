@@ -22,7 +22,7 @@ public class AvatarComponent extends BaseComponent<AvatarComponent> {
         try {
             BufferedImage actualImage = ImageIO.read(Objects.requireNonNull(self.screenshot()));
             boolean hasDiff = new ScreenDiffResult(expectedImg, actualImage).getAsBoolean();
-            if (!hasDiff) {
+            if (hasDiff) {
                 throw new ScreenshotException("screenshot did not match");
             }
         } catch (IOException e) {
