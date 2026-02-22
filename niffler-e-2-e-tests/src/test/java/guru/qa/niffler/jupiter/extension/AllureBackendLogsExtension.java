@@ -14,7 +14,7 @@ import java.util.UUID;
 @ParametersAreNonnullByDefault
 public class AllureBackendLogsExtension implements SuiteExtension {
 
-    private static final String caseName = "Niffler backend logs";
+    private static final String CASE_NAME = "Niffler backend logs";
     private static final Set<String> services = Set.of(
             "niffler-auth",
             "niffler-currency",
@@ -27,7 +27,7 @@ public class AllureBackendLogsExtension implements SuiteExtension {
     public void afterSuite() {
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
         final String caseId = UUID.randomUUID().toString();
-        allureLifecycle.scheduleTestCase(new TestResult().setUuid(caseId).setName(caseName));
+        allureLifecycle.scheduleTestCase(new TestResult().setUuid(caseId).setName(CASE_NAME));
         allureLifecycle.startTestCase(caseId);
 
         services.forEach(service -> {

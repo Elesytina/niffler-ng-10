@@ -6,7 +6,6 @@ import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.page.component.SubmitModal;
 import io.qameta.allure.Step;
 
-import java.io.File;
 import java.time.Duration;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
@@ -55,7 +54,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
     @Step("upload new picture")
     public ProfilePage uploadNewPicture(String path) {
-        fileInput.uploadFile(new File(path));
+        fileInput.uploadFromClasspath(path);
 
         return this;
     }

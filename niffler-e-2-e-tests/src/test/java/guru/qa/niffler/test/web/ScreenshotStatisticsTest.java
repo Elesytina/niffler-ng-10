@@ -17,8 +17,8 @@ import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.model.enums.CurrencyValues.USD;
-import static guru.qa.niffler.page.MainPage.getExpectedStatisticArchivedItems;
-import static guru.qa.niffler.page.MainPage.getExpectedStatisticItems;
+import static guru.qa.niffler.utils.TextUtils.getExpectedStatisticArchivedItems;
+import static guru.qa.niffler.utils.TextUtils.getExpectedStatisticItems;
 
 @WebTest
 public class ScreenshotStatisticsTest {
@@ -122,7 +122,7 @@ public class ScreenshotStatisticsTest {
     @User
     @ScreenshotTest(value = "img/icon.png")
     void shouldDisplayAvatarImg(UserJson user, BufferedImage expected) {
-        String path = "D:\\Courses\\niffler-at-courses\\niffler-e-2-e-tests\\src\\test\\resources\\img\\moana.png";
+        String path = "img/moana.png";
 
         open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
