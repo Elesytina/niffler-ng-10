@@ -2,6 +2,7 @@
 <html lang="ru">
 <#-- @ftlvariable name="data" type="io.qameta.allure.attachment.http.HttpRequestAttachment" -->
 <head>
+    <title>Request</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
     <link rel="stylesheet"
