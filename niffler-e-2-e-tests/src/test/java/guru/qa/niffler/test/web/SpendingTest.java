@@ -6,6 +6,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomInteger;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
+@Slf4j
 @WebTest
 public class SpendingTest {
 
@@ -31,15 +33,16 @@ public class SpendingTest {
     @Test
     void spendingDescriptionShouldBeEditedByTableAction(UserJson userJson) {
         final String newDescription = "Обучение Niffler Next Generation";
+        final String oldDescription = userJson.testData().spends().getFirst().description();
 
         open(CFG.frontUrl(), LoginPage.class)
                 .login(userJson.username(), userJson.testData().password())
-                .searchSpending(userJson.testData().spends().getFirst().description())
-                .editSpending()
+                .editSpending(oldDescription)
                 .setNewSpendingDescription(newDescription)
                 .save()
                 .checkSnackBarText("Spending is edited successfully")
-                .checkThatTableContains(newDescription);
+                .spendingTable()
+                .checkTableContains(newDescription);
     }
 
     @User(categories = {@SpendingCategory})
@@ -58,7 +61,8 @@ public class SpendingTest {
                 .setDescription(spendingDescription)
                 .clickSave()
                 .checkSnackBarText("New spending is successfully created")
-                .checkThatTableContains(spendingDescription);
+                .spendingTable()
+                .checkTableContains(spendingDescription);
     }
 
     @User

@@ -31,7 +31,6 @@ public class CreateSpendingExtension implements BeforeEachCallback, ParameterRes
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(userAnno -> {
-
                             if (ArrayUtils.isNotEmpty(userAnno.spendings())) {
 
                                 Optional<UserJson> testUser = UserExtension.createdUser();
@@ -75,6 +74,7 @@ public class CreateSpendingExtension implements BeforeEachCallback, ParameterRes
                         }
                 );
     }
+
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws
