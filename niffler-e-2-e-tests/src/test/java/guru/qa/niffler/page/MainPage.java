@@ -3,17 +3,12 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.model.enums.CurrencyValues;
-import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.page.component.SearchField;
 import guru.qa.niffler.page.component.SpendingTable;
 import guru.qa.niffler.page.component.StatisticComponent;
 import io.qameta.allure.Step;
-import org.junit.jupiter.api.Assertions;
 
-import java.text.DecimalFormat;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.CollectionCondition.texts;
@@ -118,39 +113,6 @@ public class MainPage extends BasePage<MainPage> {
         statisticsItems.shouldHave(sizeGreaterThanOrEqual(1), Duration.ofSeconds(6))
                 .shouldHave(texts(itemTxtList));
         return this;
-    }
-
-
-    public static String[] getExpectedStatisticItems(SpendJson... spends) {
-        DecimalFormat df = new DecimalFormat("0.######");
-
-        return Arrays.stream(spends)
-                .map(spend -> "%s %s %s".formatted(
-                        spend.category().name(),
-                        df.format(spend.amount()),
-                        getCurrencyCharacter(spend.currency())))
-                .sorted()
-                .toArray(String[]::new);
-    }
-
-    public static String getExpectedStatisticArchivedItems(List<SpendJson> spends) {
-        Assertions.assertFalse(spends.isEmpty(), "spends list is empty");
-        DecimalFormat df = new DecimalFormat("0.######");
-        Double sum = spends.stream()
-                .map(SpendJson::amount)
-                .reduce(Double::sum)
-                .get();
-
-        return "Archived %s %s".formatted(df.format(sum), getCurrencyCharacter(spends.getFirst().currency()));
-    }
-
-    public static String getCurrencyCharacter(CurrencyValues currency) {
-        return switch (currency) {
-            case EUR -> "€";
-            case USD -> "$";
-            case KZT -> "₸";
-            case RUB -> "₽";
-        };
     }
 
 }
