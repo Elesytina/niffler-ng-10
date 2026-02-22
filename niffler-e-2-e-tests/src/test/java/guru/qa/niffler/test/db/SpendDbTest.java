@@ -1,8 +1,8 @@
 package guru.qa.niffler.test.db;
 
 import guru.qa.niffler.jupiter.annotation.Spending;
-import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.extension.SpendClientInjector;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
@@ -11,32 +11,36 @@ import guru.qa.niffler.service.spend.SpendDbClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.UUID;
 
+import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
-import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomDouble;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
+@ExtendWith(SpendClientInjector.class)
 @Slf4j
 public class SpendDbTest {
 
-    private final SpendDbClient spendDbClient = new SpendDbClient();
+    private SpendDbClient spendDbClient;
 
     @Test
     @User(spendings = @Spending(
-            category = "category2",
-            description = "description",
+            category = "just spend",
             amount = 100,
-            currency = CurrencyValues.USD))
-    void shouldGetSpend(UserJson user) {
-        UUID spendId = user.testData().spends().getFirst().id();
-        String spendDescription = user.testData().spends().getFirst().description();
-        SpendJson spend1 = spendDbClient.getSpend(spendId);
-        SpendJson spend2 = spendDbClient.findByUsernameAndSpendDescription(user.username(), spendDescription);
+            currency = RUB,
+            description = "new description for spend"
+    ))
+    void shouldGetSpend(UserJson userJson) {
+        SpendJson spendJson = userJson.testData().spends().getFirst();
+        String description = spendJson.description();
+        var username = userJson.username();
+
+        SpendJson spend1 = spendDbClient.getSpend(spendJson.id());
+        SpendJson spend2 = spendDbClient.findByUsernameAndSpendDescription(username, description);
 
         Assertions.assertEquals(spend1.id(), spend2.id(), "Spends should be same");
     }
@@ -97,30 +101,25 @@ public class SpendDbTest {
     }
 
     @Test
-    @User(categories = @SpendingCategory)
-    void shouldGetSpendByUsernameAndDescription(UserJson user) {
-        var username = user.username();
-        CategoryJson category = user.testData().categories().getFirst();
+    @User(spendings = @Spending(
+            category = "just spend",
+            amount = 200,
+            currency = RUB,
+            description = "description"
+    ))
+    void shouldGetSpendByUsernameAndDescription(UserJson userJson) {
+        SpendJson spendJson = userJson.testData().spends().getFirst();
+        var spendDescription = spendJson.description();
+        var username = userJson.username();
 
-        SpendJson created = spendDbClient.addSpend(
-                new SpendJson(null,
-                        Date.from(Instant.now()),
-                        category,
-                        randomCurrency(),
-                        randomDouble(10, 10000),
-                        randomSentence(4),
-                        username)
-        );
-        Assertions.assertNotNull(created.id(), "Spend id should not be null");
-
-        SpendJson found = spendDbClient.findByUsernameAndSpendDescription(created.username(), created.description());
+        SpendJson found = spendDbClient.findByUsernameAndSpendDescription(username, spendDescription);
         Assertions.assertNotNull(found.id(), "Spend description should not be null");
     }
 
     @Test
     @User
-    void shouldCreateCategoryAndRemoveIt(UserJson user) {
-        var username = user.username();
+    void shouldCreateCategoryAndRemoveIt(UserJson userJson) {
+        var username = userJson.username();
         CategoryJson categoryJson = new CategoryJson(
                 null,
                 randomSentence(3),

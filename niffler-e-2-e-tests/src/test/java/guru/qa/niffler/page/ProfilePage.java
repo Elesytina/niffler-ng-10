@@ -1,7 +1,9 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.AvatarComponent;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SubmitModal;
 import io.qameta.allure.Step;
 
 import java.time.Duration;
@@ -22,6 +24,8 @@ public class ProfilePage extends BasePage<ProfilePage> {
     private final SelenideElement nameInput = $("#name");
     private final SelenideElement categoryInput = $("#category");
     private final SelenideElement saveBtn = $(byText("Save changes"));
+    private final SelenideElement fileInput = $("input[type='file']");
+    private final SubmitModal submitModal = new SubmitModal();
 
     @Step("click show archived categories")
     public ProfilePage showArchived() {
@@ -41,14 +45,16 @@ public class ProfilePage extends BasePage<ProfilePage> {
                 .shouldHave(sizeGreaterThanOrEqual(1));
     }
 
-    @Step("verify that active category is presented")
-    public void checkThatActiveCategoryPresent(String categoryName) {
-        $(Selectors.byText(categoryName)).shouldBe(visible);
-    }
-
     @Step("set customer name {name}")
     public ProfilePage editName(String name) {
         nameInput.setValue(name);
+
+        return this;
+    }
+
+    @Step("upload new picture")
+    public ProfilePage uploadNewPicture(String path) {
+        fileInput.uploadFromClasspath(path);
 
         return this;
     }
@@ -73,4 +79,26 @@ public class ProfilePage extends BasePage<ProfilePage> {
         $(byText("Profile successfully updated"))
                 .shouldBe(visible);
     }
+
+    @Step("verify that at least active category presented")
+    public void checkThatActiveCategoryPresent(String categoryName) {
+        $(withText(categoryName)).shouldBe(visible);
+    }
+
+    @Step("archive category")
+    public Header archiveCategory(String categoryName) {
+        $(withText(categoryName))
+                .closest(".MuiGrid-root MuiGrid-item")
+                .$("button[aria-label='Archive category']")
+                .shouldBe(visible)
+                .click();
+        submitModal.submit("Archive");
+
+        return new Header();
+    }
+
+    public AvatarComponent avatarComponent() {
+        return new AvatarComponent();
+    }
+
 }
