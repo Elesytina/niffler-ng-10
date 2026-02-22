@@ -21,7 +21,7 @@
             margin-bottom: 6px;
         }
         pre {
-            background: #f6f8fa;
+            background: #cab6b6;
             padding: 10px;
             border-radius: 4px;
             overflow-x: auto;
@@ -31,14 +31,14 @@
             width: 100%;
         }
         th, td {
-            border: 1px solid #d0d7de;
+            border: 1px solid #8ba887;
             padding: 6px;
             text-align: left;
             vertical-align: top;
             font-family: monospace;
         }
         th {
-            background: #f0f0f0;
+            background: #8b80b4;
             width: 200px;
         }
     </style>
