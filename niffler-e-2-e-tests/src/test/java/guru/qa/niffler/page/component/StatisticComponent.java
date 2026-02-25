@@ -1,10 +1,8 @@
 package guru.qa.niffler.page.component;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.exception.ScreenshotException;
-import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
 
@@ -12,11 +10,8 @@ import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Objects;
 
-import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
-import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Selenide.$;
 
 public class StatisticComponent extends BaseComponent<StatisticComponent> {

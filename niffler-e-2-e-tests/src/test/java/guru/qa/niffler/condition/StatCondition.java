@@ -2,7 +2,6 @@ package guru.qa.niffler.condition;
 
 import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.WebElementCondition;
 import com.codeborne.selenide.WebElementsCondition;
 import guru.qa.niffler.model.Bubble;
 import org.apache.commons.lang.ArrayUtils;
@@ -18,20 +17,6 @@ import static guru.qa.niffler.condition.Color.getColor;
 
 @ParametersAreNonnullByDefault
 public class StatCondition {
-
-    public static WebElementCondition color(Color expectedColor) {
-        return new WebElementCondition("color") {
-
-            @NotNull
-            @Override
-            public CheckResult check(Driver driver, WebElement element) {
-                final String rgba = element.getCssValue("background-color");
-
-                return new CheckResult(expectedColor.getRgba().equals(rgba), rgba);
-            }
-        };
-
-    }
 
     public static WebElementsCondition colors(Color... expectedColors) {
         return new WebElementsCondition() {
