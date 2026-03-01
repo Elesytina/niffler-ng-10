@@ -1,6 +1,7 @@
 package guru.qa.niffler.data.tpl;
 
 import com.atomikos.jdbc.AtomikosDataSourceBean;
+import com.p6spy.engine.spy.P6DataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -35,9 +36,10 @@ public class DataSources {
                     datasourceBean.setXaProperties(properties);
                     datasourceBean.setPoolSize(4);
                     datasourceBean.setMaxPoolSize(10);
+                    P6DataSource p6DataSource = new P6DataSource(datasourceBean);
                     try {
                         InitialContext ctx = new InitialContext();
-                        ctx.bind("java:comp/env/jdbc/%s".formatted(dbName), datasourceBean);
+                        ctx.bind("java:comp/env/jdbc/%s".formatted(dbName), p6DataSource);
                     } catch (NamingException e) {
                         throw new RuntimeException(e);
                     }

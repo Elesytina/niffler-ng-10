@@ -9,6 +9,7 @@ import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.enums.Authority;
 import guru.qa.niffler.model.enums.RelationType;
 import guru.qa.niffler.model.userdata.UserJson;
+import io.qameta.allure.Step;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
@@ -44,6 +45,7 @@ public class UserDbClient implements UsersClient {
             CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl());
 
+    @Step("create user")
     @Override
     public @Nonnull UserJson create(String username, String password) {
         return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
@@ -57,6 +59,7 @@ public class UserDbClient implements UsersClient {
         }));
     }
 
+    @Step("update user")
     @Override
     public @Nonnull UserJson update(UserJson userJson) {
         return Objects.requireNonNull(xaTransactionTemplate.execute(() -> {
