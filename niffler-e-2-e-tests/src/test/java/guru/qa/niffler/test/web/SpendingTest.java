@@ -4,7 +4,6 @@ import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.model.Bubble;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
@@ -15,8 +14,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.codeborne.selenide.Selenide.open;
-import static guru.qa.niffler.condition.Color.green;
-import static guru.qa.niffler.condition.Color.yellow;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.model.enums.CurrencyValues.USD;
@@ -25,7 +22,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomCurrency;
 import static guru.qa.niffler.utils.RandomDataUtils.randomInteger;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
-import static guru.qa.niffler.utils.TextUtils.getExpectedStatisticItems;
 
 @Slf4j
 @WebTest

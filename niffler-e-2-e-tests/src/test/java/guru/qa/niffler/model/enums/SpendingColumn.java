@@ -4,5 +4,5 @@ public enum SpendingColumn {
     Category,
     Amount,
     Description,
-    Date;
+    Date
 }
