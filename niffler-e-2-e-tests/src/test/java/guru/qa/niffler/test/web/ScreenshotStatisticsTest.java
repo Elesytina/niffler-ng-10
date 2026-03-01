@@ -1,5 +1,6 @@
 package guru.qa.niffler.test.web;
 
+import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.ScreenshotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -10,12 +11,12 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.SelenideUtils;
 import org.junit.jupiter.api.Test;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.condition.Color.green;
 import static guru.qa.niffler.condition.Color.yellow;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
@@ -26,6 +27,8 @@ import static guru.qa.niffler.utils.TextUtils.getExpectedStatisticItems;
 
 @WebTest
 public class ScreenshotStatisticsTest {
+
+    private final SelenideDriver driver = new SelenideDriver(SelenideUtils.CHROME_CONFIG);
 
     @User(spendings = @Spending(category = "restaurant",
             description = "anniversary dinner",
@@ -38,7 +41,7 @@ public class ScreenshotStatisticsTest {
         var password = userJson.testData().password();
         String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().getFirst());
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .selectCurrency(currency)
                 .checkExistingStatisticItems(expectedTxt)
@@ -62,7 +65,7 @@ public class ScreenshotStatisticsTest {
         var password = userJson.testData().password();
         String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().toArray(SpendJson[]::new));
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .selectCurrency(USD)
                 .checkBubbles(
@@ -86,7 +89,7 @@ public class ScreenshotStatisticsTest {
         var password = userJson.testData().password();
         String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().toArray(SpendJson[]::new));
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .selectCurrency(RUB)
                 .checkBubblesInAnyOrder(
@@ -110,7 +113,7 @@ public class ScreenshotStatisticsTest {
         var password = userJson.testData().password();
         String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().toArray(SpendJson[]::new));
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .selectCurrency(RUB)
                 .checkBubblesContain(
@@ -133,7 +136,7 @@ public class ScreenshotStatisticsTest {
         String[] expectedTxt = getExpectedStatisticItems(spends.toArray(SpendJson[]::new));
         String[] updatedTxt = getExpectedStatisticItems(spends.get(1));
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .selectCurrency(currency)
                 .checkExistingStatisticItems(expectedTxt)
@@ -155,7 +158,7 @@ public class ScreenshotStatisticsTest {
         SpendJson spend = spends.getFirst();
         CurrencyValues spendCurrency = spend.currency();
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .selectCurrency(spendCurrency)
                 .editSpending(spend.description())
@@ -182,7 +185,7 @@ public class ScreenshotStatisticsTest {
         String expectedTxt = getExpectedStatisticArchivedItems(spends);
 
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseProfile()
@@ -199,7 +202,7 @@ public class ScreenshotStatisticsTest {
     void shouldDisplayAvatarImg(UserJson user, BufferedImage expected) {
         String path = "img/moana.png";
 
-        open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseProfile()
