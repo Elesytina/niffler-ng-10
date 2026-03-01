@@ -103,7 +103,7 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
     }
 
     @Nonnull
-    public String getCellValueByColumnName(int rowIndex, int columnIndex) {
+    public String getCellValue(int rowIndex, int columnIndex) {
         SelenideElement spendingRow = spendingRows.get(rowIndex);
 
         return spendingRow.$$("td").get(columnIndex).innerText();
@@ -116,20 +116,20 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
         List<Executable> assertions = new ArrayList<>();
 
         for (SpendJson spendJson : spendJsonList) {
-            var actualCategory = getCellValueByColumnName(counter.get(), columnsNames.get(Category.name()));
+            var actualCategory = getCellValue(counter.get(), columnsNames.get(Category.name()));
             var expectedCategory = spendJson.category().name();
             assertions.add(() -> assertEquals(expectedCategory, actualCategory, "For line № %d category".formatted(counter.get())));
 
-            var actualDescription = getCellValueByColumnName(counter.get(), columnsNames.get(Description.name()));
+            var actualDescription = getCellValue(counter.get(), columnsNames.get(Description.name()));
             var expectedDescription = spendJson.description();
             assertions.add(() -> assertEquals(expectedDescription, actualDescription, "For line № %d description".formatted(counter.get())));
 
-            var actualAmount = getCellValueByColumnName(counter.get(), columnsNames.get(Amount.name()));
+            var actualAmount = getCellValue(counter.get(), columnsNames.get(Amount.name()));
             DecimalFormat df = new DecimalFormat("0.#");
             var expectedAmount = " %s %s".formatted(df.format(spendJson.amount()), spendJson.currency().getSymbol());
             assertions.add(() -> assertEquals(expectedAmount, actualAmount, "For line № %d amount".formatted(counter.get())));
 
-            LocalDate actualDate = getSpendingDateFromString(getCellValueByColumnName(counter.get(), columnsNames.get(Date.name())));
+            LocalDate actualDate = getSpendingDateFromString(getCellValue(counter.get(), columnsNames.get(Date.name())));
             LocalDate expectedDate = getLocalDateFromDate(spendJson.spendDate());
             assertions.add(() -> assertEquals(expectedDate, actualDate, "For line № %d date".formatted(counter.get())));
 
