@@ -16,8 +16,8 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import static com.codeborne.selenide.Selenide.open;
-import static guru.qa.niffler.condition.Color.green;
-import static guru.qa.niffler.condition.Color.yellow;
+import static guru.qa.niffler.condition.Color.GREEN;
+import static guru.qa.niffler.condition.Color.YELLOW;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.model.enums.CurrencyValues.USD;
@@ -66,8 +66,8 @@ public class ScreenshotStatisticsTest {
                 .login(username, password)
                 .selectCurrency(USD)
                 .checkBubbles(
-                        new Bubble(yellow, expectedTxt[1]),
-                        new Bubble(green, expectedTxt[0]));
+                        new Bubble(YELLOW, expectedTxt[1]),
+                        new Bubble(GREEN, expectedTxt[0]));
     }
 
     @User(spendings = {
@@ -90,8 +90,8 @@ public class ScreenshotStatisticsTest {
                 .login(username, password)
                 .selectCurrency(RUB)
                 .checkBubblesInAnyOrder(
-                        new Bubble(green, expectedTxt[1]),
-                        new Bubble(yellow, expectedTxt[0]));
+                        new Bubble(GREEN, expectedTxt[1]),
+                        new Bubble(YELLOW, expectedTxt[0]));
     }
 
     @User(spendings = {
@@ -114,7 +114,7 @@ public class ScreenshotStatisticsTest {
                 .login(username, password)
                 .selectCurrency(RUB)
                 .checkBubblesContain(
-                        new Bubble(green, expectedTxt[1]));
+                        new Bubble(GREEN, expectedTxt[1]));
     }
 
     @User(spendings = {

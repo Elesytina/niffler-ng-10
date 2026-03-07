@@ -1,26 +1,18 @@
 package guru.qa.niffler.model;
 
 import guru.qa.niffler.condition.Color;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 
-
-public record Bubble(Color color, String text) {
-
-    @Override
-    public String toString() {
-        return "Bubble{" + color.getRgba() + ", " + text + "}";
-    }
+public record Bubble(Color color, String text) implements Comparable<Bubble> {
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    public int compareTo(@NotNull Bubble o) {
+        int enumCompare = this.color.compareTo(o.color);
+        if (enumCompare != 0) {
+            return enumCompare;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Bubble bubble = (Bubble) o;
-        return Objects.equals(color, bubble.color) && Objects.equals(text, bubble.text);
+
+        return this.text.compareTo(o.text);
     }
 }
