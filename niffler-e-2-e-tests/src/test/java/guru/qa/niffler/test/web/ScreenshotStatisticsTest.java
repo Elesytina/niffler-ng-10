@@ -4,16 +4,20 @@ import guru.qa.niffler.jupiter.annotation.ScreenshotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.model.Bubble;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
+import org.junit.jupiter.api.Test;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 import static com.codeborne.selenide.Selenide.open;
+import static guru.qa.niffler.condition.Color.GREEN;
+import static guru.qa.niffler.condition.Color.YELLOW;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.model.enums.CurrencyValues.USD;
@@ -40,6 +44,77 @@ public class ScreenshotStatisticsTest {
                 .checkExistingStatisticItems(expectedTxt)
                 .statisticComponent()
                 .verifyStatisticImage(expectedImage);
+    }
+
+    @User(spendings = {
+            @Spending(category = "restaurant",
+                    description = "anniversary dinner",
+                    amount = 8990,
+                    currency = USD),
+            @Spending(category = "flowers",
+                    description = "anniversary",
+                    amount = 1899,
+                    currency = USD),
+    })
+    @Test
+    void shouldCheckStatBubbles(UserJson userJson) {
+        var username = userJson.username();
+        var password = userJson.testData().password();
+        String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().toArray(SpendJson[]::new));
+
+        open(CFG.frontUrl(), LoginPage.class)
+                .login(username, password)
+                .selectCurrency(USD)
+                .checkBubbles(
+                        new Bubble(YELLOW, expectedTxt[1]),
+                        new Bubble(GREEN, expectedTxt[0]));
+    }
+
+    @User(spendings = {
+            @Spending(category = "car",
+                    description = "car fixing",
+                    amount = 33990,
+                    currency = RUB),
+            @Spending(category = "flowers",
+                    description = "anniversary",
+                    amount = 1899,
+                    currency = RUB),
+    })
+    @Test
+    void shouldCheckStatBubblesInAnyOrder(UserJson userJson) {
+        var username = userJson.username();
+        var password = userJson.testData().password();
+        String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().toArray(SpendJson[]::new));
+
+        open(CFG.frontUrl(), LoginPage.class)
+                .login(username, password)
+                .selectCurrency(RUB)
+                .checkBubblesInAnyOrder(
+                        new Bubble(GREEN, expectedTxt[1]),
+                        new Bubble(YELLOW, expectedTxt[0]));
+    }
+
+    @User(spendings = {
+            @Spending(category = "car",
+                    description = "car fixing",
+                    amount = 33990,
+                    currency = RUB),
+            @Spending(category = "flowers",
+                    description = "anniversary",
+                    amount = 1899,
+                    currency = RUB),
+    })
+    @Test
+    void shouldCheckStatBubblesContain(UserJson userJson) {
+        var username = userJson.username();
+        var password = userJson.testData().password();
+        String[] expectedTxt = getExpectedStatisticItems(userJson.testData().spends().toArray(SpendJson[]::new));
+
+        open(CFG.frontUrl(), LoginPage.class)
+                .login(username, password)
+                .selectCurrency(RUB)
+                .checkBubblesContain(
+                        new Bubble(GREEN, expectedTxt[1]));
     }
 
     @User(spendings = {
