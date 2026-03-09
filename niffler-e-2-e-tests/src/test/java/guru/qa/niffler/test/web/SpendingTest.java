@@ -1,6 +1,5 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -8,13 +7,13 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.utils.SelenideUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.model.enums.CurrencyValues.RUB;
 import static guru.qa.niffler.model.enums.CurrencyValues.USD;
@@ -28,7 +27,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 @WebTest
 public class SpendingTest {
 
-    private final SelenideDriver driver = new SelenideDriver(SelenideUtils.CHROME_CONFIG);
 
     @User(spendings = @Spending(
             category = "Учеба",
@@ -41,7 +39,7 @@ public class SpendingTest {
         final String newDescription = "Обучение Niffler Next Generation";
         final String oldDescription = userJson.testData().spends().getFirst().description();
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(userJson.username(), userJson.testData().password())
                 .editSpending(oldDescription)
                 .setNewSpendingDescription(newDescription)
@@ -57,7 +55,7 @@ public class SpendingTest {
         var categoryName = userJson.testData().categories().getFirst().name();
         var spendingDescription = randomSentence(3);
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(userJson.username(), userJson.testData().password())
                 .clickCreateNewSpendingButton()
                 .setAmount(randomInteger(10, 10000))
@@ -74,7 +72,7 @@ public class SpendingTest {
     @User
     @Test
     void shouldEditProfile(UserJson userJson) {
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(userJson.username(), userJson.testData().password())
                 .openProfilePopupMenu()
                 .chooseProfile()
@@ -102,7 +100,7 @@ public class SpendingTest {
         var password = userJson.testData().password();
         List<SpendJson> spendJsonList = userJson.testData().spends();
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .spendingTable()
                 .verifySpendingTable(spendJsonList);

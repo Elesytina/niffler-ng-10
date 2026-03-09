@@ -1,5 +1,6 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
@@ -11,11 +12,28 @@ import static com.codeborne.selenide.Selenide.page;
 
 public class RegisterPage extends BasePage<RegisterPage> {
 
-    private final SelenideElement userNameInput = $("#username");
-    private final SelenideElement passwordInput = $("#password");
-    private final SelenideElement passwordSubmitInput = $("#passwordSubmit");
-    private final SelenideElement registerBtn = $("#register-button");
-    private final SelenideElement formError = $(".form__error");
+    private final SelenideElement userNameInput;
+    private final SelenideElement passwordInput;
+    private final SelenideElement passwordSubmitInput;
+    private final SelenideElement registerBtn;
+    private final SelenideElement formError;
+
+    public RegisterPage() {
+        this.userNameInput = $("#username");
+        this.passwordInput = $("#password");
+        this.passwordSubmitInput = $("#passwordSubmit");
+        this.registerBtn = $("#register-button");
+        this.formError = $(".form__error");
+    }
+
+    public RegisterPage(SelenideDriver driver) {
+        super(driver);
+        this.userNameInput = driver.$("#username");
+        this.passwordInput = driver.$("#password");
+        this.passwordSubmitInput = driver.$("#passwordSubmit");
+        this.registerBtn = driver.$("#register-button");
+        this.formError = driver.$(".form__error");
+    }
 
     @Step("register customer with username {username} and password {password}")
     public RegisterPage registerUser(String username, String password) {

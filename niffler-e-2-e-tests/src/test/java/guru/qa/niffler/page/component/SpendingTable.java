@@ -38,7 +38,6 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
     private final SelenideElement tbody = self.$("tbody");
     private final SelenideElement thead = self.$("thead");
     private final ElementsCollection spendingRows = tbody.$$("tr");
-    private final ElementsCollection spendTableColumns = thead.$("tr").$$("th").shouldHave(sizeGreaterThanOrEqual(4));
     private final SelenideElement deleteBtn = self.$("#delete");
     private final SelenideElement periodSelect = self.$("#period");
     private final SubmitModal submitModal = new SubmitModal();
@@ -89,7 +88,7 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
     public Map<String, Integer> getTableColumnsNames() {
         Map<String, Integer> columnsMap = new HashMap<>();
         AtomicInteger counter = new AtomicInteger();
-        spendTableColumns.stream().map(SelenideElement::innerText)
+        thead.$("tr").$$("th").shouldHave(sizeGreaterThanOrEqual(4)).stream().map(SelenideElement::innerText)
                 .forEach(r -> {
                     if (r.isBlank()) {
                         counter.getAndIncrement();

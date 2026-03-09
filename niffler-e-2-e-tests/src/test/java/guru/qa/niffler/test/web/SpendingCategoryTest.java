@@ -11,19 +11,18 @@ import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 
 @WebTest
 public class SpendingCategoryTest {
-
-    private final SelenideDriver driver = new SelenideDriver(SelenideUtils.CHROME_CONFIG);
 
     @User(categories = @SpendingCategory(
             archived = true))
     @Test
     @Description("active Category Should Be Present In Profile")
     void archivedCategoryShouldBePresentInProfilePositiveTest(UserJson user) {
-        driver.open(CFG.frontUrl(), LoginPage.class)
+       open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseProfile()
@@ -43,7 +42,7 @@ public class SpendingCategoryTest {
                 .filter(c -> !c.archived()).findAny();
         Assertions.assertTrue(activeCategory.isPresent(), "Active Category should not be present");
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+       open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password)
                 .openProfilePopupMenu()
                 .chooseProfile()

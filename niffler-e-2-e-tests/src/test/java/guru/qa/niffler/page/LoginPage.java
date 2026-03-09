@@ -3,10 +3,10 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Assertions;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
@@ -31,6 +31,7 @@ public class LoginPage extends BasePage<LoginPage> {
     }
 
     public LoginPage(SelenideDriver driver) {
+        super(driver);
         this.usernameInput = driver.$("#username");
         this.passwordInput = driver.$("#password");
         this.submitBtn = driver.$("#login-button");
@@ -71,8 +72,9 @@ public class LoginPage extends BasePage<LoginPage> {
     }
 
     @Step("verify error {message} when use incorrect credentials")
-    public void checkIncorrectCredsDataError(String message) {
-        formError.shouldBe(visible)
-                .shouldHave(text(message));
+    public void checkIncorrectCredsDataError() {
+        SelenideElement form = formError.shouldBe(visible);
+        String text = form.innerText();
+        Assertions.assertTrue(text.contains("Неверные учетные данные пользователя") || text.contains("Bad credentials"));
     }
 }

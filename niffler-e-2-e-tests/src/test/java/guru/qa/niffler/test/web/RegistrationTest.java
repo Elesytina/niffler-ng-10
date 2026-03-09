@@ -1,13 +1,12 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.utils.SelenideUtils;
 import org.junit.jupiter.api.Test;
 
+import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
@@ -15,14 +14,12 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 @WebTest
 public class RegistrationTest {
 
-    private final SelenideDriver driver = new SelenideDriver(SelenideUtils.CHROME_CONFIG);
-
     @Test
     void shouldRegisterNewUser() {
         var userName = randomUsername();
         var password = randomAlphanumeric(10);
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()
                 .setUsername(userName)
                 .setPassword(password)
@@ -37,7 +34,7 @@ public class RegistrationTest {
         var userName = user.username();
         var password = user.testData().password();
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()
                 .setUsername(userName)
                 .setPassword(password)
@@ -52,7 +49,7 @@ public class RegistrationTest {
         var password = randomAlphanumeric(10);
         var confirmPassword = randomAlphanumeric(2);
 
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateAccount()
                 .setUsername(userName)
                 .setPassword(password)
