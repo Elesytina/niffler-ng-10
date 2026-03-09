@@ -1,12 +1,10 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.SpendingCategory;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.utils.SelenideUtils;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
