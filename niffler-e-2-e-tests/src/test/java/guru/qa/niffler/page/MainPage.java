@@ -19,10 +19,10 @@ import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
-import static guru.qa.niffler.condition.StatCondition.bubbles;
-import static guru.qa.niffler.condition.StatCondition.bubblesInAnyOrder;
-import static guru.qa.niffler.condition.StatCondition.colors;
-import static guru.qa.niffler.condition.StatCondition.bubblesContains;
+import static guru.qa.niffler.condition.StatConditions.statBubbles;
+import static guru.qa.niffler.condition.StatConditions.statBubblesInAnyOrder;
+import static guru.qa.niffler.condition.StatConditions.colors;
+import static guru.qa.niffler.condition.StatConditions.statBubblesContains;
 
 public class MainPage extends BasePage<MainPage> {
 
@@ -136,21 +136,21 @@ public class MainPage extends BasePage<MainPage> {
     public void checkBubbles(Bubble... expectedBubbles) {
         statisticsItems
                 .shouldHave(sizeGreaterThanOrEqual(1))
-                .shouldHave(bubbles(expectedBubbles));
+                .shouldHave(statBubbles(expectedBubbles));
     }
 
     @Step("verify statistics bubbles in any order")
     public void checkBubblesInAnyOrder(Bubble... expectedBubbles) {
         statisticsItems
                 .shouldHave(sizeGreaterThanOrEqual(1))
-                .shouldHave(bubblesInAnyOrder(expectedBubbles));
+                .shouldHave(statBubblesInAnyOrder(expectedBubbles));
     }
 
     @Step("verify statistics bubbles contain")
     public void checkBubblesContain(Bubble... expectedBubbles) {
         statisticsItems
                 .shouldHave(sizeGreaterThanOrEqual(1))
-                .shouldHave(bubblesContains(expectedBubbles));
+                .shouldHave(statBubblesContains(expectedBubbles));
     }
 
 }

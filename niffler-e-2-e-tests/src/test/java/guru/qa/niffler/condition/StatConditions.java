@@ -16,7 +16,7 @@ import java.util.List;
 import static guru.qa.niffler.condition.Color.getColor;
 
 @ParametersAreNonnullByDefault
-public class StatCondition {
+public class StatConditions {
 
     public static WebElementsCondition colors(Color... expectedColors) {
         return new WebElementsCondition() {
@@ -53,7 +53,7 @@ public class StatCondition {
 
     }
 
-    public static WebElementsCondition bubbles(Bubble... expectedBubbles) {
+    public static WebElementsCondition statBubbles(Bubble... expectedBubbles) {
         return new WebElementsCondition() {
 
             @NotNull
@@ -88,7 +88,7 @@ public class StatCondition {
 
     }
 
-    public static WebElementsCondition bubblesInAnyOrder(Bubble... expectedBubbles) {
+    public static WebElementsCondition statBubblesInAnyOrder(Bubble... expectedBubbles) {
         return new WebElementsCondition() {
 
             @NotNull
@@ -107,9 +107,10 @@ public class StatCondition {
                                 getColor(el.getCssValue("background-color")),
                                 el.getText()
                         ))
+                        .sorted()
                         .toList();
-
-                boolean result = actualBubbles.containsAll(List.of(expectedBubbles));
+                List<Bubble> expectedBubbleList = Arrays.stream(expectedBubbles).sorted().toList();
+                boolean result = actualBubbles.equals(expectedBubbleList);
 
                 return new CheckResult(result, actualBubbles);
             }
@@ -123,7 +124,7 @@ public class StatCondition {
 
     }
 
-    public static WebElementsCondition bubblesContains(Bubble... expectedBubbles) {
+    public static WebElementsCondition statBubblesContains(Bubble... expectedBubbles) {
         return new WebElementsCondition() {
 
             @NotNull
