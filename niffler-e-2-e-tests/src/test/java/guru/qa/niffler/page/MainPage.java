@@ -2,6 +2,8 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.condition.Color;
+import guru.qa.niffler.model.Bubble;
 import guru.qa.niffler.model.enums.CurrencyValues;
 import guru.qa.niffler.page.component.SearchField;
 import guru.qa.niffler.page.component.SpendingTable;
@@ -17,6 +19,10 @@ import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
+import static guru.qa.niffler.condition.StatConditions.statBubbles;
+import static guru.qa.niffler.condition.StatConditions.statBubblesInAnyOrder;
+import static guru.qa.niffler.condition.StatConditions.colors;
+import static guru.qa.niffler.condition.StatConditions.statBubblesContains;
 
 public class MainPage extends BasePage<MainPage> {
 
@@ -26,10 +32,10 @@ public class MainPage extends BasePage<MainPage> {
     private final SelenideElement allPeopleItem = $(byLinkText("All People"));
     private final SelenideElement currencySearchSelect = $("#currency");
     private final SelenideElement createNewSpendingButton = $(byText("New spending"));
-    private final ElementsCollection statisticsItems = $("#legend-container").$$("li");
     private final SearchField searchField = new SearchField();
     private final SpendingTable spendingTable = new SpendingTable();
     private final StatisticComponent statisticComponent = new StatisticComponent();
+    private final ElementsCollection statisticsItems = $("#legend-container").$$("li");
 
 
     @Step("verify spending table is present")
@@ -97,8 +103,11 @@ public class MainPage extends BasePage<MainPage> {
 
     @Step("get statistic component")
     public StatisticComponent statisticComponent() {
+        statisticComponent.getSelf().scrollIntoView(true);
+
         return statisticComponent;
     }
+
 
     @Step("select currency")
     public MainPage selectCurrency(CurrencyValues currency) {
@@ -113,6 +122,35 @@ public class MainPage extends BasePage<MainPage> {
         statisticsItems.shouldHave(sizeGreaterThanOrEqual(1), Duration.ofSeconds(6))
                 .shouldHave(texts(itemTxtList));
         return this;
+    }
+
+    @Step("verify that statistic items contain text {text}")
+    public void checkExistingStatisticItemsColor(Color... expectedColors) {
+        statisticsItems
+                .shouldHave(sizeGreaterThanOrEqual(1))
+                .shouldHave(colors(expectedColors));
+
+    }
+
+    @Step("verify statistics bubbles")
+    public void checkBubbles(Bubble... expectedBubbles) {
+        statisticsItems
+                .shouldHave(sizeGreaterThanOrEqual(1))
+                .shouldHave(statBubbles(expectedBubbles));
+    }
+
+    @Step("verify statistics bubbles in any order")
+    public void checkBubblesInAnyOrder(Bubble... expectedBubbles) {
+        statisticsItems
+                .shouldHave(sizeGreaterThanOrEqual(1))
+                .shouldHave(statBubblesInAnyOrder(expectedBubbles));
+    }
+
+    @Step("verify statistics bubbles contain")
+    public void checkBubblesContain(Bubble... expectedBubbles) {
+        statisticsItems
+                .shouldHave(sizeGreaterThanOrEqual(1))
+                .shouldHave(statBubblesContains(expectedBubbles));
     }
 
 }

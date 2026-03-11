@@ -1,9 +1,11 @@
 package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.SelenideElement;
+import lombok.Getter;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@Getter
 @ParametersAreNonnullByDefault
 public abstract class BaseComponent<T extends BaseComponent<?>> {
 
