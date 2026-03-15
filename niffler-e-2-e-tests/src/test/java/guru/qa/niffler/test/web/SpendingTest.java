@@ -27,7 +27,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 @WebTest
 public class SpendingTest {
 
-
     @User(spendings = @Spending(
             category = "Учеба",
             amount = 599,
