@@ -1,6 +1,8 @@
 package guru.qa.niffler.jupiter.extension;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
+import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -28,10 +30,8 @@ public class BrowserExtension implements
 
     @Override
     public void afterEach(ExtensionContext context) {
-        for (SelenideDriver driver : drivers) {
-            if (driver.hasWebDriverStarted()) {
-                driver.close();
-            }
+        if (WebDriverRunner.hasWebDriverStarted()) {
+            Selenide.closeWebDriver();
         }
     }
 
@@ -62,15 +62,13 @@ public class BrowserExtension implements
     }
 
     private void doScreenshot() {
-        for (SelenideDriver driver : drivers) {
-            if (driver.hasWebDriverStarted()) {
-                Allure.addAttachment(
-                        "Screen on fail for browser %s".formatted(driver.browser().name),
-                        new ByteArrayInputStream(
-                                ((TakesScreenshot) driver.getWebDriver()).getScreenshotAs(OutputType.BYTES)
-                        )
-                );
-            }
+        if (WebDriverRunner.hasWebDriverStarted()) {
+            Allure.addAttachment(
+                    "Screen on fail",
+                    new ByteArrayInputStream(
+                            ((TakesScreenshot) WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)
+                    )
+            );
         }
     }
 }

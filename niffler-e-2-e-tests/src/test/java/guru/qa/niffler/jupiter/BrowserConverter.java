@@ -9,14 +9,16 @@ import org.junit.jupiter.params.converter.ArgumentConverter;
 public class BrowserConverter implements ArgumentConverter {
 
     @Override
-    public SelenideDriver convert(Object source, ParameterContext context) throws ArgumentConversionException {
+    public Object convert(Object source, ParameterContext context) throws ArgumentConversionException {
         if (context.getParameter().getType().equals(SelenideDriver.class)) {
-            Browser browser = (Browser) source;
+            if (!(source instanceof Browser browser)) {
+                throw new ArgumentConversionException("Wrong argument type");
+            }
 
             return new SelenideDriver(browser.getConfig());
 
         } else {
-            throw new IllegalArgumentException("Unsupported browser type: %s".formatted(source.getClass()));
+            throw new ArgumentConversionException("Unsupported browser type: %s".formatted(source.getClass()));
         }
     }
 }

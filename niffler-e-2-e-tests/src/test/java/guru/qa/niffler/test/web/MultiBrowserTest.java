@@ -18,13 +18,13 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 public class MultiBrowserTest {
 
     @RegisterExtension
-    private static final NonStaticBrowserExtension browserExtension = new NonStaticBrowserExtension();
+    private static final NonStaticBrowserExtension NON_STATIC_BROWSER_EXTENSION = new NonStaticBrowserExtension();
 
     @ParameterizedTest
     @Execution(ExecutionMode.CONCURRENT)
     @EnumSource(value = Browser.class)
     void mainPageShouldBeDisplayedAfterSuccessLogin(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
-        browserExtension.getDrivers().get().add(driver);
+        NonStaticBrowserExtension.drivers().add(driver);
         var userName = randomUsername();
 
         driver.open(LoginPage.LOGIN_PAGE_URL);
