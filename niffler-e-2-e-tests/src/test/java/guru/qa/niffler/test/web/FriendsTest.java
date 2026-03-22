@@ -1,13 +1,14 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
+import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.helper.TestConstantHolder.CFG;
+
 @WebTest
 public class FriendsTest {
 
@@ -16,7 +17,7 @@ public class FriendsTest {
     void friendsShouldBePresentInFriendsTable(UserJson user) {
         var friendUsername = user.testData().friends().getFirst().username();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
@@ -30,7 +31,7 @@ public class FriendsTest {
     void incomeRequestShouldBePresentInFriendsTable(UserJson user) {
         var targetUsername = user.testData().incomeInvitations().getFirst().username();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
@@ -44,7 +45,7 @@ public class FriendsTest {
     void outcomeRequestShouldBePresentInAllPeopleTable(UserJson user) {
         var targetUsername = user.testData().outcomeInvitations().getFirst().username();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseAllPeople()
@@ -55,7 +56,7 @@ public class FriendsTest {
     @User
     @Test
     void friendsTableShouldBeEmptyForNewUser(UserJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
@@ -67,7 +68,7 @@ public class FriendsTest {
     void shouldAcceptRequestForFriendship(UserJson user) {
         var targetUsername = user.testData().incomeInvitations().getFirst().username();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
@@ -83,7 +84,7 @@ public class FriendsTest {
     void shouldDeclineRequestForFriendship(UserJson user) {
         var targetUsername = user.testData().incomeInvitations().getFirst().username();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
                 .openProfilePopupMenu()
                 .chooseFriends()
