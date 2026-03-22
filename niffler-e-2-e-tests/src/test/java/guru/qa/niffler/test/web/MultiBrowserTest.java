@@ -5,6 +5,7 @@ import guru.qa.niffler.jupiter.BrowserConverter;
 import guru.qa.niffler.jupiter.extension.NonStaticBrowserExtension;
 import guru.qa.niffler.model.enums.Browser;
 import guru.qa.niffler.page.LoginPage;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +16,9 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 public class MultiBrowserTest {
+
+    @RegisterExtension
+    NonStaticBrowserExtension nonStaticBrowserExtension = new NonStaticBrowserExtension();
 
     @ParameterizedTest
     @Execution(ExecutionMode.CONCURRENT)
