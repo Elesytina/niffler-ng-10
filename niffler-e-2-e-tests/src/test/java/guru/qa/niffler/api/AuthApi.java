@@ -26,7 +26,7 @@ public interface AuthApi {
     );
 
     @GET("oauth2/authorize")
-    Call<Void> preRequest(
+    Call<Void> authorize(
             @Query("response_type") String responseType,
             @Query("client_id") String clientId,
             @Query("scope") String scope,

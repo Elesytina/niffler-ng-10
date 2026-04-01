@@ -1,14 +1,17 @@
 package guru.qa.niffler.utils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import static java.util.Base64.getUrlEncoder;
-
+@ParametersAreNonnullByDefault
 public class OauthUtils {
 
+    @Nonnull
     public static String generateCodeVerifier() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] codeVerifier = new byte[32];
@@ -16,6 +19,7 @@ public class OauthUtils {
         return getUrlEncoder().withoutPadding().encodeToString(codeVerifier);
     }
 
+    @Nonnull
     public static String generateCodeChallenge(String codeVerifier) {
         try {
             byte[] bytes = codeVerifier.getBytes(StandardCharsets.US_ASCII);

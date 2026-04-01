@@ -78,7 +78,7 @@ public class AuthApiClient extends RestClient {
         String codeChallenge = OauthUtils.generateCodeChallenge(codeVerifier);
 
         Response<Void> response = Assertions.assertDoesNotThrow(
-                () -> authApi.preRequest(
+                () -> authApi.authorize(
                         "code",
                         CLIENT_ID,
                         "openid",
